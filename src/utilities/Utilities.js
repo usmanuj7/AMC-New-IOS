@@ -94,7 +94,7 @@ export default class Utilities extends React.Component {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value)).then((value) => {
 
-      });;
+      });
     } catch (error) {
      
     }
