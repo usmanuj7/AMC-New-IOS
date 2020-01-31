@@ -250,6 +250,8 @@ export default class SiginScreen extends React.Component {
 }
 
   async componentWillMount() {
+    console.log("sign in components will mount")
+
     SplashScreen.hide();
     var date = new Date();
     this.setState({ isLoadingIndicator: true })

@@ -151,6 +151,7 @@ export default class Dashboard extends React.Component {
     }
   }
   async componentWillMount() {
+    console.log("dashboard components will mount")
 
     this.setState({ isLoadingIndicator: true, noificationCount: constants.noificationCount });
     var date = new Date();
