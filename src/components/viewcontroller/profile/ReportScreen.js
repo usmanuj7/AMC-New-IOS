@@ -397,7 +397,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = sundayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = sundayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = sundayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          // arrayTopush.push(parseFloat(inHrs));
+          arrayTopush.push(res1);
 
           // arrayTopush.push(parseInt(sundayhrs.total.split(":")[0]))
           var arrayToSend = this.state.arrayToSend;
@@ -410,7 +414,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = mondayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = mondayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = mondayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });
@@ -419,7 +427,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = tuesdayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = tuesdayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = tuesdayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });
@@ -428,7 +440,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = wednesdayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = wednesdayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = wednesdayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });
@@ -437,7 +453,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = thursdayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = thursdayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = thursdayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });
@@ -446,7 +466,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = fridayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = fridayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = fridayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });
@@ -455,7 +479,11 @@ export default class ReportScreen extends React.Component {
           var inHrs = saturdayhrs.break.split(":")[0];
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = saturdayhrs.worked.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          var min = saturdayhrs.worked.split(":")[1];
+          var res = parseFloat(min) / 100
+          var res1 = parseFloat(inHrs) + res
+          arrayTopush.push(res1);
+          // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
           this.setState({ arrayToSend: arrayToSend });

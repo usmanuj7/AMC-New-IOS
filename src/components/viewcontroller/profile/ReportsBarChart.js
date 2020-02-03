@@ -111,10 +111,10 @@
                       data: this.props.data,
                       barColors: ['red', 'green'],
                     }}
-                    width={Dimensions.get('window').width}
-                    height={180}
+                    width={Dimensions.get('window').width }
+                    height={220}
                     chartConfig={{
-                      padding:20,
+                      // padding:20,
                       backgroundColor: '#1cc910',
                       backgroundGradientFrom: '#eff3ff',
                       backgroundGradientTo: '#efefef',
