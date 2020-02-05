@@ -173,7 +173,7 @@ export default class AlreadyLoggedScreen extends Component {
     });
   }
   async  getOfflineData() {
-
+console.log(`offline data et called`)
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     var EndBreakTimeToday = await AsyncStorage.getItem('EndBreakTimeToday');
     var startBreakTimeToday = await AsyncStorage.getItem('startBreakTimeToday');
@@ -192,17 +192,20 @@ export default class AlreadyLoggedScreen extends Component {
       if (startDutyTimeToday.swipe_time === undefined) {
         startDutyTime =startDutyTimeToday.clock_in;
         var abc = startDutyTimeToday.clock_in;
-        var d = abc;
-        var n = parseInt(d.split(":")[0])
-        if (n < 10)
-          n = "0" + n;
-        var m = parseInt(d.split(":")[1])
-        if (m < 10)
-          m = "0" + m;
-        var p = parseInt(d.split(":")[2])
-        if (p < 10)
-          p = "0" + p;
-        this.setState({ startDutyTime: n + ":" + m + ":" + p });
+        // if(abc !== undefined){
+          var d = abc;
+          var n = parseInt(d.split(":")[0])
+          if (n < 10)
+            n = "0" + n;
+          var m = parseInt(d.split(":")[1])
+          if (m < 10)
+            m = "0" + m;
+          var p = parseInt(d.split(":")[2])
+          if (p < 10)
+            p = "0" + p;
+          this.setState({ startDutyTime: n + ":" + m + ":" + p });
+            
+        // }
        
       }
     }
@@ -225,17 +228,20 @@ export default class AlreadyLoggedScreen extends Component {
       startEndDutyToday = JSON.parse(startEndDutyToday);
       startEndDuty = startEndDutyToday.clock_out;
       var abc = startEndDutyToday.clock_out;
-    var d = abc;
-    var n = parseInt(d.split(":")[0])
-    if (n < 10)
-      n = "0" + n;
-    var m = parseInt(d.split(":")[1])
-    if (m < 10)
-      m = "0" + m;
-    var p = parseInt(d.split(":")[2])
-    if (p < 10)
-      p = "0" + p;
-    this.setState({ endDutyTime: n + ":" + m + ":" + p });
+      if(abc !== undefined){
+        var d = abc;
+        var n = parseInt(d.split(":")[0])
+        if (n < 10)
+          n = "0" + n;
+        var m = parseInt(d.split(":")[1])
+        if (m < 10)
+          m = "0" + m;
+        var p = parseInt(d.split(":")[2])
+        if (p < 10)
+          p = "0" + p;
+        this.setState({ endDutyTime: n + ":" + m + ":" + p });
+      }
+   
 
     }
 
@@ -262,9 +268,12 @@ export default class AlreadyLoggedScreen extends Component {
 
 
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
-    if (startDutyTimeToday !== null) {
+console.log(`end duty time is ${endDutyTimeToday}`)
+
+    // if (startDutyTimeToday !== null) {
       var abc = JSON.parse(startDutyTimeToday).clock_in;
-      var d = abc;
+      if(abc !== undefined){
+        var d = abc;
       var n = parseInt(d.split(":")[0])
       if (n < 10)
         n = "0" + n;
@@ -275,24 +284,36 @@ export default class AlreadyLoggedScreen extends Component {
       if (p < 10)
         p = "0" + p;
       this.setState({ startDutyTime: n + ":" + m + ":" + p });
-    }
+      }
+      else{
+        console.log(`else called`)
+      }
+      
+    // }
     var endDutyTimeToday = await AsyncStorage.getItem('startEndDutyToday');
-    if (endDutyTimeToday !== null)
+    if (endDutyTimeToday !== null){
       var abc = JSON.parse(startDutyTimeToday).clock_out;
-    var d = abc;
-    var n = parseInt(d.split(":")[0])
-    if (n < 10)
-      n = "0" + n;
-    var m = parseInt(d.split(":")[1])
-    if (m < 10)
-      m = "0" + m;
-    var p = parseInt(d.split(":")[2])
-    if (p < 10)
-      p = "0" + p;
-    this.setState({ endDutyTime: n + ":" + m + ":" + p });
+      if(abc !== undefined){
+      var d = abc;
+      var n = parseInt(d.split(":")[0])
+      if (n < 10)
+        n = "0" + n;
+      var m = parseInt(d.split(":")[1])
+      if (m < 10)
+        m = "0" + m;
+      var p = parseInt(d.split(":")[2])
+      if (p < 10)
+        p = "0" + p;
+      this.setState({ endDutyTime: n + ":" + m + ":" + p });
+    }
+    else{
+      console.log(`else called`)
+    }
+    }
+
 
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    debugger
+    
     const profile = await AsyncStorage.getItem('profileData');
     if (profile !== null) {
       var profileData = JSON.parse(profile);
@@ -412,3 +433,4 @@ export default class AlreadyLoggedScreen extends Component {
     )
   }
 }
+

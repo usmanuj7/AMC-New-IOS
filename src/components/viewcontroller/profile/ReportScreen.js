@@ -16,6 +16,7 @@ import EntypoIcons from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/Entypo';
 import WebServicesManager from '../../managers/webServicesManager/WebServicesManager';;
 import HeaderView from '../Header/Header';
+import DropdownAlert from 'react-native-dropdownalert';
 import TimePicker from "react-native-24h-timepicker";
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -501,6 +502,11 @@ export default class ReportScreen extends React.Component {
           });
 
         }
+        else{
+          console.log("no internet connection")
+          this.setState({ isLoadingIndicatorLoader: false })
+          this.dropDownAlertRef1.alertWithType('info', 'Alert', "Please check your internet connection");
+        }
       }
 
     )
@@ -760,6 +766,14 @@ export default class ReportScreen extends React.Component {
         <StatusBar barStyle="light-content" hidden={false} backgroundColor={constants.colorPurpleLight595278} translucent={false} />
         <HeaderView name={this.state.profileDataSurce._firstname + " " + this.state.profileDataSurce._lastname} context={this} notificationCount={this.state.noificationCount} />
         <Loader loading={this.state.isLoadingIndicatorLoader}></Loader>
+
+        <DropdownAlert infoColor={constants.coloBrownFFF5DA} titleStyle={{ color: constants.colorWhitefcfcfc, fontWeight: 'bold', }}
+        messageStyle={{ color: constants.colorWhitefcfcfc, fontWeight: 'bold', fontSize: 12 }} imageStyle={{
+          padding: 8,
+          tintColor: constants.colorWhitefcfcfc,
+          alignSelf: 'center',
+        }}
+        ref={ref => this.dropDownAlertRef1 = ref} />
         <ImageBackground source={require('../../../ImageAssets/background.png')}
           style={[styles.mainImageBackground]}>
           <View style={{ backgroundColor: '#595278', flexDirection: 'row' }}>

@@ -115,15 +115,15 @@
                       barColors: ['red', 'green'],
                     }}
                     
-                    width={Dimensions.get('window').width * 0.95}
+                    width={Dimensions.get('window').width }
                     height={220}
                     chartConfig={{
-                      // padding:20,
+                      // marginHorizonal:60,
                       backgroundColor: '#1cc910',
                       backgroundGradientFrom: '#eff3ff',
                       backgroundGradientTo: '#efefef',
                       decimalPlaces: 2,
-                      barPercentage: 0.7,
+                      // barPercentage: 0.9,
                       color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                       style: {
                       //   borderRadius: 16,

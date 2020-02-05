@@ -54,15 +54,18 @@ class LeaveDetailModal extends React.Component {
       status="Approved";
     }
     return (
+
       <Modal transparent={true} animationType={'none'} visible={blnLoading}>
         <View
           style={{
             borderRadius: 30,
-            flex: 1,
+            // flex: 1,
+            zIndex:6,
+            height:"60%",
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: constants.colorPurpleLight595278,
-            marginTop: 100,
+            marginTop: 200,
             marginBottom: 100,
             marginRight: 30,
             marginLeft: 30,
