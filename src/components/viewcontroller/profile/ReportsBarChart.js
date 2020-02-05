@@ -80,7 +80,10 @@
   export default class ReportsBarChart extends React.Component {
     render() {
       const data =this.props.data
-      
+      for(var i = 0; i < data.length; i++) {
+        console.log(`data of graph ${this.props.data[i]} \n`)
+
+      }
 
       if(this.props.data.length>0)
       {
@@ -107,11 +110,12 @@
                   <StackedBarChart
                     data={{
                       labels: this.props.labelArray,
-                    legend: ['Break', 'Worked'],
+                      legend: ['Break', 'Worked'],
                       data: this.props.data,
                       barColors: ['red', 'green'],
                     }}
-                    width={Dimensions.get('window').width }
+                    
+                    width={Dimensions.get('window').width * 0.95}
                     height={220}
                     chartConfig={{
                       // padding:20,
@@ -119,6 +123,7 @@
                       backgroundGradientFrom: '#eff3ff',
                       backgroundGradientTo: '#efefef',
                       decimalPlaces: 2,
+                      barPercentage: 0.7,
                       color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                       style: {
                       //   borderRadius: 16,

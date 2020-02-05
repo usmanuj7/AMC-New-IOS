@@ -399,7 +399,8 @@ export default class ReportScreen extends React.Component {
           var inHrs = sundayhrs.worked.split(":")[0];
           var min = sundayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           // arrayTopush.push(parseFloat(inHrs));
           arrayTopush.push(res1);
 
@@ -415,8 +416,9 @@ export default class ReportScreen extends React.Component {
           arrayTopush.push(parseFloat(inHrs));
           var inHrs = mondayhrs.worked.split(":")[0];
           var min = mondayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var res =  parseFloat(min) / 100
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           arrayTopush.push(res1);
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
@@ -429,7 +431,8 @@ export default class ReportScreen extends React.Component {
           var inHrs = tuesdayhrs.worked.split(":")[0];
           var min = tuesdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           arrayTopush.push(res1);
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
@@ -455,7 +458,8 @@ export default class ReportScreen extends React.Component {
           var inHrs = thursdayhrs.worked.split(":")[0];
           var min = thursdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           arrayTopush.push(res1);
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
@@ -468,7 +472,8 @@ export default class ReportScreen extends React.Component {
           var inHrs = fridayhrs.worked.split(":")[0];
           var min = fridayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           arrayTopush.push(res1);
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
@@ -481,7 +486,8 @@ export default class ReportScreen extends React.Component {
           var inHrs = saturdayhrs.worked.split(":")[0];
           var min = saturdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
-          var res1 = parseFloat(inHrs) + res
+          var temp = parseFloat(res.toFixed(2))
+          var res1 = parseFloat(inHrs) + temp
           arrayTopush.push(res1);
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;

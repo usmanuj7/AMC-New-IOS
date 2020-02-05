@@ -209,6 +209,8 @@ export default class EndDuty extends React.Component {
       })
       
   }
+
+
   async setofflineData(attendanceData) {
      
     var dataToPush = [];
@@ -220,6 +222,8 @@ export default class EndDuty extends React.Component {
     if (attendanceDataPrevArray !== null) {
       SearchesToSave = JSON.parse(attendanceDataPrevArray)
       SearchesToSave.push(attendanceData);
+      console.log(`first if ${JSON.stringify(SearchesToSave)}`)
+
       Utilities.saveToStorage("attendanceData", SearchesToSave);
 
     }
@@ -264,8 +268,10 @@ export default class EndDuty extends React.Component {
     else {
       Utilities.saveToStorage("todayTime", dataToPush);
     }
-
   }
+
+
+
   pressNotification() {
     constants.noificationCount = 0;
     this.props.navigation.navigate("NotificationScreen");
