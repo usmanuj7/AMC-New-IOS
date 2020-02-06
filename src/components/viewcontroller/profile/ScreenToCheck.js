@@ -683,16 +683,32 @@ export default class ScreenToCheck extends React.Component {
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
 
     var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
     console.log('offline storage called');
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
+      console.log(`last entery is ${lastEntryData.title}`);
+
       if (today.diff(lastEntryData.date_times, 'days') !== 0) {
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
         this.props.navigation.navigate('DashboardScreen');
       } else {
         if (lastEntryData.title === 'StartDuty') {
-          this.props.navigation.navigate('BreakScreen');
+          let check = false;
+          for (let index = 0; index < todayAttemArray.length; index++) {
+            if (todayAttemArray[index].title === 'EndDuty') {
+              check = true;
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
         } else if (lastEntryData.title === 'StartBreak') {
           this.props.navigation.navigate('EndDutyScreen');
         } else if (lastEntryData.title === 'EndDuty') {

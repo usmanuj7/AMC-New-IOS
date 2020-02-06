@@ -204,6 +204,7 @@ export default class ActionTimePick extends React.Component {
     async Save() {
          var context=this;
         var date = this.props.navigation.state.params.selectedItem._clock_date;
+        // debugger
          
         var profile = {
             staff_clocktime_id: this.props.navigation.state.params.selectedItem._staff_clocktime_id,
@@ -222,9 +223,12 @@ export default class ActionTimePick extends React.Component {
                     var todayAttemArray=JSON.parse(todayTimeDataArrayTemp);
                     var profileTemp=profile;
                     var selectedItemTemp=context.props.navigation.state.params.selectedItem;
- 
+
+                    console.log(`today attem array ${JSON.stringify(todayTimeDataArrayTemp)}`)
+                    
                         if(todayAttemArray!==null)
-                  {  for (let index = 0; index < todayAttemArray.length; index++) {
+                  { 
+                       for (let index = 0; index < todayAttemArray.length; index++) {
                         if(todayAttemArray[index].title==="StartDuty")
                         {
                         if (todayAttemArray.hasOwnProperty(index) && todayAttemArray[index].title === (selectedItemTemp._title).replace(/\s+/g, '')
