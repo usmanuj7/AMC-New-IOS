@@ -169,7 +169,7 @@ export default class LeaveScreen extends React.Component {
     }
 
     applyLeave() {
-        debugger
+        // debugger
         if (Utilities.isValidString(this.state.leaveTypeLabel)) {
             if (Utilities.isValidString(this.state.checkedStartDate)) {
                 if (Utilities.isValidString(this.state.checkedEndDate)) {

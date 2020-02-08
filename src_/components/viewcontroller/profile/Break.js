@@ -206,7 +206,7 @@ export default class Break extends React.Component {
     }
   async  handleEndDuty()
     {
-       debugger
+      //  debugger
       const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
       var today = moment(new Date());
         this.setState({isLoadingIndicator:true})

@@ -179,7 +179,7 @@ export default class ReportScreen extends React.Component {
     //     });
   }
   updateWeek(week) {
-    debugger
+    // debugger
     var prevWeekNo = parseInt(parseInt(week.split("Week")[1]));
     this.setState({ weeknumber: prevWeekNo });
 

@@ -654,7 +654,7 @@ export default class ReportScreen extends React.Component {
         // var prevMonth = moment(this.state.monthDate).subtract(1, "month").format("MMMM YYYY");
         if(parseInt(this.state.weekToCheck.split("Week")[1])>1)
         {
-          debugger
+          // debugger
           this.setState({isLoadingIndicatorLoader:true})
           this.setState({arrayToSend:[],BarDataSource:[],labelArray:[],chartYear:""});
         var prevWeek="Week "+parseInt(parseInt(this.state.weekToCheck.split("Week")[1])-1);

@@ -395,8 +395,14 @@ export default class ReportScreen extends React.Component {
 
 
           var arrayTopush = [];
-          var inHrs = sundayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = sundayhrs.break.split(":")[0];
+          var minBreak = sundayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = sundayhrs.worked.split(":")[0];
           var min = sundayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -413,8 +419,16 @@ export default class ReportScreen extends React.Component {
 
 
           var arrayTopush = [];
-          var inHrs = mondayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          // var inHrs = mondayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = mondayhrs.break.split(":")[0];
+          var minBreak = mondayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = mondayhrs.worked.split(":")[0];
           var min = mondayhrs.worked.split(":")[1];
           var res =  parseFloat(min) / 100
@@ -427,8 +441,17 @@ export default class ReportScreen extends React.Component {
           this.setState({ arrayToSend: arrayToSend });
 
           var arrayTopush = [];
-          var inHrs = tuesdayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+
+          // var inHrs = tuesdayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = tuesdayhrs.break.split(":")[0];
+          var minBreak = tuesdayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = tuesdayhrs.worked.split(":")[0];
           var min = tuesdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -441,8 +464,16 @@ export default class ReportScreen extends React.Component {
           this.setState({ arrayToSend: arrayToSend });
 
           var arrayTopush = [];
-          var inHrs = wednesdayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          // var inHrs = wednesdayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = wednesdayhrs.break.split(":")[0];
+          var minBreak = wednesdayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = wednesdayhrs.worked.split(":")[0];
           var min = wednesdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -454,8 +485,16 @@ export default class ReportScreen extends React.Component {
           this.setState({ arrayToSend: arrayToSend });
 
           var arrayTopush = [];
-          var inHrs = thursdayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          // var inHrs = thursdayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = thursdayhrs.break.split(":")[0];
+          var minBreak = thursdayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = thursdayhrs.worked.split(":")[0];
           var min = thursdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -468,8 +507,17 @@ export default class ReportScreen extends React.Component {
           this.setState({ arrayToSend: arrayToSend });
 
           var arrayTopush = [];
-          var inHrs = fridayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          // var inHrs = fridayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+
+          var inHrsBreak = fridayhrs.break.split(":")[0];
+          var minBreak = fridayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = fridayhrs.worked.split(":")[0];
           var min = fridayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -482,8 +530,16 @@ export default class ReportScreen extends React.Component {
           this.setState({ arrayToSend: arrayToSend });
 
           var arrayTopush = [];
-          var inHrs = saturdayhrs.break.split(":")[0];
-          arrayTopush.push(parseFloat(inHrs));
+          // var inHrs = saturdayhrs.break.split(":")[0];
+          // arrayTopush.push(parseFloat(inHrs));
+
+          var inHrsBreak = saturdayhrs.break.split(":")[0];
+          var minBreak = saturdayhrs.break.split(":")[1];
+          var resBreak = parseFloat(minBreak) / 100
+          var temp = parseFloat(resBreak.toFixed(2))
+          var res1Break = parseFloat(inHrsBreak) + temp
+          arrayTopush.push(parseFloat(res1Break));
+
           var inHrs = saturdayhrs.worked.split(":")[0];
           var min = saturdayhrs.worked.split(":")[1];
           var res = parseFloat(min) / 100
@@ -673,7 +729,7 @@ export default class ReportScreen extends React.Component {
   // }
   Next() {
     var timeNow = (new Date()).getTime();
-    if (timeNow > (lastClicked + 2500)) {
+    if (timeNow > (lastClicked + 500)) {
       if (parseInt(this.state.weekToCheck.split("Week")[1]) < 52) {
 
         this.setState({ isLoadingIndicatorLoader: true })
@@ -695,7 +751,7 @@ export default class ReportScreen extends React.Component {
   }
   Prev() {
     var timeNow = (new Date()).getTime();
-    if (timeNow > (lastClicked + 2500)) {
+    if (timeNow > (lastClicked + 500)) {
     // var nextDate= moment(this.state.monthDate).subtract(1, 'M');
     // var prevMonth = moment(this.state.monthDate).subtract(1, "month").format("MMMM YYYY");
     if (parseInt(this.state.weekToCheck.split("Week")[1]) > 1) {

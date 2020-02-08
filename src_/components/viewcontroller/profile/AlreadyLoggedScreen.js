@@ -130,7 +130,7 @@ export default class AlreadyLoggedScreen extends Component {
         this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_dated_lastAttendance" },
           (statusCode, response) => {
             if (Utilities.checkAPICallStatus(statusCode)) {
-              debugger
+              // debugger
                var endDutyTime=moment(response.attendance[0].clock_time).format("HH : mm : ss")
               this.setState({ endDutyTime:endDutyTime });
             }
@@ -144,7 +144,7 @@ export default class AlreadyLoggedScreen extends Component {
         var workedHours = attendenceModel._worked;
         var duration = moment.duration(workedHours, 'seconds');
         var formatted = moment.utc(workedHours * 1000).format('HH : mm : ss');
-        debugger
+        // debugger
         this.setState({ timeWorked: formatted });
       }
       else {
@@ -157,7 +157,7 @@ export default class AlreadyLoggedScreen extends Component {
             if (Utilities.checkAPICallStatus(statusCode)) {
               var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(response.hours_history);
               this.setState({ hoursDataModel: attendenceModel });
-              debugger
+              // debugger
               this.setState({ timeWorked: attendenceModel._worked });
 
             }
@@ -241,7 +241,7 @@ export default class AlreadyLoggedScreen extends Component {
     }
     var endDutyTimeToday = await AsyncStorage.getItem('startEndDutyToday');
     if (endDutyTimeToday !== null)
-    debugger
+    // debugger
     var endDutyTime=moment(JSON.parse(endDutyTimeToday).date+" "+JSON.parse(endDutyTimeToday).clock_out).format("HH : mm : ss")
       this.setState({ endDutyTime:  endDutyTime});
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);

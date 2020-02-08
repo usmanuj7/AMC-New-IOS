@@ -323,7 +323,7 @@ export default class Dashboard extends React.Component {
   }
 
   async setofflineData(attendanceData) {
-    debugger
+    // debugger
     var dataToPush = [];
     var today = moment(new Date());
     dataToPush.push(attendanceData);

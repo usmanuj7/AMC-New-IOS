@@ -358,7 +358,7 @@ console.log(`end duty time is ${endDutyTimeToday}`)
 
   render() {
     if (this.state.timeWorked == "Invalid Date") {
-      debugger
+      // debugger
     }
     return (
       <Container>

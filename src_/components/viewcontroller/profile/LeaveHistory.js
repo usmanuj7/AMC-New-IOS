@@ -206,7 +206,7 @@ export default class LeaveHistory extends React.Component {
   }
   deleteLeave(item)
   {
-    debugger
+    // debugger
     var Leave = { staffid: this.state.profileDataSurce._staffid,leave_request_id: item._leaverequest_id};
 
     this.WebServicesManager.postApiDeleteLeave({ dataToInsert: Leave, apiEndPoint: "delete_leave_request" },

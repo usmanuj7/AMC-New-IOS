@@ -645,6 +645,7 @@ export default class LogData extends React.Component {
 
     }
     async goToFirstTab() {
+       
         var appLevel = await AsyncStorage.getItem('appLevel');
         var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
         this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
@@ -653,11 +654,29 @@ export default class LogData extends React.Component {
                 if (Utilities.checkAPICallStatus(statusCode)) {
                     if (response.attendance !== undefined) {
                         var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                        
+                       
+                      
                         if (attendance_data.length > 0) {
+                           
+                            for (let index = 0; index < todayAttemArray.length; index++) {
+                              if (todayAttemArray[index].title === 'EndDuty') {
+                                check = true;
+                              }
+                            }
+
+                            if (check) {
+                                this.props.navigation.navigate('AlreadyLoggedScreen');
+                              } else {
+                                this.props.navigation.navigate('BreakScreen');
+                              }
+                  
                             if (attendance_data[0]._title === "Start Break") {
                                 AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
                                     this.setState({ isLoadingIndicator: false });
                                     constants.attendance_id = attendance_data[0]._attendance_id;
+
+                                    
                                     this.props.navigation.navigate("EndDutyScreen");
                                 })
                             }
@@ -665,6 +684,7 @@ export default class LogData extends React.Component {
                                 AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
                                     this.setState({ isLoadingIndicator: false });
                                     constants.attendance_id = attendance_data[0]._attendance_id;
+                                  
                                     this.props.navigation.navigate("BreakScreen");
                                 })
                             }

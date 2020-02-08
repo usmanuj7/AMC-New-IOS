@@ -94,7 +94,7 @@ export default class Utilities extends React.Component {
     if(value!==undefined)
     {
       try {
-        debugger
+        // debugger
         await AsyncStorage.setItem(key, JSON.stringify(value)).then((value) => {
   
         });;

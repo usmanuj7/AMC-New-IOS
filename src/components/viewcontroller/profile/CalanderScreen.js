@@ -318,6 +318,7 @@ export default class CalanderScreen extends React.Component {
         this.props.navigation.navigate("NotificationScreen");
     }
     async goToFirstTab() {
+     
         var appLevel = await AsyncStorage.getItem('appLevel');
         var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
         this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
@@ -384,6 +385,10 @@ export default class CalanderScreen extends React.Component {
         var today = moment(new Date());
         var offlineApplevel = await AsyncStorage.getItem("attendanceData");
         var lastEntry = await AsyncStorage.getItem("lastEntry");
+
+        var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
         if (lastEntry !== null) {
           var lastEntryData = JSON.parse(lastEntry);
           if (today.diff(lastEntryData.date_times, 'days') !== 0) {
@@ -391,8 +396,22 @@ export default class CalanderScreen extends React.Component {
             this.props.navigation.navigate("DashboardScreen");
           }
           else {
+            let check = false;
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+              console.log(`last one is ${lastEntryData.title}`)
+              debugger
             if (lastEntryData.title === "StartDuty") {
-              this.props.navigation.navigate("BreakScreen");
+
+                if (check) {
+                    this.props.navigation.navigate('AlreadyLoggedScreen');
+                  } else {
+                    this.props.navigation.navigate('BreakScreen');
+                  }
+            //   this.props.navigation.navigate("BreakScreen");
             }
             else if (lastEntryData.title === "StartBreak") {
               this.props.navigation.navigate("EndDutyScreen");
