@@ -165,6 +165,11 @@ export default class SiginScreen extends React.Component {
                     })
                   }
                  else if (profileData._attendaceModel[0]._title === "End Duty") {
+                  console.log(`mo data is ${JSON.stringify(profileData._attendaceModel[0])}`)
+                  AsyncStorage.setItem(
+                   'appLevelCheckIs',
+                   profileData._attendaceModel[0]._title,
+                   )
                   debugger
                     AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
                       this.setState({isLoadingIndicator:false});
