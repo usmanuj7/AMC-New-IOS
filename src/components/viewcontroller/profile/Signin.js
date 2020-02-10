@@ -43,6 +43,8 @@ export default class SiginScreen extends React.Component {
 
   async checkNotif(dailyLogsModelDataSource,prevDate,profileData)
 {
+  console.log(` check notify ${JSON.stringify(profileData._attendaceModel[0])}`)
+  debugger
 
   var staffData = { staffid: profileData._staffid };
   this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_unread_notifications" },
@@ -55,6 +57,7 @@ export default class SiginScreen extends React.Component {
     })
    if (dailyLogsModelDataSource.length>0)
   {
+    debugger
      
         if(dailyLogsModelDataSource.find(k=>k._is_manual=="2"&&k._status=="101")===undefined )
                 {
@@ -94,8 +97,10 @@ export default class SiginScreen extends React.Component {
                   AsyncStorage.setItem('notifications', JSON.stringify(notificationsArray));
                   AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => { 
                     this.setState({isLoadingIndicator:false})  
+                    debugger
                     if (profileData._attendaceModel!==undefined && profileData._attendaceModel.length > 0) {
                       if (profileData._attendaceModel[0]._title === "Start Break") {
+                        debugger
                         AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
                           this.setState({isLoadingIndicator:false});
                           constants.attendance_id=profileData._attendaceModel[0]._attendance_id;
@@ -103,6 +108,7 @@ export default class SiginScreen extends React.Component {
                         })
                       }
                      else if (profileData._attendaceModel[0]._title === "Start Duty") {
+                      debugger
                         AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
                           this.setState({isLoadingIndicator:false});
                           constants.attendance_id=profileData._attendaceModel[0]._attendance_id;
@@ -117,6 +123,8 @@ export default class SiginScreen extends React.Component {
                         })
                       }
                      else if (profileData._attendaceModel[0]._title === "End Duty") {
+                       debugger
+                      Utilities.saveToStorage("lastEntry", attendanceData[0]);
                         AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
                           this.setState({isLoadingIndicator:false});
                           constants.attendance_id=profileData._attendaceModel[0]._attendance_id;
@@ -157,6 +165,7 @@ export default class SiginScreen extends React.Component {
                     })
                   }
                  else if (profileData._attendaceModel[0]._title === "End Duty") {
+                  debugger
                     AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
                       this.setState({isLoadingIndicator:false});
                       constants.attendance_id=profileData._attendaceModel[0]._attendance_id;
@@ -174,7 +183,7 @@ export default class SiginScreen extends React.Component {
               }
               else
               {
-                  
+                debugger
                 const notificationsArrayData = await AsyncStorage.getItem('notifications');
                 var notificationsArray=[];
                 if (notificationsArrayData !== null && notificationsArrayData !== undefined) {      
@@ -233,6 +242,12 @@ export default class SiginScreen extends React.Component {
                     })
                   }
                  else if (profileData._attendaceModel[0]._title === "End Duty") {
+                   console.log(`mo data is ${JSON.stringify(profileData._attendaceModel[0])}`)
+                   AsyncStorage.setItem(
+                    'appLevelCheckIs',
+                    profileData._attendaceModel[0]._title,
+                    )
+                  debugger
                     AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
                       this.setState({isLoadingIndicator:false});
                       constants.attendance_id=profileData._attendaceModel[0]._attendance_id;

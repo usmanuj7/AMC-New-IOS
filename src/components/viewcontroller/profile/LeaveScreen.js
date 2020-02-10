@@ -371,7 +371,16 @@ export default class LeaveScreen extends React.Component {
 
         }
         else {
-            this.props.navigation.navigate("DashboardScreen");
+            var check = await AsyncStorage.getItem('appLevelCheckIs');
+      debugger
+         if(check == "End Duty"){
+           debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+           debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+            // this.props.navigation.navigate("DashboardScreen");
 
         }
 

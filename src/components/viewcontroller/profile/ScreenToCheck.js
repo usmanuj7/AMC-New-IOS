@@ -687,6 +687,8 @@ export default class ScreenToCheck extends React.Component {
     var todayAttemArray = JSON.parse(todayTimeDataArray);
 
     console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+debugger
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
@@ -720,7 +722,17 @@ export default class ScreenToCheck extends React.Component {
         }
       }
     } else {
-      this.props.navigation.navigate('DashboardScreen');
+
+      var check = await AsyncStorage.getItem('appLevelCheckIs');
+      debugger
+         if(check == "End Duty"){
+           debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+           debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+      // this.props.navigation.navigate('DashboardScreen');
     }
   }
 
