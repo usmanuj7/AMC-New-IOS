@@ -387,8 +387,9 @@ export default class CalanderScreen extends React.Component {
         var lastEntry = await AsyncStorage.getItem("lastEntry");
 
         var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+        console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
     var todayAttemArray = JSON.parse(todayTimeDataArray);
-
+    debugger
         if (lastEntry !== null) {
           var lastEntryData = JSON.parse(lastEntry);
           if (today.diff(lastEntryData.date_times, 'days') !== 0) {
@@ -397,13 +398,16 @@ export default class CalanderScreen extends React.Component {
           }
           else {
             let check = false;
-            for (let index = 0; index < todayAttemArray.length; index++) {
-              if (todayAttemArray[index].title === 'EndDuty') {
-                check = true;
+            if(todayAttemArray !== null){
+                for (let index = 0; index < todayAttemArray.length; index++) {
+                  if (todayAttemArray[index].title === 'EndDuty') {
+                    check = true;
+                  }
+                }
               }
-            }
+              
               console.log(`last one is ${lastEntryData.title}`)
-              debugger
+            //   debugger
             if (lastEntryData.title === "StartDuty") {
 
                 if (check) {
@@ -432,12 +436,12 @@ export default class CalanderScreen extends React.Component {
         }
         else {
             var check = await AsyncStorage.getItem('appLevelCheckIs');
-      debugger
+    //   debugger
          if(check == "End Duty"){
-           debugger
+        //    debugger
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-           debugger
+        //    debugger
            this.props.navigation.navigate("DashboardScreen");
          }
         //   this.props.navigation.navigate("DashboardScreen");

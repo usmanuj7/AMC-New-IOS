@@ -632,18 +632,30 @@ export default class ScreenToCheck extends React.Component {
                 `attandance ${JSON.stringify(dailyLogsModelDataSource)}`,
               );
 
+              // debugger
+
               if (dailyLogsModelDataSource.length > 0) {
                 // here i updated the code
-                const startDutyTimeToday = dailyLogsModelDataSource[0]._clock_time.split(
-                  ' ',
-                )[1];
+                // const startDutyTimeToday = dailyLogsModelDataSource[0]._clock_time.split(
+                //   ' ',
+                // )[1];
+                // const startDutyTimeToday = dailyLogsModelDataSource[0]
+                var attendanceData11 = {
+                  title: 'StartDuty',
+                  date: dailyLogsModelDataSource[0]._clock_date,
+                  staffid: dailyLogsModelDataSource[0]._staffid,
+                  clock_in: dailyLogsModelDataSource[0]._clock_time.split(' ')[1],
+                };
+                
+                
                 console.log(
-                  `Utilities save startDutyTimeToday ${startDutyTimeToday}
+                  `Utilities save startDutyTimeToday ${JSON.stringify(attendanceData11)}
                   `,
                 );
+                debugger
                 Utilities.saveToStorage(
                   'startDutyTimeToday',
-                  startDutyTimeToday,
+                  attendanceData11,
                 );
               }
               console.log(
@@ -688,7 +700,7 @@ export default class ScreenToCheck extends React.Component {
 
     console.log('offline storage called');
     console.log(`last entry is  ${lastEntry}`);
-debugger
+// debugger
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
@@ -700,11 +712,14 @@ debugger
       } else {
         if (lastEntryData.title === 'StartDuty') {
           let check = false;
-          for (let index = 0; index < todayAttemArray.length; index++) {
-            if (todayAttemArray[index].title === 'EndDuty') {
-              check = true;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
             }
           }
+          
 
           if (check) {
             this.props.navigation.navigate('AlreadyLoggedScreen');
@@ -724,12 +739,12 @@ debugger
     } else {
 
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-      debugger
+      // debugger
          if(check == "End Duty"){
-           debugger
+          //  debugger
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-           debugger
+          //  debugger
            this.props.navigation.navigate("DashboardScreen");
          }
       // this.props.navigation.navigate('DashboardScreen');

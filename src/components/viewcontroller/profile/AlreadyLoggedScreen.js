@@ -1,31 +1,46 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react';
 import {
   ListView,
   View,
   StatusBar,
   Text,
-  Image, Alert,
-  ImageBackground, BackHandler,
-  TextInput, TouchableOpacity, ScrollView, AsyncStorage
+  Image,
+  Alert,
+  ImageBackground,
+  BackHandler,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  AsyncStorage,
 } from 'react-native';
-import { Container, Body, Title, Center, Content, Footer, FooterTab, Button, Right, Left } from 'native-base';
-import styles from "../../../Style";
+import {
+  Container,
+  Body,
+  Title,
+  Center,
+  Content,
+  Footer,
+  FooterTab,
+  Button,
+  Right,
+  Left,
+} from 'native-base';
+import styles from '../../../Style';
 import WebServicesManager from '../../managers/webServicesManager/WebServicesManager';
 import constants from '../../../constants/constants';
-import HeaderView from '../Header/Header'
+import HeaderView from '../Header/Header';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import AntDesignIcons from 'react-native-vector-icons/AntDesign';
 import HoursHistoryModal from '../../Models/HoursHistoryModal';
 import Utilities from '../../../utilities/Utilities';
 import LoggedHoursModal from '../../Models/LoggedHoursModal';
-import { withNavigation } from 'react-navigation';
-import NetInfo from "@react-native-community/netinfo";
+import {withNavigation} from 'react-navigation';
+import NetInfo from '@react-native-community/netinfo';
 import Loader from '../../../Loader';
 
-
 export default class AlreadyLoggedScreen extends Component {
-  WebServicesManager = new WebServicesManager;
+  WebServicesManager = new WebServicesManager();
 
   constructor(props) {
     super(props);
@@ -37,176 +52,192 @@ export default class AlreadyLoggedScreen extends Component {
       noificationCount: 0,
       isLoadingIndicator: false,
       connectionCount: 0,
-      startDutyTime: "",
-      endDutyTime: "",
-      totalHoursWorked: "",
-      successImage: require('../../../ImageAssets/startduty.gif')
-    }
+      startDutyTime: '',
+      endDutyTime: '',
+      totalHoursWorked: '',
+      successImage: require('../../../ImageAssets/startduty.gif'),
+    };
     // userInfo: '',
   }
   menuItemPressed() {
-    this.props.navigation.navigate("BreakScreen");
+    this.props.navigation.navigate('BreakScreen');
   }
   componentDidUpdate(prevProps) {
     if (prevProps.isFocused !== this.props.isFocused) {
-
     }
   }
 
   pressNotification() {
     constants.noificationCount = 0;
-    this.props.navigation.navigate("NotificationScreen");
+    this.props.navigation.navigate('NotificationScreen');
   }
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     this.focusListener.remove();
     NetInfo.isConnected.removeEventListener(
       'connectionChange',
-      this._handleConnectivityChange
-
+      this._handleConnectivityChange,
     );
   }
   toggleLoader(status) {
     // this.setState({isLoadingIndicator:status})
-
   }
   handleBackButton = () => {
     BackHandler.exitApp();
     return true;
-  }
-  _handleConnectivityChange = (isConnected) => {
-
+  };
+  _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
-      if (this.state.connectionCount == 1)
-        Utilities.sendLocalStorageToServer();
-      this.setState({ connectionCount: 1 });
-    }
-    else {
-      this.setState({ connection_Status: "Offline" });
-      this.setState({ connectionCount: 1 });
+      if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
+      this.setState({connectionCount: 1});
+    } else {
+      this.setState({connection_Status: 'Offline'});
+      this.setState({connectionCount: 1});
     }
   };
 
   async componentDidMount() {
+    // debugger
     const profile = await AsyncStorage.getItem('profileData');
     var totalHoursWork = await AsyncStorage.getItem('totalHoursWorked');
-    this.setState({ totalHoursWorked: totalHoursWork })
+    this.setState({totalHoursWorked: totalHoursWork});
     Utilities.connectionCount = 0;
     NetInfo.isConnected.addEventListener(
       'connectionChange',
-      this._handleConnectivityChange
-
+      this._handleConnectivityChange,
     );
 
-    NetInfo.isConnected.fetch().done((isConnected) => {
-
+    NetInfo.isConnected.fetch().done(isConnected => {
       if (isConnected == true) {
-        this.setState({ connection_Status: "Online" })
+        this.setState({connection_Status: 'Online'});
+      } else {
+        this.setState({connection_Status: 'Offline'});
       }
-      else {
-        this.setState({ connection_Status: "Offline" })
-      }
-
     });
 
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      this.setState({ noificationCount: constants.noificationCount });
+      this.setState({noificationCount: constants.noificationCount});
       if (profile !== null) {
         var profileData = JSON.parse(profile);
-        this.setState({ profileDataSurce: profileData });
-        var Leave = { staffid: profileData._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-        this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
+        this.setState({profileDataSurce: profileData});
+        var Leave = {
+          staffid: profileData._staffid,
+          clock_date: moment(new Date()).format('YYYY-MM-DD'),
+        };
+        this.WebServicesManager.postApiDailyAttendence(
+          {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
             if (Utilities.checkAPICallStatus(statusCode)) {
-              var startDutyTime = moment(response.attendance_data[0].clock_time).format("HH:mm:ss")
-              this.setState({ startDutyTime: startDutyTime });
+              var startDutyTime = moment(
+                response.attendance_data[0].clock_time,
+              ).format('HH:mm:ss');
+              this.setState({startDutyTime: startDutyTime});
             }
+          },
+        );
 
-          })
-
-        var Leave = { staffid: profileData._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-        this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_dated_lastAttendance" },
+        var Leave = {
+          staffid: profileData._staffid,
+          clock_date: moment(new Date()).format('YYYY-MM-DD'),
+        };
+        this.WebServicesManager.postApiDailyAttendence(
+          {dataToInsert: Leave, apiEndPoint: 'get_dated_lastAttendance'},
           (statusCode, response) => {
             if (Utilities.checkAPICallStatus(statusCode)) {
-
-              var endDutyTime = moment(response.attendance[0].clock_time).format("HH:mm:ss")
-              this.setState({ endDutyTime: endDutyTime });
+              var endDutyTime = moment(
+                response.attendance[0].clock_time,
+              ).format('HH:mm:ss');
+              this.setState({endDutyTime: endDutyTime});
             }
-          })
+          },
+        );
       }
       var totalHoursWorked = this.state.totalHoursWorked;
-      if (totalHoursWorked !== "" && totalHoursWork !== null) {
+      if (totalHoursWorked !== '' && totalHoursWork !== null) {
+        // debugger
         var totalWorkarray = JSON.parse(JSON.parse(totalHoursWorked));
-        var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(totalWorkarray);
-        this.setState({ hoursDataModel: attendenceModel });
+        var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(
+          totalWorkarray,
+        );
+        this.setState({hoursDataModel: attendenceModel});
         var workedHours = attendenceModel._worked;
         var duration = moment.duration(workedHours, 'seconds');
         var formatted = moment.utc(workedHours * 1000).format('HH:mm:ss');
 
-        this.setState({ timeWorked: formatted });
+        this.setState({timeWorked: formatted});
         // this.getOfflineData();
-      }
-      else {
-        this.setState({ noificationCount: constants.noificationCount });
-        var attendence = { staffid: profileData._staffid, month_year: moment(new Date()).format('YYYY-MM-DD') };
+      } else {
+        // debugger
+        this.setState({noificationCount: constants.noificationCount});
+        var attendence = {
+          staffid: profileData._staffid,
+          month_year: moment(new Date()).format('YYYY-MM-DD'),
+        };
 
-        this.WebServicesManager.postApiHoursHistoryMonth({ dataToInsert: attendence, apiEndPoint: "get_hours_history_wm" },
+        this.WebServicesManager.postApiHoursHistoryMonth(
+          {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
           (statusCode, response) => {
-
             if (Utilities.checkAPICallStatus(statusCode)) {
-              var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(response.hours_history);
-              this.setState({ hoursDataModel: attendenceModel });
-
-              this.setState({ timeWorked: attendenceModel._worked });
-
-            }
-            else {
+              var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(
+                response.hours_history,
+              );
+              console.log(`hours history ${JSON.stringify(attendenceModel)}`);
+              this.setState({hoursDataModel: attendenceModel});
+              console.log(
+                `timeWorked ${JSON.stringify(attendenceModel._worked)}`,
+              );
+              // debugger
+              this.setState({timeWorked: attendenceModel._worked});
+            } else {
+              // debugger
               this.getOfflineData();
             }
-          });
+          },
+        );
       }
-
-
-
     });
   }
-  async  getOfflineData() {
-console.log(`offline data et called`)
+  async getOfflineData() {
+
+    console.log(`offline data et called`);
+  
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     var EndBreakTimeToday = await AsyncStorage.getItem('EndBreakTimeToday');
     var startBreakTimeToday = await AsyncStorage.getItem('startBreakTimeToday');
     var startEndDutyToday = await AsyncStorage.getItem('startEndDutyToday');
+
+    console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
+    console.log(`end duty time  ${JSON.stringify(startEndDutyToday)}`);
+    debugger
+
 
     var startDutyTime;
     var EndBreakTime;
     var startBreakTime;
     var startEndDuty;
 
-    var totalTime = "00:00";
-    var totalBreakTime = "00:00";
+    var totalTime = '00:00';
+    var totalBreakTime = '00:00';
     if (startDutyTimeToday !== null) {
       startDutyTimeToday = JSON.parse(startDutyTimeToday);
       startDutyTime = startDutyTimeToday.swipe_time;
       if (startDutyTimeToday.swipe_time === undefined) {
-        startDutyTime =startDutyTimeToday.clock_in;
+        console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
+        startDutyTime = startDutyTimeToday.clock_in;
         var abc = startDutyTimeToday.clock_in;
-        // if(abc !== undefined){
+        console.log(`act start ${abc}`);
+        if (abc !== undefined) {
           var d = abc;
-          var n = parseInt(d.split(":")[0])
-          if (n < 10)
-            n = "0" + n;
-          var m = parseInt(d.split(":")[1])
-          if (m < 10)
-            m = "0" + m;
-          var p = parseInt(d.split(":")[2])
-          if (p < 10)
-            p = "0" + p;
-          this.setState({ startDutyTime: n + ":" + m + ":" + p });
-            
-        // }
-       
+          var n = parseInt(d.split(':')[0]);
+          if (n < 10) n = '0' + n;
+          var m = parseInt(d.split(':')[1]);
+          if (m < 10) m = '0' + m;
+          var p = parseInt(d.split(':')[2]);
+          if (p < 10) p = '0' + p;
+          this.setState({startDutyTime: n + ':' + m + ':' + p});
+        }
       }
     }
 
@@ -214,133 +245,163 @@ console.log(`offline data et called`)
       EndBreakTimeToday = JSON.parse(EndBreakTimeToday);
       EndBreakTime = EndBreakTimeToday.swipe_time;
       if (EndBreakTimeToday.swipe_time === undefined) {
-        startBreakTime = EndBreakTimeToday.clock_out
+        startBreakTime = EndBreakTimeToday.clock_out;
       }
     }
     if (startBreakTimeToday !== null) {
       startBreakTimeToday = JSON.parse(startBreakTimeToday);
-      startBreakTime = startBreakTimeToday.swipe_time
+      startBreakTime = startBreakTimeToday.swipe_time;
       if (startBreakTimeToday.swipe_time === undefined) {
-        startBreakTime = startBreakTimeToday.clock_out
+        startBreakTime = startBreakTimeToday.clock_out;
       }
     }
+    console.log(`end time is ${JSON.stringify(startEndDutyToday)}`);
     if (startEndDutyToday !== null) {
       startEndDutyToday = JSON.parse(startEndDutyToday);
       startEndDuty = startEndDutyToday.clock_out;
       var abc = startEndDutyToday.clock_out;
-      if(abc !== undefined){
+      console.log(`abc ${abc}`);
+      debugger;
+      if (abc !== undefined) {
         var d = abc;
-        var n = parseInt(d.split(":")[0])
-        if (n < 10)
-          n = "0" + n;
-        var m = parseInt(d.split(":")[1])
-        if (m < 10)
-          m = "0" + m;
-        var p = parseInt(d.split(":")[2])
-        if (p < 10)
-          p = "0" + p;
-        this.setState({ endDutyTime: n + ":" + m + ":" + p });
+        var n = parseInt(d.split(':')[0]);
+        if (n < 10) n = '0' + n;
+        var m = parseInt(d.split(':')[1]);
+        if (m < 10) m = '0' + m;
+        var p = parseInt(d.split(':')[2]);
+        if (p < 10) p = '0' + p;
+        console.log(`endDutyTime: ${n} : ${m} : ${p}`);
+
+        this.setState({endDutyTime: n + ':' + m + ':' + p});
       }
-   
-
     }
 
+    console.log(
+      `breakend ${EndBreakTime}\n start break ${startBreakTime}\n start duty ${startDutyTime} \n end duty ${startEndDuty}`,
+    );
+    debugger;
     if (EndBreakTime !== undefined && startBreakTime !== undefined) {
-      totalBreakTime = moment.utc(moment(EndBreakTime, "HH:mm:ss").diff(moment(startBreakTime, "HH:mm:ss"))).format("HH:mm:ss")
+      totalBreakTime = moment
+        .utc(
+          moment(EndBreakTime, 'HH:mm:ss').diff(
+            moment(startBreakTime, 'HH:mm:ss'),
+          ),
+        )
+        .format('HH:mm:ss');
     }
-    if (startDutyTime !== undefined && startEndDuty !== undefined) {
-      totalTime = moment.utc(moment(startEndDuty, "HH:mm:ss").diff(moment(startDutyTime, "HH:mm:ss"))).format("HH:mm:ss")
-      totalTime = moment.utc(moment(totalTime, "HH:mm:ss").diff(moment(totalBreakTime, "HH:mm:ss"))).format("HH:mm:ss")
 
-      this.setState({ timeWorked: totalTime });
+    if (startDutyTime !== undefined && startEndDuty !== undefined) {
+      debugger;
+      totalTime = moment
+        .utc(
+          moment(startEndDuty, 'HH:mm:ss').diff(
+            moment(startDutyTime, 'HH:mm:ss'),
+          ),
+        )
+        .format('HH:mm:ss');
+      console.log(`total time ${totalTime}`);
+      debugger;
+      totalTime = moment
+        .utc(
+          moment(totalTime, 'HH:mm:ss').diff(
+            moment(totalBreakTime, 'HH:mm:ss'),
+          ),
+        )
+        .format('HH:mm:ss');
+      console.log(`total time ${totalTime}`);
+      debugger;
+      this.setState({timeWorked: totalTime});
     }
   }
   handleBackButton = () => {
     BackHandler.exitApp();
     return true;
-  }
-  async  componentWillMount() {
+  };
+  async componentWillMount() {
+    // debugger
     var context = this;
-    setTimeout(function () {
-      context.setState({ successImage: require('../../../ImageAssets/startdutypng.png') })
-    }, 5000)
-
-
+    setTimeout(function() {
+      context.setState({
+        successImage: require('../../../ImageAssets/startdutypng.png'),
+      });
+    }, 5000);
 
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
-console.log(`end duty time is ${endDutyTimeToday}`)
+    console.log(`end duty time is ${endDutyTimeToday}`);
 
     // if (startDutyTimeToday !== null) {
-      var abc = JSON.parse(startDutyTimeToday).clock_in;
-      if(abc !== undefined){
-        var d = abc;
-      var n = parseInt(d.split(":")[0])
-      if (n < 10)
-        n = "0" + n;
-      var m = parseInt(d.split(":")[1])
-      if (m < 10)
-        m = "0" + m;
-      var p = parseInt(d.split(":")[2])
-      if (p < 10)
-        p = "0" + p;
-      this.setState({ startDutyTime: n + ":" + m + ":" + p });
-      }
-      else{
-        console.log(`else called`)
-      }
-      
+    var abc = JSON.parse(startDutyTimeToday).clock_in;
+    if (abc !== undefined) {
+      var d = abc;
+      var n = parseInt(d.split(':')[0]);
+      if (n < 10) n = '0' + n;
+      var m = parseInt(d.split(':')[1]);
+      if (m < 10) m = '0' + m;
+      var p = parseInt(d.split(':')[2]);
+      if (p < 10) p = '0' + p;
+      this.setState({startDutyTime: n + ':' + m + ':' + p});
+    } else {
+      console.log(`else called`);
+    }
+
     // }
     var endDutyTimeToday = await AsyncStorage.getItem('startEndDutyToday');
-    if (endDutyTimeToday !== null){
-      var abc = JSON.parse(startDutyTimeToday).clock_out;
-      if(abc !== undefined){
-      var d = abc;
-      var n = parseInt(d.split(":")[0])
-      if (n < 10)
-        n = "0" + n;
-      var m = parseInt(d.split(":")[1])
-      if (m < 10)
-        m = "0" + m;
-      var p = parseInt(d.split(":")[2])
-      if (p < 10)
-        p = "0" + p;
-      this.setState({ endDutyTime: n + ":" + m + ":" + p });
+    if (endDutyTimeToday !== null) {
+      var abc = JSON.parse(endDutyTimeToday).clock_out;
+      if (abc !== undefined) {
+        var d = abc;
+        var n = parseInt(d.split(':')[0]);
+        if (n < 10) n = '0' + n;
+        var m = parseInt(d.split(':')[1]);
+        if (m < 10) m = '0' + m;
+        var p = parseInt(d.split(':')[2]);
+        if (p < 10) p = '0' + p;
+        this.setState({endDutyTime: n + ':' + m + ':' + p});
+      } else {
+        console.log(`else called`);
+      }
     }
-    else{
-      console.log(`else called`)
-    }
-    }
-
 
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    
+
     const profile = await AsyncStorage.getItem('profileData');
     if (profile !== null) {
       var profileData = JSON.parse(profile);
-      this.setState({ profileDataSurce: profileData });
-      var Leave = { staffid: profileData._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-      this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
+      this.setState({profileDataSurce: profileData});
+      var Leave = {
+        staffid: profileData._staffid,
+        clock_date: moment(new Date()).format('YYYY-MM-DD'),
+      };
+      this.WebServicesManager.postApiDailyAttendence(
+        {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
-            var startDutyTime = moment(response.attendance_data[0].clock_time).format("HH:mm:ss")
-            this.setState({ startDutyTime: startDutyTime });
-          }
-          else if (statusCode === 400) {
+            var startDutyTime = moment(
+              response.attendance_data[0].clock_time,
+            ).format('HH:mm:ss');
+            this.setState({startDutyTime: startDutyTime});
+          } else if (statusCode === 400) {
             this.getOfflineData();
 
             // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
-
           }
-        })
-      var Leave = { staffid: profileData._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-      this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_dated_lastAttendance" },
+        },
+      );
+      var Leave = {
+        staffid: profileData._staffid,
+        clock_date: moment(new Date()).format('YYYY-MM-DD'),
+      };
+      this.WebServicesManager.postApiDailyAttendence(
+        {dataToInsert: Leave, apiEndPoint: 'get_dated_lastAttendance'},
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
-
-            var endDutyTime = moment(response.attendance[0].clock_time).format("HH:mm:ss")
-            this.setState({ endDutyTime: endDutyTime });
+            var endDutyTime = moment(response.attendance[0].clock_time).format(
+              'HH:mm:ss',
+            );
+            this.setState({endDutyTime: endDutyTime});
           }
-        })
+        },
+      );
     }
     // var attendence = { staffid:this.state.profileDataSurce._staffid, month_year:moment(new Date()).format('YYYY-MM-DD') };
     // this.WebServicesManager.postApiHoursHistoryMonth({ dataToInsert: attendence, apiEndPoint: "get_hours_history_wm" },
@@ -352,85 +413,150 @@ console.log(`end duty time is ${endDutyTimeToday}`)
 
     //         }
     //     });
-
-
   }
 
   render() {
-    if (this.state.timeWorked == "Invalid Date") {
+    if (this.state.timeWorked == 'Invalid Date') {
       // debugger
     }
     return (
       <Container>
-        <StatusBar barStyle="light-content" hidden={false} backgroundColor={constants.colorPurpleLight595278} translucent={false} />
-        <HeaderView name={this.state.profileDataSurce._firstname + " " + this.state.profileDataSurce._lastname} context={this} notificationCount={this.state.noificationCount} />
+        <StatusBar
+          barStyle="light-content"
+          hidden={false}
+          backgroundColor={constants.colorPurpleLight595278}
+          translucent={false}
+        />
+        <HeaderView
+          name={
+            this.state.profileDataSurce._firstname +
+            ' ' +
+            this.state.profileDataSurce._lastname
+          }
+          context={this}
+          notificationCount={this.state.noificationCount}
+        />
         <Loader loading={this.state.isLoadingIndicator}></Loader>
 
-        <ImageBackground source={require('../../../ImageAssets/background.png')}
-          style={[styles.mainImageBackground, { justifyContent: 'center' }]}>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-
-
-            <View style={{ flex: 1 }}>
-            </View>
-            <View style={{ flex: 1, flexDirection: 'column' }}>
-              <View style={{ marginRight: 10, paddingTop: 20, flexDirection: 'row' }}>
+        <ImageBackground
+          source={require('../../../ImageAssets/background.png')}
+          style={[styles.mainImageBackground, {justifyContent: 'center'}]}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1}}></View>
+            <View style={{flex: 1, flexDirection: 'column'}}>
+              <View
+                style={{marginRight: 10, paddingTop: 20, flexDirection: 'row'}}>
                 <Text style={styles.HeaderTextTitleSemiBold}>Start Duty :</Text>
-                <Text style={styles.HeaderTextTitleSemiBold}>{this.state.startDutyTime}</Text>
+                <Text style={styles.HeaderTextTitleSemiBold}>
+                  {this.state.startDutyTime}
+                </Text>
               </View>
-              <View style={{ marginRight: 10, paddingTop: 5, flexDirection: 'row' }}>
-                <Text style={styles.HeaderTextTitleSemiBold}>End Duty  : </Text>
-                <Text style={styles.HeaderTextTitleSemiBold}>{this.state.endDutyTime}</Text>
+              <View
+                style={{marginRight: 10, paddingTop: 5, flexDirection: 'row'}}>
+                <Text style={styles.HeaderTextTitleSemiBold}>End Duty : </Text>
+                <Text style={styles.HeaderTextTitleSemiBold}>
+                  {this.state.endDutyTime}
+                </Text>
               </View>
             </View>
           </View>
-          <View style={{
-            flex: 9, alignItems: 'center', justifyContent: 'center', borderColor: '', backgroundColor: 'white', opacity: 0.7,
-            marginBottom: 100, marginTop: 50, marginLeft: 40, marginRight: 40
-          }}>
-            <View style={{ marginBottom: 50, alignItems: 'center', marginTop: 30, justifyContent: 'center' }}>
-              <Image source={this.state.successImage} style={{ alignItems: 'center', height: 90, width: 90 }} />
+          <View
+            style={{
+              flex: 9,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderColor: '',
+              backgroundColor: 'white',
+              opacity: 0.7,
+              marginBottom: 100,
+              marginTop: 50,
+              marginLeft: 40,
+              marginRight: 40,
+            }}>
+            <View
+              style={{
+                marginBottom: 50,
+                alignItems: 'center',
+                marginTop: 30,
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={this.state.successImage}
+                style={{alignItems: 'center', height: 90, width: 90}}
+              />
 
-              <Text style={{ color: 'black', textAlign: 'center', marginTop: 20, fontSize: 18, fontWeight: 'bold' }} >Todays Record</Text>
-              <View style={{ height: 1, borderTopWidth: 2, borderTopColor: 'black', marginRight: 50, marginLeft: 50 }}></View>
+              <Text
+                style={{
+                  color: 'black',
+                  textAlign: 'center',
+                  marginTop: 20,
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}>
+                Todays Record
+              </Text>
+              <View
+                style={{
+                  height: 1,
+                  borderTopWidth: 2,
+                  borderTopColor: 'black',
+                  marginRight: 50,
+                  marginLeft: 50,
+                }}></View>
             </View>
-            <View>
-
+            <View></View>
+            <View style={{marginBottom: 20}}>
+              <Text style={{textAlign: 'center', color: 'black'}}>
+                You have worked for:{'\n'}
+                {this.state.timeWorked}
+              </Text>
             </View>
-            <View style={{ marginBottom: 20 }}>
-              <Text style={{ textAlign: 'center', color: 'black' }}>You have worked for:{"\n"}
-                {this.state.timeWorked}</Text>
-            </View>
-
           </View>
-          <Footer style={{ backgroundColor: constants.colorPurpleLight595278 }}>
-
+          <Footer style={{backgroundColor: constants.colorPurpleLight595278}}>
             <Button style={styles.footerButtonActive} vertical>
               {/* <Icon name="home" style={{paddingTop:20}} color='white' size={24}/> */}
-              <Image source={require('../../../ImageAssets/home.png')} style={{ width: 20, height: 20 }} />
-              <Text style={{ color: 'white', fontSize: 10, }}>Home</Text>
+              <Image
+                source={require('../../../ImageAssets/home.png')}
+                style={{width: 20, height: 20}}
+              />
+              <Text style={{color: 'white', fontSize: 10}}>Home</Text>
             </Button>
-            <Button onPress={() => this.props.navigation.navigate("LeaveScreen")} vertical style={styles.footerButtonInactive} >
-
+            <Button
+              onPress={() => this.props.navigation.navigate('LeaveScreen')}
+              vertical
+              style={styles.footerButtonInactive}>
               {/* <Icon name="home"  color='white' size={24}/> */}
-              <Image source={require('../../../ImageAssets/leave.png')} style={{ width: 20, height: 20 }} />
-              <Text style={{ color: 'white', fontSize: 10, }}>Leave</Text>
+              <Image
+                source={require('../../../ImageAssets/leave.png')}
+                style={{width: 20, height: 20}}
+              />
+              <Text style={{color: 'white', fontSize: 10}}>Leave</Text>
             </Button>
-            <Button onPress={() => this.props.navigation.navigate("CalanderScreen")} vertical style={styles.footerButtonInactive} >
+            <Button
+              onPress={() => this.props.navigation.navigate('CalanderScreen')}
+              vertical
+              style={styles.footerButtonInactive}>
               {/* <Icon active name="navigate" color='white' size={24}/> */}
-              <Image source={require('../../../ImageAssets/logs.png')} style={{ width: 20, height: 20 }} />
-              <Text style={{ color: 'white', fontSize: 10, }}>Logs</Text>
+              <Image
+                source={require('../../../ImageAssets/logs.png')}
+                style={{width: 20, height: 20}}
+              />
+              <Text style={{color: 'white', fontSize: 10}}>Logs</Text>
             </Button>
-            <Button onPress={() => this.props.navigation.navigate("ReportScreen")} vertical style={styles.footerButtonInactive} >
+            <Button
+              onPress={() => this.props.navigation.navigate('ReportScreen')}
+              vertical
+              style={styles.footerButtonInactive}>
               {/* <Icon name="profile"  color='white' size={24}/> */}
-              <Image source={require('../../../ImageAssets/profile.png')} style={{ width: 20, height: 20 }} />
-              <Text style={{ color: 'white', fontSize: 10, }}>Profile</Text>
+              <Image
+                source={require('../../../ImageAssets/profile.png')}
+                style={{width: 20, height: 20}}
+              />
+              <Text style={{color: 'white', fontSize: 10}}>Profile</Text>
             </Button>
-
           </Footer>
         </ImageBackground>
       </Container>
-    )
+    );
   }
 }
-
