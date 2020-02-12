@@ -325,7 +325,7 @@ export default class EndDuty extends React.Component {
 
           <Footer style={{ backgroundColor: constants.colorPurpleLight595278 }}>
 
-            <Button onPress={() => this.props.navigation.navigate("DashboardScreen")} style={styles.footerButtonActive} vertical>
+            <Button  style={styles.footerButtonActive} vertical>
               {/* <Icon name="home" style={{paddingTop:20}} color='white' size={24}/> */}
               <Image source={require('../../../ImageAssets/home.png')} style={{ width: 20, height: 20 }} />
               <Text style={{ color: 'white', fontSize: 10, }}>Home</Text>

@@ -43,7 +43,7 @@ export default class SiginScreen extends React.Component {
 
   async checkNotif(dailyLogsModelDataSource,prevDate,profileData)
 {
-  console.log(` check notify ${JSON.stringify(profileData._attendaceModel[0])}`)
+  console.log(` check notify ${JSON.stringify(JSON.stringify(profileData))}`)
   debugger
 
   var staffData = { staffid: profileData._staffid };
@@ -55,7 +55,9 @@ export default class SiginScreen extends React.Component {
 
       }
     })
-   if (dailyLogsModelDataSource.length>0)
+    console.log(`dailyLogsModelDataSource is ${dailyLogsModelDataSource.length} ${dailyLogsModelDataSource} `)
+   debugger
+    if (dailyLogsModelDataSource.length>0 || dailyLogsModelDataSource == undefined)  
   {
     debugger
      
@@ -188,7 +190,7 @@ export default class SiginScreen extends React.Component {
               }
               else
               {
-                debugger
+            
                 const notificationsArrayData = await AsyncStorage.getItem('notifications');
                 var notificationsArray=[];
                 if (notificationsArrayData !== null && notificationsArrayData !== undefined) {      
@@ -201,7 +203,7 @@ export default class SiginScreen extends React.Component {
                 {
                   notificationsArray.push(prevDate);
                 }
-                 
+                debugger
                 var staffData = { staffid: profileData._staffid};
                 this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_staff_weekends" },
                     (statusCode, response) => {
@@ -296,6 +298,7 @@ export default class SiginScreen extends React.Component {
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
             if (response.responseCode !== 204 && response.responseCode !== 404) {
+              debugger
               var profileData = ProfileModel.parseProfileModelFromJSON(response.user);
               AsyncStorage.setItem('profileData', JSON.stringify(profileData)).then((value) => {
                 this.setState({ isLoadingIndicator: false })
@@ -332,8 +335,13 @@ export default class SiginScreen extends React.Component {
                 var Leave = { staffid: profileData._staffid,clock_date:moment(prevDate).format('YYYY-MM-DD')};
                 this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                     (statusCode, response) => {
+                      debugger
                         if (Utilities.checkAPICallStatus(statusCode)) {  
+                        
                             var dailyLogsModelDataSource= DailyLogsModel.parseDailyLogsModelFromJSON(response.attendance_data);
+                            console.log(`attandance log ${JSON.stringify(dailyLogsModelDataSource)} `)
+                            console.log(`profile ${JSON.stringify(profileData)} `)
+                            debugger
                             this.checkNotif(dailyLogsModelDataSource,moment(prevDate).format('YYYY-MM-DD'),profileData);
                             this.setState({dailyLogsModelDataSource:dailyLogsModelDataSource});
                         }

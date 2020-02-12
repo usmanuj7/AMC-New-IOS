@@ -267,6 +267,7 @@ export default class ActionTimePick extends React.Component {
           );
 
           if (todayAttemArray !== null) {
+            debugger
             for (let index = 0; index < todayAttemArray.length; index++) {
               if (todayAttemArray[index].title === 'StartDuty') {
                 if (
@@ -340,8 +341,8 @@ export default class ActionTimePick extends React.Component {
                   console.log(
                     `attandance data is  ${JSON.stringify(attendanceData1)}`,
                   );
-                  debugger;
-                  //  Utilities.saveToStorage("lastEntry", attendanceData);
+                  // debugger;
+                   Utilities.saveToStorage("lastEntry", attendanceData1);
                   Utilities.saveToStorage('startEndDutyToday', attendanceData1);
                 }
               }
@@ -351,6 +352,7 @@ export default class ActionTimePick extends React.Component {
               this.props.navigation.navigate('CalanderScreen');
             }, 3000);
           } else {
+            debugger
             if (
               selectedItemTemp._title === 'Start Duty' &&
               moment(new Date()).format('YYYY-MM-DD') ===
@@ -376,6 +378,33 @@ export default class ActionTimePick extends React.Component {
                 this.props.navigation.navigate('CalanderScreen');
               }, 3000);
             }
+
+            if (
+              selectedItemTemp._title === 'End Duty' &&
+              moment(new Date()).format('YYYY-MM-DD') ===
+                selectedItemTemp._clock_date
+            ) {
+              var attendanceData = {
+                title: 'EndDuty',
+                date: this.props.navigation.state.params.selectedItem
+                  ._clock_date,
+                staffid: this.props.navigation.state.params.selectedItem
+                  ._staffid,
+                clock_out:
+                  this.state.indexofSelectedHours +
+                  ':' +
+                  this.state.indexofSelectedMinutes +
+                  ':' +
+                  '00',
+              };
+              Utilities.saveToStorage('lastEntry', attendanceData);
+              Utilities.saveToStorage('startEndDutyToday', attendanceData);
+              Utilities.saveToStorage('todayTime', todayAttemArray);
+              setTimeout(() => {
+                this.props.navigation.navigate('CalanderScreen');
+              }, 3000);
+            }
+
             if (
               selectedItemTemp._title === 'Start Break' &&
               moment(new Date()).format('YYYY-MM-DD') ===
