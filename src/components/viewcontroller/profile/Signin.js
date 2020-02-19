@@ -35,7 +35,8 @@ export default class SiginScreen extends React.Component {
       isModelVisible: false,
       userEmail: "noufal@dowgroup.com",
       userPassword: "123",
-      isLoadingIndicator: false
+      isLoadingIndicator: false,
+      token: null
 
     }
     // userInfo: '',
@@ -291,9 +292,23 @@ export default class SiginScreen extends React.Component {
 
   }
   async  Login() {
+
+    const _token = await AsyncStorage.getItem('token')
+    if(_token == null){
+      const x = Date.now();
+      this.state.token = x;
+      AsyncStorage.setItem("token",`${x}`)
+      
+    }
+    else{
+      this.state.token = _token
+    }
+    console.log(`token is ${_token}`)
+
+    // Utilities.saveToStorage("todayTime", "");
     if (Utilities.ValidateEmail(this.state.userEmail)) {
       this.setState({ isLoadingIndicator: false })
-      var profile = { Email: this.state.userEmail, Password: this.state.userPassword, };
+      var profile = { Email: this.state.userEmail, Password: this.state.userPassword, Token: this.state.token, };
       this.WebServicesManager.postApiCall({ dataToInsert: profile, apiEndPoint: "login" },
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {

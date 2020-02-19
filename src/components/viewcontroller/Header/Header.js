@@ -76,7 +76,7 @@ class HeaderView extends React.Component {
               alignContent: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={require('../../../ImageAssets/backbtn.png')}></Image>
+            <Image source={require('../../../ImageAssets/backbtn.png')} resizeMode ={"contain"}></Image>
           </TouchableOpacity>
 
           <View

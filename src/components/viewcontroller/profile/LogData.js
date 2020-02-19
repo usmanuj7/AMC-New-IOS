@@ -338,7 +338,7 @@ export default class LogData extends React.Component {
             this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
-            this.props.navigation.navigate('ActionTimePick', { selectedItem: item, context: this })
+            this.props.navigation.navigate('ActionTimePick', { selectedItem: item,  fullData:this.state.dailyLogsModelDataSource ,context: this })
         }
     }
 
@@ -378,7 +378,15 @@ export default class LogData extends React.Component {
                                 }
 
                                      this.setState({ timeWorked: totalWorkeshrs });
-                                    
+
+                                     var today = moment(new Date());
+                                     var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
+                                     var totalDifferenceInDays = today.diff(tocheckDate, 'days');
+                                     console.log(`difference is ${totalDifferenceInDays}`)
+                                     if ( totalDifferenceInDays==0 ) {
+                                        
+                                     
+                                     
                                     var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
                                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
                                         (statusCode, response) => {
@@ -392,6 +400,7 @@ export default class LogData extends React.Component {
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             setInterval( () => {
+                                                                // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
                                                                 totalWorkeshrs=timeWorked;
                                                                 this.setState({
@@ -404,6 +413,7 @@ export default class LogData extends React.Component {
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             setInterval( () => {
+                                                                // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
                                                                 totalWorkeshrs=timeWorked;
                                                                 this.setState({
@@ -417,7 +427,7 @@ export default class LogData extends React.Component {
                                         })
 
                                     
-                                      
+                                     }
                                 }
                             });
                         this.setState({ dailyLogsModelDataSource: dailyLogsModelDataSource });
@@ -659,17 +669,17 @@ export default class LogData extends React.Component {
                       
                         if (attendance_data.length > 0) {
                            
-                            for (let index = 0; index < todayAttemArray.length; index++) {
-                              if (todayAttemArray[index].title === 'EndDuty') {
-                                check = true;
-                              }
-                            }
+                            // for (let index = 0; index < todayAttemArray.length; index++) {
+                            //   if (todayAttemArray[index].title === 'EndDuty') {
+                            //     check = true;
+                            //   }
+                            // }
 
-                            if (check) {
-                                this.props.navigation.navigate('AlreadyLoggedScreen');
-                              } else {
-                                this.props.navigation.navigate('BreakScreen');
-                              }
+                            // if (check) {
+                            //     this.props.navigation.navigate('AlreadyLoggedScreen');
+                            //   } else {
+                            //     this.props.navigation.navigate('BreakScreen');
+                            //   }
                   
                             if (attendance_data[0]._title === "Start Break") {
                                 AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
@@ -821,7 +831,7 @@ export default class LogData extends React.Component {
                             <Image source={require('../../../ImageAssets/home.png')} style={{ width: 20, height: 20 }} />
                             <Text style={{ color: 'white', fontSize: 10, }}>Home</Text>
                         </Button>
-                        <Button onPress={() => this.props.navigation.navigate("LeaveHistory")} vertical style={styles.footerButtonInactive} >
+                        <Button onPress={() => this.props.navigation.navigate("LeaveScreen")} vertical style={styles.footerButtonInactive} >
 
                             {/* <Icon name="home"  color='white' size={24}/> */}
                             <Image source={require('../../../ImageAssets/leave.png')} style={{ width: 20, height: 20 }} />

@@ -652,7 +652,7 @@ export default class ScreenToCheck extends React.Component {
                   `Utilities save startDutyTimeToday ${JSON.stringify(attendanceData11)}
                   `,
                 );
-                debugger
+                // debugger
                 Utilities.saveToStorage(
                   'startDutyTimeToday',
                   attendanceData11,

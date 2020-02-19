@@ -389,7 +389,7 @@ export default class CalanderScreen extends React.Component {
         var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
         console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
     var todayAttemArray = JSON.parse(todayTimeDataArray);
-    debugger
+    // debugger
         if (lastEntry !== null) {
           var lastEntryData = JSON.parse(lastEntry);
           if (today.diff(lastEntryData.date_times, 'days') !== 0) {
@@ -447,8 +447,6 @@ export default class CalanderScreen extends React.Component {
         //   this.props.navigation.navigate("DashboardScreen");
     
         }
-    
-    
       }
     render() {
 

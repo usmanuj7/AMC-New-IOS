@@ -180,7 +180,7 @@ export default class ReportScreen extends React.Component {
     //     });
   }
   updateWeek(week) {
-    debugger
+    // debugger
     var prevWeekNo = parseInt(parseInt(week.split("Week")[1]));
     this.setState({ weeknumber: prevWeekNo });
 
@@ -235,7 +235,7 @@ export default class ReportScreen extends React.Component {
     var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
     var check = await AsyncStorage.getItem('appLevelCheckIs');
     console.log(`last entery ${lastEntry}`)
-    debugger
+    // debugger
     if (lastEntry !== null) {
       var lastEntryData = JSON.parse(lastEntry);
       if (today.diff(lastEntryData.date_times, 'days') !== 0) {
@@ -268,12 +268,12 @@ export default class ReportScreen extends React.Component {
     else {
       // this.props.navigation.navigate("AlreadyLoggedScreen");
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-   debugger
+  //  debugger
       if(check == "End Duty"){
-        debugger
+        // debugger
         this.props.navigation.navigate("AlreadyLoggedScreen");
       }else{
-        debugger
+        // debugger
         this.props.navigation.navigate("DashboardScreen");
       }
       
@@ -283,7 +283,7 @@ export default class ReportScreen extends React.Component {
 
   }
   async goToFirstTab() {
-    debugger
+    // debugger
     var appLevel = await AsyncStorage.getItem('appLevel');
     var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
@@ -334,7 +334,7 @@ export default class ReportScreen extends React.Component {
           else if (statusCode === 400) {
           }
           else {
-            debugger
+            // debugger
             AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
               this.setState({ isLoadingIndicator: false })
               this.props.navigation.navigate("DashboardScreen");
@@ -342,7 +342,7 @@ export default class ReportScreen extends React.Component {
           }
         }
         else if (statusCode === 400) {
-          debugger
+          // debugger
           this.getOfflineStorageData();
         }
       });

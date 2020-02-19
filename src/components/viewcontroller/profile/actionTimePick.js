@@ -89,6 +89,7 @@ const minutes = [
   {key: 'MARIA', title: '19'},
   {key: 'MARIA', title: '20'},
   {key: 'MARIA', title: '21'},
+  {key: 'MARIA', title: '22'},
   {key: 'MARIA', title: '23'},
   {key: 'MARIA', title: '24'},
   {key: 'MARIA', title: '25'},
@@ -175,6 +176,7 @@ export default class ActionTimePick extends React.Component {
   static propTypes = {
     context: PropTypes.object.isRequired,
     selectedItem: PropTypes.object.isRequired,
+    fullData: PropTypes.array.isRequired,
   };
   componentWillMount() {
     this.setState({
@@ -226,6 +228,176 @@ export default class ActionTimePick extends React.Component {
       this.props.navigation.navigate('CalanderScreen');
     }, 3000);
   }
+  getTimeData(title){
+    let data = this.props.navigation.state.params.fullData
+    console.log(`full data is  ${JSON.stringify(data)}`)
+    let temp ;
+    data.map((x)=>{ x._title===title ? temp = x: null})
+    console.log(`refined data is  ${JSON.stringify(temp)}`)
+    const x = temp._clock_time.split(" ")
+    const fullTime = x[1]
+    console.log(`full time is ${JSON.stringify(fullTime)}`)
+
+    const y = fullTime.split(":")
+    const hours = parseInt(y[0]) 
+    console.log(`hours are  ${JSON.stringify(hours)}`)
+    const minutes = parseInt(y[1]) 
+    console.log(`minutes are  ${JSON.stringify(minutes)}`)
+
+    const time = {
+      hour: hours,
+      min : minutes,
+    }
+    return time;
+  }
+  checkSave(){
+ 
+    const selectedHours = parseInt(this.state.indexofSelectedHours)
+    console.log(`selected minutes are  ${JSON.stringify(selectedHours)}`)
+
+    const selectedMinutes = parseInt(this.state.indexofSelectedMinutes)
+    console.log(`selected minutes are  ${JSON.stringify(selectedMinutes)}`)
+
+    const title = this.props.navigation.state.params.selectedItem._title
+
+    if(title === "Start Duty"){
+      const time = this.getTimeData("End Duty")
+
+      if( selectedHours === time.hour){
+        if(selectedMinutes < time.min){
+          console.log("start duty inner if")
+          this.Save()
+        }
+        else{
+          console.log("start duty else")
+          this.dropDownAlertRef1.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+      }
+     else if( selectedHours < time.hour){
+        console.log("start duty else if")
+        this.Save()
+
+      }
+      else{
+        console.log("start duty else")
+        this.dropDownAlertRef1.alertWithType(
+          'info',
+          'Alert',
+          'Please select valid time',
+        );
+
+      }
+
+    }
+    else if(title === "End Duty"){
+
+      const time = this.getTimeData("Start Duty")
+
+      if( selectedHours === time.hour){
+        if(selectedMinutes > time.min){
+          console.log("end duty inner if")
+          this.Save()
+        }
+        else{
+          console.log("end duty inner else")
+          console.log("start duty else")
+          this.dropDownAlertRef1.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+      }
+     else if( selectedHours > time.hour){
+        console.log("end duty else if")
+        this.Save()
+      }
+      else{
+        console.log("end duty else")
+        console.log("start duty else")
+        this.dropDownAlertRef1.alertWithType(
+          'info',
+          'Alert',
+          'Please select valid time',
+        );
+
+      }
+
+    }
+    else if(title === "Start Break"){
+      const time = this.getTimeData("Start Duty")
+
+
+      if( selectedHours === time.hour){
+        if(selectedMinutes > time.min){
+          console.log("start break inner if")
+          this.Save()
+        }
+        else{
+          console.log(" start break inner else")
+          console.log("start duty else")
+          this.dropDownAlertRef1.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+      }
+     else if( selectedHours > time.hour){
+        console.log("start break else if")
+        this.Save()
+      }
+      else{
+        console.log("start break else")
+        console.log("start duty else")
+        this.dropDownAlertRef1.alertWithType(
+          'info',
+          'Alert',
+          'Please select valid time',
+        );
+
+      }
+
+    }
+    else if(title === "End Break"){
+      const time = this.getTimeData("End Duty")
+
+      if( selectedHours === time.hour){
+        if(selectedMinutes < time.min){
+          console.log("End Break inner if")
+          this.Save()
+        }
+        else{
+          console.log("End Break inner else")
+          console.log("start duty else")
+          this.dropDownAlertRef1.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+      }
+     else if( selectedHours < time.hour){
+        console.log( "End Break else if")
+        this.Save()
+      }
+      else{
+        console.log("End Break else")
+        console.log("start duty else")
+        this.dropDownAlertRef1.alertWithType(
+          'info',
+          'Alert',
+          'Please select valid time',
+        );
+      }
+    }
+
+
+  }
 
   async Save() {
     var context = this;
@@ -243,6 +415,10 @@ export default class ActionTimePick extends React.Component {
         '00',
       clock_date: this.props.navigation.state.params.selectedItem._clock_date,
     };
+
+
+    console.log(`${JSON.stringify(profile)}`)
+    // debugger
     var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
 
     this.WebServicesManager.postMethodUpdateTime(
@@ -267,7 +443,7 @@ export default class ActionTimePick extends React.Component {
           );
 
           if (todayAttemArray !== null) {
-            debugger
+            // debugger
             for (let index = 0; index < todayAttemArray.length; index++) {
               if (todayAttemArray[index].title === 'StartDuty') {
                 if (
@@ -352,7 +528,7 @@ export default class ActionTimePick extends React.Component {
               this.props.navigation.navigate('CalanderScreen');
             }, 3000);
           } else {
-            debugger
+            // debugger
             if (
               selectedItemTemp._title === 'Start Duty' &&
               moment(new Date()).format('YYYY-MM-DD') ===
@@ -584,6 +760,137 @@ export default class ActionTimePick extends React.Component {
     }
   }
 
+  async goToFirstTab() {
+     
+    var appLevel = await AsyncStorage.getItem('appLevel');
+    var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
+    this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
+        (statusCode, response) => {
+
+            if (Utilities.checkAPICallStatus(statusCode)) {
+                if (response.attendance !== undefined) {
+                    var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                    if (attendance_data.length > 0) {
+                        if (attendance_data[0]._title === "Start Break") {
+                            AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("EndDutyScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "Start Duty") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Break") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Duty") {
+                            AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("AlreadyLoggedScreen");
+                            })
+                        }
+                    }
+                    else {
+                        AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                            this.setState({ isLoadingIndicator: false })
+                            this.props.navigation.navigate("DashboardScreen");
+                        })
+                    }
+                }
+
+
+                else if (statusCode === 400) {
+                }
+                else {
+                    AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                        this.setState({ isLoadingIndicator: false })
+                        this.props.navigation.navigate("DashboardScreen");
+                    })
+                }
+            }
+            else if (statusCode === 400) {
+                this.getOfflineStorageData();
+            }
+        });
+}
+async getOfflineStorageData() {
+     
+    var today = moment(new Date());
+    var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+    var lastEntry = await AsyncStorage.getItem("lastEntry");
+
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
+var todayAttemArray = JSON.parse(todayTimeDataArray);
+// debugger
+    if (lastEntry !== null) {
+      var lastEntryData = JSON.parse(lastEntry);
+      if (today.diff(lastEntryData.date_times, 'days') !== 0) {
+        var lastEntry = await AsyncStorage.setItem("lastEntry", "");
+        this.props.navigation.navigate("DashboardScreen");
+      }
+      else {
+        let check = false;
+        if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+          
+          console.log(`last one is ${lastEntryData.title}`)
+        //   debugger
+        if (lastEntryData.title === "StartDuty") {
+
+            if (check) {
+                this.props.navigation.navigate('AlreadyLoggedScreen');
+              } else {
+                this.props.navigation.navigate('BreakScreen');
+              }
+        //   this.props.navigation.navigate("BreakScreen");
+        }
+        else if (lastEntryData.title === "StartBreak") {
+          this.props.navigation.navigate("EndDutyScreen");
+        }
+        else if (lastEntryData.title === "EndDuty") {
+          this.props.navigation.navigate("AlreadyLoggedScreen");
+        }
+        else if (lastEntryData.title === "EndBreak") {
+          this.props.navigation.navigate("BreakScreen");
+        }
+        else {
+          this.props.navigation.navigate("DashboardScreen");
+
+        }
+
+      }
+
+    }
+    else {
+        var check = await AsyncStorage.getItem('appLevelCheckIs');
+//   debugger
+     if(check == "End Duty"){
+    //    debugger
+       this.props.navigation.navigate("AlreadyLoggedScreen");
+     }else{
+    //    debugger
+       this.props.navigation.navigate("DashboardScreen");
+     }
+    //   this.props.navigation.navigate("DashboardScreen");
+
+    }
+  }
   render() {
     return (
       <Container>
@@ -616,6 +923,22 @@ export default class ActionTimePick extends React.Component {
             alignSelf: 'center',
           }}
           ref={ref => (this.dropDownAlertRef = ref)}
+        />
+
+        <DropdownAlert
+          infoColor={constants.colorRedFD3232}
+          titleStyle={{color: constants.colorWhitefcfcfc, fontWeight: 'bold'}}
+          messageStyle={{
+            color: constants.colorWhitefcfcfc,
+            fontWeight: 'bold',
+            fontSize: 12,
+          }}
+          imageStyle={{
+            padding: 8,
+            tintColor: constants.colorWhitefcfcfc,
+            alignSelf: 'center',
+          }}
+          ref={ref => (this.dropDownAlertRef1 = ref)}
         />
         <ImageBackground
           source={require('../../../ImageAssets/background.png')}
@@ -661,7 +984,7 @@ export default class ActionTimePick extends React.Component {
             </View>
             <View style={{flex: 0.2, marginBottom: 10}}>
               <Button
-                onPress={() => this.Save()}
+                onPress={() => this.checkSave()}
                 style={{
                   borderRadius: 7,
                   backgroundColor: constants.colorRed9d0000,
@@ -678,6 +1001,7 @@ export default class ActionTimePick extends React.Component {
               bottom: 0,
             }}>
             <Button
+            // onPress={() => this.goToFirstTab()}
               onPress={() => this.props.navigation.navigate('DashboardScreen')}
               style={styles.footerButtonActive}
               vertical>

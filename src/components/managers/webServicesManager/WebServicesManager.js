@@ -31,8 +31,10 @@ export default class WebServicesManager extends React.Component {
         var formdata = new FormData();
         formdata.append('email', params.dataToInsert.Email);
         formdata.append('password', params.dataToInsert.Password);
+        formdata.append('token', params.dataToInsert.Token);
         formdata.append('DeviceToken', 'testdata');
-        formdata.append('DeviceType', 'android');
+        // formdata.append('DeviceType', 'android');
+        formdata.append('DeviceType', 'mobile');
         formdata.append('DeviceName', 'iphone');
 
         var request = {
