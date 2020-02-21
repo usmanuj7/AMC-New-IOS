@@ -222,6 +222,33 @@ export default class LeaveHistory extends React.Component {
         }
       });
   }
+  FlatListHeader = () => {
+    return (
+      <View elevation={1} 
+        style={{
+          height: 30,
+          width: "88%",
+          // marginHorizontal: 15,
+          flexDirection:"row",
+          // backgroundColor: "#fff",
+          border: 1.9,
+          borderColor: "black",
+          alignSelf: "center",
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.7,
+          shadowRadius: 7.49
+        }}
+      >
+        <Text style={{ flex: 1, alignSelf: "center",  fontSize: 13}}>    Date</Text>
+        <Text style={{ flex: 1, alignSelf: "center",  fontSize: 13}}>Leave Type</Text>
+        <Text style={{ flex: 1, alignSelf: "center",  fontSize: 13}}>Comments</Text>
+      </View>
+    );
+  }
   _renderItem = ({ item, index }) => {
     var date = item._leave_from_date;
     var dateToXheck=moment(date);
@@ -353,10 +380,16 @@ export default class LeaveHistory extends React.Component {
             flex: 1, justifyContent: 'center', opacity: 0.7, marginBottom: 30, marginTop: 10, marginLeft: 20, marginRight: 20,
             borderRadius: 8, borderWidth: 1, borderColor: constants.colorGrey838383, overflow: 'hidden',
           }}>
-            <FlatList
+            {
+              this.state.LeaveModelData.length>0 && this.state.LeaveModelData!='' ?     
+              <FlatList
               data={this.state.LeaveModelData}
+              ListHeaderComponent = { this.FlatListHeader }   
               renderItem={this._renderItem}
-            />
+            /> : <Text style={{alignSelf:"center"}}> No data available </Text>
+                      
+            }
+
           </View>
           <Footer style={{ backgroundColor: constants.colorPurpleLight595278 }}>
 

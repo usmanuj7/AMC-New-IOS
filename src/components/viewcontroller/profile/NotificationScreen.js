@@ -156,6 +156,7 @@ export default class NotificationScreen extends React.Component {
         if (Utilities.checkAPICallStatus(statusCode)) {
           if (response.attendance !== undefined) {
             var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+            console.log(`responce after parsing ${JSON.stringify(attendance_data)}`)
             if (attendance_data.length > 0) {
               if (attendance_data[0]._title === "Start Break") {
                 AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
@@ -431,11 +432,15 @@ export default class NotificationScreen extends React.Component {
             </View>
           </View>
           <View style={{ flex: 1.3, justifyContent: 'center', backgroundColor: 'white', opacity: 0.8, marginBottom: 30, marginLeft: 20, marginRight: 20, borderRadius: 5, }}>
-            <FlatList
+        {    
+        this.state.notificationDataSource.length >0 ?
+        <FlatList
               data={this.state.notificationDataSource}
               renderItem={this._renderItem}
               extraData={this.state}
             />
+          :<Text style={{alignSelf:"center", height:"50%"}}> No data available </Text>
+          }
             <Button onPress={() => this.props.navigation.navigate("ClearNotification")} block style={{ marginLeft: 10, marginRight: 10, marginBottom: 5, borderRadius: 7, backgroundColor: constants.coloBlue2f2756, height: 40 }}>
               <Text style={styles.buttonTextSmall}>
                 View All

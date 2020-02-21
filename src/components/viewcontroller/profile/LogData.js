@@ -14,6 +14,7 @@ import { Container, Body, Title, Center, Content, Footer, FooterTab, Button, Rig
 import styles from "../../../Style";
 import AntDesignIcons from 'react-native-vector-icons/AntDesign';
 import WebServicesManager from '../../managers/webServicesManager/WebServicesManager';;
+import EntypoIcons from 'react-native-vector-icons/Entypo';
 import HeaderView from '../Header/Header'
 import moment from 'moment';
 import { FloatingAction } from "react-native-floating-action";
@@ -39,6 +40,8 @@ export default class LogData extends React.Component {
 
         this.state = {
             profileDataSurce: [],
+            actions:[],
+            checkActionNames:[],
             dailyLogsModelDataSource: '',
             text: '',
             isLoadingIndicator: false,
@@ -330,6 +333,10 @@ export default class LogData extends React.Component {
     }
 
     handleEdit(item) {
+
+        console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
+
+        
         var today = moment(new Date());
         var tocheckDate = moment(item._clock_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
@@ -343,7 +350,7 @@ export default class LogData extends React.Component {
     }
 
     async  componentWillMount() {
-
+        console.log(`selected date is ${JSON.stringify( this.props.navigation.state.params.selectedDate)}`)
         const profile = await AsyncStorage.getItem('profileData');
 
         if (profile !== null) {
@@ -355,7 +362,65 @@ export default class LogData extends React.Component {
                     if (Utilities.checkAPICallStatus(statusCode)) {
                           
                         var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(response.attendance_data);
+                      
+                     
                         this.setState({ dailyLogsModelDataSource: dailyLogsModelDataSource });
+                        console.log(`full data ${JSON.stringify(this.state.dailyLogsModelDataSource)}`)
+                      console.log(`length is ${JSON.stringify(this.state.dailyLogsModelDataSource.length)}`)
+                      let l = this.state.dailyLogsModelDataSource.length
+                      var da = this.state.dailyLogsModelDataSource
+                      var te =[]
+                      var start ;
+                      var end;
+                      this.state.checkActionNames =[]
+                      for (let i =0; i<l ;i++){
+                        console.log(da[i]._title)
+                          if(da[i]._title==="Start Duty" && da[i]._status !="0"){
+                              start = da[i]._title
+
+                              console.log("iff called")
+                          }
+                         else if(da[i]._title==="End Duty" && da[i]._status !="0"){
+                            end  = da[i]._title
+                        }
+                          else{
+                            console.log("else called")
+
+                          }
+                      }
+                      const actions = [
+                        {
+                            text: "Start Duty",
+                            icon: require("../../../ImageAssets/cup.png"),
+                            name: "start_duty",
+                            position: 1
+                        },
+                        {
+                            text: "Start Break",
+                            icon: require("../../../ImageAssets/cup.png"),
+                            name: "start_break",
+                            position: 2
+                        },
+                        {
+                            text: "End Break",
+                            icon: require("../../../ImageAssets/end.png"),
+                            name: "end_break",
+                            position: 3
+                        },
+                        {
+                            text: "End Duty",
+                            icon: require("../../../ImageAssets/end.png"),
+                            name: "end_duty",
+                            position: 4
+                        }
+                    ];
+                     
+               var tempArr = actions.filter(action => action.text !==start && action.text!==end)
+               this.setState({
+                   actions:tempArr
+               })
+               console.log(`refined arr is ${JSON.stringify(tempArr)}`)
+            //    debugger
                         var attendence = { staffid: this.state.profileDataSurce._staffid, month_year: moment(this.props.navigation.state.params.selectedDate).format("YYYY-MM-DD") };
                         this.WebServicesManager.postApiHoursHistoryMonth({ dataToInsert: attendence, apiEndPoint: "get_hours_history_wm" },
                             (statusCode, response) => {
@@ -363,7 +428,6 @@ export default class LogData extends React.Component {
 
                                     var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(response.hours_history);
                                     this.setState({ hoursDataModel: attendenceModel });
-
                                     var totalWorkeshrs = attendenceModel._worked;
                                     var found = false;
                                     if(totalWorkeshrs==="00:00:00"){
@@ -377,6 +441,8 @@ export default class LogData extends React.Component {
                                     }
                                 }
 
+                                console.log(`${JSON.stringify(totalWorkeshrs)}`)
+
                                      this.setState({ timeWorked: totalWorkeshrs });
 
                                      var today = moment(new Date());
@@ -385,8 +451,6 @@ export default class LogData extends React.Component {
                                      console.log(`difference is ${totalDifferenceInDays}`)
                                      if ( totalDifferenceInDays==0 ) {
                                         
-                                     
-                                     
                                     var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
                                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
                                         (statusCode, response) => {
@@ -394,11 +458,12 @@ export default class LogData extends React.Component {
                                             if (Utilities.checkAPICallStatus(statusCode)) {
                                                 if (response.attendance !== undefined) {
                                                     var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                                                    console.log(`dated attandance is ${JSON.stringify(attendance_data)}`)
                                                     if (attendance_data.length > 0) {
                                                         if (attendance_data[0]._title === "Start Duty") {
                                                          
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
-                                                            totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
+                                                            // totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             setInterval( () => {
                                                                 // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
@@ -411,7 +476,7 @@ export default class LogData extends React.Component {
                                                        else if (attendance_data[0]._title === "End Break") {
                                                          
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
-                                                            totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
+                                                            // totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             setInterval( () => {
                                                                 // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
@@ -737,22 +802,23 @@ export default class LogData extends React.Component {
             });
     }
     render() {
+        // debugger
         const actions = [
             {
                 text: "Start Duty",
                 icon: require("../../../ImageAssets/cup.png"),
                 name: "start_duty",
-                position: 2
+                position: 1
             },
             {
                 text: "Start Break",
                 icon: require("../../../ImageAssets/cup.png"),
                 name: "start_break",
-                position: 1
+                position: 2
             },
             {
                 text: "End Break",
-                icon: require("../../../ImageAssets/cup.png"),
+                icon: require("../../../ImageAssets/end.png"),
                 name: "end_break",
                 position: 3
             },
@@ -809,6 +875,12 @@ export default class LogData extends React.Component {
                 </Modal>
                 <ImageBackground source={require('../../../ImageAssets/background.png')}
                     style={[styles.mainImageBackground, { backgroundColor: 'white' }]}>
+                    <View
+                         style={{alignItems: 'flex-end', marginRight: 18, marginTop: 10}}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                          <EntypoIcons name="circle-with-cross" color="Red" size={24} />
+                         </TouchableOpacity>
+                          </View>
                     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white', opacity: 0.5, marginBottom: 30, marginTop: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, borderTopWidth: 1, borderTopColor: "BLACK", borderLeftWidth: 1, borderLeftColor: "black" }}>
                         <FlatList
 

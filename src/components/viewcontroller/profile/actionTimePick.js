@@ -178,7 +178,13 @@ export default class ActionTimePick extends React.Component {
     selectedItem: PropTypes.object.isRequired,
     fullData: PropTypes.array.isRequired,
   };
-  componentWillMount() {
+  async componentWillMount() {
+
+    const profile = await AsyncStorage.getItem('profileData');
+    var profileData = JSON.parse(profile);
+    this.setState({profileDataSurce: profileData});
+
+
     this.setState({
       clocktimeToCheck: this.props.navigation.state.params.selectedItem
         ._clock_time,
@@ -229,8 +235,12 @@ export default class ActionTimePick extends React.Component {
     }, 3000);
   }
   getTimeData(title){
-    let data = this.props.navigation.state.params.fullData
-    console.log(`full data is  ${JSON.stringify(data)}`)
+
+    var _date = this.props.navigation.state.params.selectedItem._clock_date;
+    
+    console.log(`date is   ${JSON.stringify(moment(_date).format("YYYY-MM-DD"))}`)
+
+    debugger
     let temp ;
     data.map((x)=>{ x._title===title ? temp = x: null})
     console.log(`refined data is  ${JSON.stringify(temp)}`)
@@ -248,7 +258,7 @@ export default class ActionTimePick extends React.Component {
       hour: hours,
       min : minutes,
     }
-    return time;
+    // return time;
   }
   checkSave(){
  
@@ -401,7 +411,9 @@ export default class ActionTimePick extends React.Component {
 
   async Save() {
     var context = this;
-    var date = this.props.navigation.state.params.selectedItem._clock_date;
+    var _date = this.props.navigation.state.params.selectedItem._clock_date;
+    moment(_date)
+    var cc = this.props.navigation.state.params.context;
     // debugger
 
     var profile = {
@@ -424,7 +436,9 @@ export default class ActionTimePick extends React.Component {
     this.WebServicesManager.postMethodUpdateTime(
       {dataToInsert: profile, apiEndPoint: 'update_time'},
       (statusCode, response) => {
+        console.log(`status code is ${statusCode} description ${response.description}`)
         if (Utilities.checkAPICallStatus(statusCode)) {
+          if (Utilities.checkAPICallStatus(response.responseCode)) {
           this.setState({isLoadingIndicator: false});
           this.dropDownAlertRef.alertWithType(
             'info',
@@ -525,7 +539,11 @@ export default class ActionTimePick extends React.Component {
             }
             Utilities.saveToStorage('todayTime', todayAttemArray);
             setTimeout(() => {
-              this.props.navigation.navigate('CalanderScreen');
+              // this.props.navigation.navigate('CalanderScreen'); 
+              
+              this.props.navigation.navigate('LogDataScreen',{selectedDate:moment(_date).format("YYYY-MM-DD")}); 
+              cc.componentDidMount()
+
             }, 3000);
           } else {
             // debugger
@@ -551,7 +569,11 @@ export default class ActionTimePick extends React.Component {
               Utilities.saveToStorage('startDutyTimeToday', attendanceData);
               Utilities.saveToStorage('todayTime', todayAttemArray);
               setTimeout(() => {
-                this.props.navigation.navigate('CalanderScreen');
+                // this.props.navigation.navigate('CalanderScreen');
+               
+                this.props.navigation.navigate('LogDataScreen',{selectedDate:moment(_date).format("YYYY-MM-DD")});
+                cc.componentDidMount()
+
               }, 3000);
             }
 
@@ -577,7 +599,10 @@ export default class ActionTimePick extends React.Component {
               Utilities.saveToStorage('startEndDutyToday', attendanceData);
               Utilities.saveToStorage('todayTime', todayAttemArray);
               setTimeout(() => {
-                this.props.navigation.navigate('CalanderScreen');
+                // this.props.navigation.navigate('CalanderScreen');
+               
+                this.props.navigation.navigate('LogDataScreen',{selectedDate:moment(_date).format("YYYY-MM-DD")});
+                cc.componentDidMount()
               }, 3000);
             }
 
@@ -602,7 +627,10 @@ export default class ActionTimePick extends React.Component {
               };
               Utilities.saveToStorage('todayTime', attendanceData);
               setTimeout(() => {
-                this.props.navigation.navigate('CalanderScreen');
+                // this.props.navigation.navigate('CalanderScreen');
+               
+                this.props.navigation.navigate('LogDataScreen',{selectedDate:moment(_date).format("YYYY-MM-DD")});
+                cc.componentDidMount()
               }, 3000);
             }
             if (
@@ -626,9 +654,19 @@ export default class ActionTimePick extends React.Component {
               };
               Utilities.saveToStorage('todayTime', attendanceData);
               setTimeout(() => {
-                this.props.navigation.navigate('CalanderScreen');
+                // this.props.navigation.navigate('CalanderScreen');
+             
+                this.props.navigation.navigate('LogDataScreen',{selectedDate:moment(_date).format("YYYY-MM-DD")});
+                cc.componentDidMount()
               }, 3000);
             }
+          }
+        }
+          else {
+            console.log(`else called des ${response.description}`)
+
+            // this.setState({ isLoadingIndicator: false })
+            this.dropDownAlertRef1.alertWithType('info', 'Error', response.description);
           }
         } else if (statusCode === 400) {
           this.dropDownAlertRef.alertWithType(
@@ -984,7 +1022,7 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
             </View>
             <View style={{flex: 0.2, marginBottom: 10}}>
               <Button
-                onPress={() => this.checkSave()}
+                onPress={() => this.Save()}
                 style={{
                   borderRadius: 7,
                   backgroundColor: constants.colorRed9d0000,

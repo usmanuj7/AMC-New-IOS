@@ -449,7 +449,7 @@ export default class Dashboard extends React.Component {
 
           </View>
 
-          {this.state.notificationView}
+          {/* {this.state.notificationView} */}
 
           <Footer style={{ backgroundColor: constants.colorPurpleLight595278 }}>
             <Button onPress={() => this.props.navigation.navigate("DashboardScreen")} style={styles.footerButtonActive} vertical>

@@ -56,7 +56,7 @@ class HeaderView extends React.Component {
   }
   render() {
     if (this.props.name !== 'undefined undefined')
-      var headerText = 'Welcome ' + this.props.name;
+      var headerText = this.props.name+",";
     if (this.props.callFrom === 'Success') {
       return (
         <View
@@ -185,12 +185,15 @@ class HeaderView extends React.Component {
           }}>
           <View
             style={{
-              flex: 1.3,
+              flex: 8,
               alignContent: 'center',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{color: '#fff'}}>{headerText}</Text>
+            <Text style={{color: '#fff', width:"100%"}}>
+            <Text> WELCOME:</Text>
+          <Text style={{fontWeight: "bold", fontSize:15, }}> {headerText}</Text>
+            </Text>
           </View>
 
           <View

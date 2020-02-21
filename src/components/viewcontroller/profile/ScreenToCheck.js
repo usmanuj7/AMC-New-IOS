@@ -659,8 +659,9 @@ export default class ScreenToCheck extends React.Component {
                 );
               }
               console.log(
-                `all daily logs ${dailyLogsModelDataSource}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,
+                `all daily logs ${JSON.stringify(dailyLogsModelDataSource)}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,
               );
+              
               this.checkNotif(
                 dailyLogsModelDataSource,
                 attendance_id,
@@ -704,9 +705,11 @@ export default class ScreenToCheck extends React.Component {
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
-      console.log(`last entery is ${lastEntryData.title}`);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+      // debugger
 
-      if (today.diff(lastEntryData.date_times, 'days') !== 0) {
+      if (today.diff(lastEntryData.date, 'days') !== 0) {
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
         this.props.navigation.navigate('DashboardScreen');
       } else {

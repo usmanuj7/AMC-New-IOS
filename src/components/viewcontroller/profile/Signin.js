@@ -293,17 +293,20 @@ export default class SiginScreen extends React.Component {
   }
   async  Login() {
 
-    const _token = await AsyncStorage.getItem('token')
-    if(_token == null){
-      const x = Date.now();
-      this.state.token = x;
-      AsyncStorage.setItem("token",`${x}`)
+    // const _token = await AsyncStorage.getItem('token')
+    // if(_token == null){
+    //   const x = Date.now();
+    //   this.state.token = x;
+    //   AsyncStorage.setItem("token",`${x}`)
       
-    }
-    else{
-      this.state.token = _token
-    }
-    console.log(`token is ${_token}`)
+    // }
+    // else{
+    //   this.state.token = _token
+    // }
+
+    const x = Date.now();
+    this.state.token = x;
+    AsyncStorage.setItem("token",`${x}`)
 
     // Utilities.saveToStorage("todayTime", "");
     if (Utilities.ValidateEmail(this.state.userEmail)) {

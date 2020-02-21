@@ -210,7 +210,7 @@ export default class AlreadyLoggedScreen extends Component {
 
     console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
     console.log(`end duty time  ${JSON.stringify(startEndDutyToday)}`);
-    debugger
+    // debugger
 
 
     var startDutyTime;
@@ -261,7 +261,7 @@ export default class AlreadyLoggedScreen extends Component {
       startEndDuty = startEndDutyToday.clock_out;
       var abc = startEndDutyToday.clock_out;
       console.log(`abc ${abc}`);
-      debugger;
+      // debugger;
       if (abc !== undefined) {
         var d = abc;
         var n = parseInt(d.split(':')[0]);
@@ -279,7 +279,7 @@ export default class AlreadyLoggedScreen extends Component {
     console.log(
       `breakend ${EndBreakTime}\n start break ${startBreakTime}\n start duty ${startDutyTime} \n end duty ${startEndDuty}`,
     );
-    debugger;
+    // debugger;
     if (EndBreakTime !== undefined && startBreakTime !== undefined) {
       totalBreakTime = moment
         .utc(
@@ -291,7 +291,7 @@ export default class AlreadyLoggedScreen extends Component {
     }
 
     if (startDutyTime !== undefined && startEndDuty !== undefined) {
-      debugger;
+      // debugger;
       totalTime = moment
         .utc(
           moment(startEndDuty, 'HH:mm:ss').diff(
@@ -300,7 +300,7 @@ export default class AlreadyLoggedScreen extends Component {
         )
         .format('HH:mm:ss');
       console.log(`total time ${totalTime}`);
-      debugger;
+      // debugger;
       totalTime = moment
         .utc(
           moment(totalTime, 'HH:mm:ss').diff(
@@ -309,7 +309,7 @@ export default class AlreadyLoggedScreen extends Component {
         )
         .format('HH:mm:ss');
       console.log(`total time ${totalTime}`);
-      debugger;
+      // debugger;
       this.setState({timeWorked: totalTime});
     }
   }
