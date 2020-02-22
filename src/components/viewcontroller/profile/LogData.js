@@ -108,6 +108,10 @@ export default class LogData extends React.Component {
                                 this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
                             }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                            }
                         });
                 }
                 if (this.state.checnkedNameToAdd === "end_duty") {
@@ -149,12 +153,20 @@ export default class LogData extends React.Component {
                                                 setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
                                             }
+                                            else  {
+                                                this.setState({ isLoadingIndicator: false });
+                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                            }
 
                                         });
                                 }
                                 else if (statusCode === 400) {
                                     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
+                                }
+                                else  {
+                                  
+                                    this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                                 }
                             }
                         });
@@ -202,12 +214,19 @@ export default class LogData extends React.Component {
                                                 setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
                                             }
-
+                                            else  {
+                                                this.setState({ isLoadingIndicator: false });
+                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                            }
                                         });
                                 }
                                 else if (statusCode === 400) {
                                     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
+                                }
+                                else  {
+                                    // this.setState({ isLoadingIndicator: false });
+                                    this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                                 }
                             }
                         });
@@ -250,6 +269,10 @@ export default class LogData extends React.Component {
                                                 this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
                                                 setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
+                                            }
+                                            else  {
+                                                this.setState({ isLoadingIndicator: false });
+                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                                             }
 
                                         });
@@ -476,7 +499,7 @@ export default class LogData extends React.Component {
                                                        else if (attendance_data[0]._title === "End Break") {
                                                          
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
-                                                            // totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
+                                                            totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             setInterval( () => {
                                                                 // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
@@ -875,13 +898,18 @@ export default class LogData extends React.Component {
                 </Modal>
                 <ImageBackground source={require('../../../ImageAssets/background.png')}
                     style={[styles.mainImageBackground, { backgroundColor: 'white' }]}>
+                  
                     <View
-                         style={{alignItems: 'flex-end', marginRight: 18, marginTop: 10}}>
+                         style={{alignItems: "center", marginRight: 18, marginTop: 10, flexDirection:"row", justifyContent:"space-between"}}>
+                                   <Text style={{textAlign:"center",marginLeft: 22, }}>
+                          Date: {this.props.navigation.state.params.selectedDate}
+                      </Text>
                         <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
                           <EntypoIcons name="circle-with-cross" color="Red" size={24} />
                          </TouchableOpacity>
                           </View>
-                    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white', opacity: 0.5, marginBottom: 30, marginTop: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, borderTopWidth: 1, borderTopColor: "BLACK", borderLeftWidth: 1, borderLeftColor: "black" }}>
+                    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white', opacity: 0.5, marginBottom: 30, marginTop: 5, marginLeft: 20, marginRight: 20, borderRadius: 5, borderTopWidth: 1, borderTopColor: "BLACK", borderLeftWidth: 1, borderLeftColor: "black" }}>
+                      
                         <FlatList
 
                             data={this.state.dailyLogsModelDataSource}

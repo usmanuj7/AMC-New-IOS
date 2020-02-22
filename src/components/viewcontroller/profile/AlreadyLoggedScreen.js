@@ -167,7 +167,7 @@ export default class AlreadyLoggedScreen extends Component {
         var formatted = moment.utc(workedHours * 1000).format('HH:mm:ss');
 
         this.setState({timeWorked: formatted});
-        // this.getOfflineData();
+        this.getOfflineData();
       } else {
         // debugger
         this.setState({noificationCount: constants.noificationCount});
@@ -188,7 +188,7 @@ export default class AlreadyLoggedScreen extends Component {
               console.log(
                 `timeWorked ${JSON.stringify(attendenceModel._worked)}`,
               );
-              // debugger
+              debugger
               this.setState({timeWorked: attendenceModel._worked});
             } else {
               // debugger
@@ -211,7 +211,6 @@ export default class AlreadyLoggedScreen extends Component {
     console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
     console.log(`end duty time  ${JSON.stringify(startEndDutyToday)}`);
     // debugger
-
 
     var startDutyTime;
     var EndBreakTime;
@@ -326,6 +325,7 @@ export default class AlreadyLoggedScreen extends Component {
       });
     }, 5000);
 
+    // debugger
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     console.log(`end duty time is ${endDutyTimeToday}`);
 

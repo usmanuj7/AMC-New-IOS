@@ -451,6 +451,8 @@ export default class CalanderScreen extends React.Component {
     render() {
 
         calendarEvents = JSON.parse(JSON.stringify(this.state.markedDates))
+        var currentDate = moment().format("YYYY-MM-DD");
+        
         return (
 
             <Container>
@@ -477,7 +479,8 @@ export default class CalanderScreen extends React.Component {
                             // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
                             minDate={'2012-05-10'}
                             // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-                            maxDate={'3019-09-24'}
+                            // maxDate={'2020-02-22'}
+                            maxDate={currentDate.toString()}
                             onMonthChange={date => this.onMonthChange(date)}
                             // Handler which gets executed on day press. Default = undefined
                             onDayPress={(day) => {

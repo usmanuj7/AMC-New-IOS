@@ -114,18 +114,31 @@ export default class YearScreen extends React.Component {
     var startDate = monthdate + '- 11';
     var month_year = monthdate + '- 11';
     this.setState({month: monthdate, monthDate: startDate});
+    // var attendence = {
+    //   staffid: this.state.profileDataSurce._staffid,
+    //   month_year: month_year,
+    //   year: monthdate + '',
+    // };
     var attendence = {
       staffid: this.state.profileDataSurce._staffid,
-      month_year: month_year,
       year: monthdate + '',
     };
+
+    console.log(`attandance is ==> ${JSON.stringify(attendence)}`)
+    // debugger
     this.WebServicesManager.postApiHoursHistoryYear(
-      {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
+      // {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
+      {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm_report'},
+
       (statusCode, response) => {
+        console.log(`status code ${statusCode}`)
         if (Utilities.checkAPICallStatus(statusCode)) {
           var attendenceModel = HoursHistoryModal.parseHoursHistoryModalFromJSON(
             response.hours_history,
           );
+          console.log(`response is ==> ${JSON.stringify(attendenceModel)}`)
+
+
           var totalWorkedMinutes =
             attendenceModel._worked.split(':')[0] * 3600 +
             attendenceModel._worked.split(':')[1] * 60 +

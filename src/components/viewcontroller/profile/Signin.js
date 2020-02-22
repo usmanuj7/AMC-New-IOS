@@ -311,7 +311,11 @@ export default class SiginScreen extends React.Component {
     // Utilities.saveToStorage("todayTime", "");
     if (Utilities.ValidateEmail(this.state.userEmail)) {
       this.setState({ isLoadingIndicator: false })
-      var profile = { Email: this.state.userEmail, Password: this.state.userPassword, Token: this.state.token, };
+      var profile = { Email: this.state.userEmail, Password: this.state.userPassword, Token: `${x}` };
+
+      console.log(`profiel to be inserted ${JSON.stringify(profile)}`)
+
+      debugger
       this.WebServicesManager.postApiCall({ dataToInsert: profile, apiEndPoint: "login" },
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {

@@ -268,143 +268,39 @@ export default class ActionTimePick extends React.Component {
     const selectedMinutes = parseInt(this.state.indexofSelectedMinutes)
     console.log(`selected minutes are  ${JSON.stringify(selectedMinutes)}`)
 
-    const title = this.props.navigation.state.params.selectedItem._title
+    var today = new Date();
+    var hour = today.getHours() ;
+    var min = today.getMinutes();
 
-    if(title === "Start Duty"){
-      const time = this.getTimeData("End Duty")
-
-      if( selectedHours === time.hour){
-        if(selectedMinutes < time.min){
-          console.log("start duty inner if")
-          this.Save()
-        }
-        else{
-          console.log("start duty else")
-          this.dropDownAlertRef1.alertWithType(
-            'info',
-            'Alert',
-            'Please select valid time',
-          );
-        }
-      }
-     else if( selectedHours < time.hour){
-        console.log("start duty else if")
-        this.Save()
-
-      }
-      else{
-        console.log("start duty else")
-        this.dropDownAlertRef1.alertWithType(
-          'info',
-          'Alert',
-          'Please select valid time',
-        );
-
-      }
+    if(selectedHours<hour){
+      this.Save();
 
     }
-    else if(title === "End Duty"){
-
-      const time = this.getTimeData("Start Duty")
-
-      if( selectedHours === time.hour){
-        if(selectedMinutes > time.min){
-          console.log("end duty inner if")
-          this.Save()
-        }
-        else{
-          console.log("end duty inner else")
-          console.log("start duty else")
-          this.dropDownAlertRef1.alertWithType(
-            'info',
-            'Alert',
-            'Please select valid time',
-          );
-        }
-      }
-     else if( selectedHours > time.hour){
-        console.log("end duty else if")
-        this.Save()
+    else if(selectedHours===hour){
+      if(selectedMinutes<min){
+      this.Save();
       }
       else{
-        console.log("end duty else")
-        console.log("start duty else")
-        this.dropDownAlertRef1.alertWithType(
-          'info',
-          'Alert',
-          'Please select valid time',
-        );
-
-      }
-
-    }
-    else if(title === "Start Break"){
-      const time = this.getTimeData("Start Duty")
-
-
-      if( selectedHours === time.hour){
-        if(selectedMinutes > time.min){
-          console.log("start break inner if")
-          this.Save()
-        }
-        else{
-          console.log(" start break inner else")
-          console.log("start duty else")
-          this.dropDownAlertRef1.alertWithType(
-            'info',
-            'Alert',
-            'Please select valid time',
-          );
-        }
-      }
-     else if( selectedHours > time.hour){
-        console.log("start break else if")
-        this.Save()
-      }
-      else{
-        console.log("start break else")
-        console.log("start duty else")
-        this.dropDownAlertRef1.alertWithType(
-          'info',
-          'Alert',
-          'Please select valid time',
-        );
-
-      }
-
-    }
-    else if(title === "End Break"){
-      const time = this.getTimeData("End Duty")
-
-      if( selectedHours === time.hour){
-        if(selectedMinutes < time.min){
-          console.log("End Break inner if")
-          this.Save()
-        }
-        else{
-          console.log("End Break inner else")
-          console.log("start duty else")
-          this.dropDownAlertRef1.alertWithType(
-            'info',
-            'Alert',
-            'Please select valid time',
-          );
-        }
-      }
-     else if( selectedHours < time.hour){
-        console.log( "End Break else if")
-        this.Save()
-      }
-      else{
-        console.log("End Break else")
-        console.log("start duty else")
         this.dropDownAlertRef1.alertWithType(
           'info',
           'Alert',
           'Please select valid time',
         );
       }
+      
+  
+    }else{
+      this.dropDownAlertRef1.alertWithType(
+        'info',
+        'Alert',
+        'Please select valid time',
+      );
     }
+    
+
+
+      
+
 
 
   }
@@ -1022,7 +918,7 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
             </View>
             <View style={{flex: 0.2, marginBottom: 10}}>
               <Button
-                onPress={() => this.Save()}
+                onPress={() => this.checkSave()}
                 style={{
                   borderRadius: 7,
                   backgroundColor: constants.colorRed9d0000,

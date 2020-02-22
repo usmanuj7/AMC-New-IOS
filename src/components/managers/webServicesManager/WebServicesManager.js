@@ -31,8 +31,7 @@ export default class WebServicesManager extends React.Component {
         var formdata = new FormData();
         formdata.append('email', params.dataToInsert.Email);
         formdata.append('password', params.dataToInsert.Password);
-        formdata.append('token', params.dataToInsert.Token);
-        formdata.append('DeviceToken', 'testdata');
+        formdata.append('DeviceToken', params.dataToInsert.Token);
         // formdata.append('DeviceType', 'android');
         formdata.append('DeviceType', 'mobile');
         formdata.append('DeviceName', 'iphone');
@@ -582,7 +581,7 @@ export default class WebServicesManager extends React.Component {
       if (state.isConnected === true) {
         var formdata = new FormData();
         formdata.append('staffid', params.dataToInsert.staffid);
-        formdata.append('month_year', params.dataToInsert.month_year);
+        // formdata.append('month_year', params.dataToInsert.month_year);
         formdata.append('year', params.dataToInsert.year);
 
         var request = {

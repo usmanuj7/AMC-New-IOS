@@ -75,8 +75,9 @@ class HeaderView extends React.Component {
               paddingBottom: 10,
               alignContent: 'center',
               justifyContent: 'center',
+              
             }}>
-            <Image source={require('../../../ImageAssets/backbtn.png')} resizeMode ={"contain"}></Image>
+            <Image source={require('../../../ImageAssets/back1.png')} resizeMode ={"contain"}style={{width:80, height:40}}></Image>
           </TouchableOpacity>
 
           <View
@@ -153,18 +154,18 @@ class HeaderView extends React.Component {
             onPress={() => this.props.context.menuItemPressed()}
             style={{
               flexDirection: 'row',
-              paddingBottom: 10,
+              // paddingLeft: 10,
               flex: 1,
               alignContent: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={require('../../../ImageAssets/backbtn.png')}></Image>
+            <Image source={require('../../../ImageAssets/back1.png')} resizeMode ={"contain"}style={{width:80, height:40}}></Image>
           </TouchableOpacity>
 
           <View
             style={{
               flex: 5,
-              marginLeft: 30,
+              marginLeft: 60,
               alignContent: 'center',
               justifyContent: 'center',
             }}>

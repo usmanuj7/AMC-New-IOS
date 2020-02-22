@@ -133,7 +133,9 @@ export default class MonthScreen extends React.Component {
     };
 
     this.WebServicesManager.postApiHoursHistoryMonth(
-      {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
+      // {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'}, get_hours_history_wm_report
+      {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm_report'}, 
+
       (statusCode, response) => {
         if (Utilities.checkAPICallStatus(statusCode)) {
           var attendenceModel = HoursHistoryModal.parseHoursHistoryModalFromJSON(
