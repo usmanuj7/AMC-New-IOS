@@ -126,7 +126,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
                                         clock_out: time,
@@ -163,14 +163,15 @@ export default class LogData extends React.Component {
 
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
-
-                                }
+         
                                 else  {
                                   
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
                                 }
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -183,7 +184,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
 
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
@@ -223,14 +224,15 @@ export default class LogData extends React.Component {
                                             }
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                else  {
+                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
-                                else  {
-                                    // this.setState({ isLoadingIndicator: false });
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
-                                }
+                               
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -243,7 +245,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
                                     this.setState({ attendance_id: response.attendance_data[0].attendance_id })
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
@@ -280,10 +282,14 @@ export default class LogData extends React.Component {
 
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                else  {
+                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
