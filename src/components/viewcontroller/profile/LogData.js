@@ -51,10 +51,13 @@ export default class LogData extends React.Component {
             isStartDateTimePickerVisible: false,
             isEndDateTimePickerVisible: false,
             isDateTimePickerVisible: false,
-            checnkedNameToAdd: ''
+            checnkedNameToAdd: '',
+           
         }
         // userInfo: '',
     }
+    startDutyInterval = 0;
+    endBreakInterval= 0;
     static propTypes = {
         context: PropTypes.object.isRequired,
 
@@ -137,22 +140,22 @@ export default class LogData extends React.Component {
                                                 setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
-                                            }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
-                                            }
+                                            // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
                                                 this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
@@ -198,22 +201,22 @@ export default class LogData extends React.Component {
                                                 setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
-                                            }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
-                                            }
+                                            // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
                                                 this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
@@ -254,22 +257,22 @@ export default class LogData extends React.Component {
                                                 setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
-                                            }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
-                                            }
+                                            // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
                                                 this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
@@ -359,7 +362,8 @@ export default class LogData extends React.Component {
 
         console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
 
-        
+        clearInterval(this.startDutyInterval);
+        clearInterval(this.endBreakInterval);
         var today = moment(new Date());
         var tocheckDate = moment(item._clock_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
@@ -484,30 +488,51 @@ export default class LogData extends React.Component {
                                                     console.log(`dated attandance is ${JSON.stringify(attendance_data)}`)
                                                     if (attendance_data.length > 0) {
                                                         if (attendance_data[0]._title === "Start Duty") {
-                                                         
-                                                            var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
-                                                            // totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
-                                                            setInterval( () => {
-                                                                // debugger
-                                                                var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
-                                                                totalWorkeshrs=timeWorked;
-                                                                this.setState({
-                                                                    timeWorked : timeWorked
-                                                                });
-                                                              },1200)
-                                                        }
-                                                       else if (attendance_data[0]._title === "End Break") {
-                                                         
+                                                            console.log(`clock time ${attendance_data[0]._clock_time}`)
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
-                                                            setInterval( () => {
+                                                            console.log(`working hours ${totalWorkeshrs}`)
+                                                            console.log(`start duty interval ${this.startDutyInterval}`)
+
+                                                           debugger
+                                                           if(this.startDutyInterval === 0){
+                                                            this.startDutyInterval= setInterval( () => {
                                                                 // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
                                                                 totalWorkeshrs=timeWorked;
+                                                                console.log(`in loop working hours ${totalWorkeshrs}`)
                                                                 this.setState({
                                                                     timeWorked : timeWorked
                                                                 });
                                                               },1200)
+
+                                                           }
+                                                           else{
+                                                               console.log("interval else called")
+                                                           }
+                                                   
+                                                        }
+                                                       else if (attendance_data[0]._title === "End Break") {
+                                                         var previousWorkingHours =totalWorkeshrs
+                                                            var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
+                                                            var temp = moment.duration(duration.add(previousWorkingHours))
+                                                            console.log(`temp : ${JSON.stringify(temp)}`)
+                                                            debugger
+                                                            totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
+                                                            if(this.endBreakInterval === 0){
+                                                                this.endBreakInterval= setInterval( () => {
+                                                                    // debugger
+                                                                    var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
+                                                                    totalWorkeshrs=timeWorked;
+                                                                    this.setState({
+                                                                        timeWorked : timeWorked
+                                                                    });
+                                                                  },1200)
+                                                            }
+                                                            else{
+                                                                console.log(`else end break  end brek interval`)
+                                                            }
+                                                   
                                                         }
                                                     }
                                                 }

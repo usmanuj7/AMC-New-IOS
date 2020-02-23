@@ -311,6 +311,8 @@ export default class ActionTimePick extends React.Component {
     moment(_date)
     var cc = this.props.navigation.state.params.context;
     // debugger
+    cc.startDutyInterval = 0;
+    cc.endBreakInterval= 0;
 
     var profile = {
       staff_clocktime_id: this.props.navigation.state.params.selectedItem

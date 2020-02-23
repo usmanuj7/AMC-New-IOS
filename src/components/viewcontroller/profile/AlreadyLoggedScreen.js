@@ -167,7 +167,7 @@ export default class AlreadyLoggedScreen extends Component {
         var formatted = moment.utc(workedHours * 1000).format('HH:mm:ss');
 
         this.setState({timeWorked: formatted});
-        this.getOfflineData();
+        // this.getOfflineData();
       } else {
         // debugger
         this.setState({noificationCount: constants.noificationCount});
@@ -197,6 +197,32 @@ export default class AlreadyLoggedScreen extends Component {
           },
         );
       }
+
+      var attendence = {
+        staffid: profileData._staffid,
+        month_year: moment(new Date()).format('YYYY-MM-DD'),
+      };
+
+      this.WebServicesManager.postApiHoursHistoryMonth(
+        {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
+        (statusCode, response) => {
+          if (Utilities.checkAPICallStatus(statusCode)) {
+            var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(
+              response.hours_history,
+            );
+            console.log(`hours history ${JSON.stringify(attendenceModel)}`);
+            this.setState({hoursDataModel: attendenceModel});
+            console.log(
+              `timeWorked ${JSON.stringify(attendenceModel._worked)}`,
+            );
+            debugger
+            this.setState({timeWorked: attendenceModel._worked});
+          } else {
+            // debugger
+            this.getOfflineData();
+          }
+        },
+      );
     });
   }
   async getOfflineData() {
