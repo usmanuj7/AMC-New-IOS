@@ -296,13 +296,6 @@ export default class ActionTimePick extends React.Component {
         'Please select valid time',
       );
     }
-    
-
-
-      
-
-
-
   }
 
   async Save() {

@@ -66,20 +66,64 @@ export default class LogData extends React.Component {
         this.setState({ isDateTimePickerVisible: false });
     };
 
+    checkDatePick= date =>{
+        var selectedHours = moment(date).format('HH');
+    selectedHours == "00" ? selectedHours = 0 : null
+        console.log(selectedHours)
+
+        var selectedMinutes = moment(date).format('mm');
+        console.log(selectedMinutes)
+    
+        var today = new Date();
+        var hour = today.getHours() ;
+        console.log(`hour ${hour}`)
+
+        var min = today.getMinutes();
+        console.log(`mins ${min}`)
+
+        if(selectedHours<hour){
+          this.handleDatePicked(date)
+    
+        }
+        else if(selectedHours===hour){
+          if(selectedMinutes<min){
+            this.handleDatePicked(date)
+          }
+          else{
+            this.dropDownAlertRefRed.alertWithType(
+              'info',
+              'Alert',
+              'Please select valid time',
+            );
+          }
+          
+      
+        }else{
+            console.log("outer called")
+          this.dropDownAlertRefRed.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+        this.hideDateTimePicker();
+
+      }
+
     handleDatePicked = date => {
         var today = moment(new Date());
 
         var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
         if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 ) {
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
+            this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
             var today = moment(new Date());
             var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
             var totalDifferenceInDays = today.diff(tocheckDate, 'days');
             if (totalDifferenceInDays > 3 || totalDifferenceInDays<0) {
-                this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
+                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
             }
             else {
                 var time = moment(date).format('HH:mm');
@@ -103,17 +147,17 @@ export default class LogData extends React.Component {
                             }
                             else if (statusCode === 400) {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please check your internet connection");
 
                             }
                             else if (response.responseCode === 403) {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
                             }
                             else  {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
                 }
@@ -158,7 +202,7 @@ export default class LogData extends React.Component {
                                             // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
 
                                         });
@@ -166,12 +210,12 @@ export default class LogData extends React.Component {
          
                                 else  {
                                   
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
                                 }
                             }
                             else  {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -220,19 +264,19 @@ export default class LogData extends React.Component {
                                             // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
                                         });
                                 }
                                 else  {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
                                
                             }
                             else  {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -277,19 +321,19 @@ export default class LogData extends React.Component {
                                             // }
                                             else  {
                                                 this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
 
                                         });
                                 }
                                 else  {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark the attandance first");
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
                             }
                             else  {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', response.description);
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -741,7 +785,7 @@ export default class LogData extends React.Component {
         var lastEntry = await AsyncStorage.getItem("lastEntry");
         if (lastEntry !== null) {
             var lastEntryData = JSON.parse(lastEntry);
-            if (today.diff(lastEntryData.date_times, 'days') !== 0) {
+            if (today.diff(lastEntryData.date, 'days') !== 0) {
                 var lastEntry = await AsyncStorage.setItem("lastEntry", "");
                 this.props.navigation.navigate("DashboardScreen");
             }
@@ -897,7 +941,7 @@ export default class LogData extends React.Component {
                     ref={ref => this.dropDownAlertRef = ref} />
                 <DateTimePicker
                     isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this.handleDatePicked.bind(this)}
+                    onConfirm={this.checkDatePick.bind(this)}
                     onCancel={this.hideDateTimePicker}
                     locale="en_GB"
                     mode={"time"}
@@ -909,6 +953,22 @@ export default class LogData extends React.Component {
                         alignSelf: 'center',
                     }}
                     ref={ref => this.dropDownAlertRef1 = ref} />
+
+              <DropdownAlert
+                  infoColor={constants.colorRedFD3232}
+                titleStyle={{color: constants.colorWhitefcfcfc, fontWeight: 'bold'}}
+                 messageStyle={{
+                   color: constants.colorWhitefcfcfc,
+                 fontWeight: 'bold',
+                 fontSize: 12,
+                    }}
+                 imageStyle={{
+                   padding: 8,
+                  tintColor: constants.colorWhitefcfcfc,
+                 alignSelf: 'center',
+               }}
+               ref={ref => (this.dropDownAlertRefRed = ref)}
+             />
                 <Modal
                     transparent
                     animationType={'none'}

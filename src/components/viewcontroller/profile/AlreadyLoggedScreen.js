@@ -88,6 +88,7 @@ export default class AlreadyLoggedScreen extends Component {
   };
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
+      debugger
       if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
