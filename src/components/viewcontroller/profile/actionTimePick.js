@@ -260,17 +260,18 @@ export default class ActionTimePick extends React.Component {
     }
     // return time;
   }
-  checkSave(){
- 
-    const selectedHours = parseInt(this.state.indexofSelectedHours)
+
+currentDayChecks(){
+  const selectedHours = parseInt(this.state.indexofSelectedHours)
     console.log(`selected minutes are  ${JSON.stringify(selectedHours)}`)
 
     const selectedMinutes = parseInt(this.state.indexofSelectedMinutes)
     console.log(`selected minutes are  ${JSON.stringify(selectedMinutes)}`)
+    // this.props.navigation.state.params.selectedDate
 
     var today = new Date();
-    var hour = today.getHours() ;
-    var min = today.getMinutes();
+    var hour = parseInt(today.getHours())  ;
+    var min = parseInt(today.getMinutes()) ;
 
     if(selectedHours<hour){
       this.Save();
@@ -296,6 +297,24 @@ export default class ActionTimePick extends React.Component {
         'Please select valid time',
       );
     }
+}
+
+  checkSave(){
+ 
+    console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
+    var selectedDate = this.props.navigation.state.params.selectedDate
+    var today = moment(new Date());
+    console.log(`date is ${today}`)
+     if (today.diff(selectedDate, 'days') !== 0) {
+       debugger
+       console.log("iff called")
+       this.Save();
+      
+     }
+     else{
+      console.log("else called")
+      this.currentDayChecks();
+     }
   }
 
   async Save() {

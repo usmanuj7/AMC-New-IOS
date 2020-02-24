@@ -23,6 +23,7 @@ import constants from '../../../constants/constants';
 import LeaveModel from '../../Models/LeaveModel'
 import DailyLogsModel from '../../Models/DailyLogsModel';
 import PropTypes from 'prop-types';
+import Loader from '../../../Loader';
 import AttendanceModel from '../../Models/AttendanceModel';
 import DeleteShiftPopUp from '../../../DeleteShiftPopUp';
 import SigninDataLogsModel from '../../Models/SigninDataLogsModel';
@@ -45,6 +46,7 @@ export default class LogData extends React.Component {
             dailyLogsModelDataSource: '',
             text: '',
             isLoadingIndicator: false,
+            isLoading:false,
             deleteShiftItem: '',
             timeWorked: "00:00:00",
             noificationCount: 0,
@@ -65,13 +67,35 @@ export default class LogData extends React.Component {
     hideDateTimePicker = () => {
         this.setState({ isDateTimePickerVisible: false });
     };
+    checkDatePick= date=>{
+ 
+        console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
+        var selectedDate = this.props.navigation.state.params.selectedDate
+        var today = moment(new Date());
+        console.log(`date is ${today}`)
+         if (today.diff(selectedDate, 'days') !== 0) {
+           debugger
+           console.log("iff called")
+           this.handleDatePicked(date);
+          
+         }
+         else{
+             debugger
+          console.log("else called")
+          this.checkCurrentDatePick(date);
+         }
+      }
 
-    checkDatePick= date =>{
-        var selectedHours = moment(date).format('HH');
-    selectedHours == "00" ? selectedHours = 0 : null
+    checkCurrentDatePick= date =>{
+
+        var selectedHours = parseInt( moment(date).format('HH')) ;
+        
+// var selectedHours = parseInt(temp[0]) 
+    // selectedHours == "00" ? selectedHours = 0 : null
         console.log(selectedHours)
 
-        var selectedMinutes = moment(date).format('mm');
+        var selectedMinutes =  parseInt( moment(date).format('mm')) ;
+
         console.log(selectedMinutes)
     
         var today = new Date();
@@ -86,7 +110,7 @@ export default class LogData extends React.Component {
     
         }
         else if(selectedHours===hour){
-          if(selectedMinutes<min){
+          if(selectedMinutes<min || selectedMinutes == min){
             this.handleDatePicked(date)
           }
           else{
@@ -143,7 +167,8 @@ export default class LogData extends React.Component {
                                   
                               Utilities.saveToStorage("startDutyTimeToday", attendanceData);
                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Start Duty is recorded successfully");
-                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                this.componentWillMount()
+                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
                             }
                             else if (statusCode === 400) {
                                 this.setState({ isLoadingIndicator: false });
@@ -181,7 +206,8 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "End Duty is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
                                             // else if (statusCode === 400) {
@@ -243,7 +269,8 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Add break is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
                                             // else if (statusCode === 400) {
@@ -282,6 +309,9 @@ export default class LogData extends React.Component {
 
                 }
                 if (this.state.checnkedNameToAdd === "start_break") {
+                    this.setState({
+                        isLoading:true
+                    })
                     var Leave = {
                         staffid: this.state.profileDataSurce._staffid,
                         clock_date: this.props.navigation.state.params.selectedDate
@@ -300,7 +330,11 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Break Start is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                this.setState({
+                                                    isLoading:false
+                                                })
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
                                             // else if (statusCode === 400) {
@@ -422,7 +456,8 @@ export default class LogData extends React.Component {
             this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
-            this.props.navigation.navigate('ActionTimePick', { selectedItem: item,  fullData:this.state.dailyLogsModelDataSource ,context: this })
+            var _date = this.props.navigation.state.params.selectedDate
+            this.props.navigation.navigate('ActionTimePick', { selectedItem: item,  fullData:this.state.dailyLogsModelDataSource ,selectedDate: _date,context: this })
         }
     }
 
@@ -544,7 +579,7 @@ export default class LogData extends React.Component {
                                                             console.log(`working hours ${totalWorkeshrs}`)
                                                             console.log(`start duty interval ${this.startDutyInterval}`)
 
-                                                           debugger
+                                                        //    debugger
                                                            if(this.startDutyInterval === 0){
                                                             this.startDutyInterval= setInterval( () => {
                                                                 // debugger
@@ -567,7 +602,7 @@ export default class LogData extends React.Component {
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
                                                             var temp = moment.duration(duration.add(previousWorkingHours))
                                                             console.log(`temp : ${JSON.stringify(temp)}`)
-                                                            debugger
+                                                            // debugger
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
                                                             if(this.endBreakInterval === 0){
                                                                 this.endBreakInterval= setInterval( () => {
@@ -629,6 +664,7 @@ export default class LogData extends React.Component {
                     if (Utilities.checkAPICallStatus(statusCode)) {
                         this.setState({ isLoadingIndicator: false })
                         this.dropDownAlertRef.alertWithType('info', 'Success', "Break is deleted successfully");
+                        // this.componentWillMount()
                         setTimeout(() => { this.props.navigation.goBack(); }, 3000);
                     }
                     else if (statusCode === 400) {
@@ -931,7 +967,9 @@ export default class LogData extends React.Component {
         return (
             <Container>
                 <StatusBar barStyle="light-content" hidden={false} backgroundColor={constants.colorPurpleLight595278} translucent={false} />
+                <Loader loading={this.state.isLoading}></Loader>
                 <HeaderView name={this.state.profileDataSurce._firstname + " " + this.state.profileDataSurce._lastname} context={this} notificationCount={this.state.noificationCount} />
+               
                 <DropdownAlert infoColor={constants.coloBrownFFF5DA} titleStyle={{ color: constants.colorGrey838383, fontWeight: 'bold', }}
                     messageStyle={{ color: constants.colorGrey838383, fontWeight: 'bold', fontSize: 12 }} imageStyle={{
                         padding: 8,
@@ -943,6 +981,7 @@ export default class LogData extends React.Component {
                     isVisible={this.state.isDateTimePickerVisible}
                     onConfirm={this.checkDatePick.bind(this)}
                     onCancel={this.hideDateTimePicker}
+                    titleIOS="Please select time"
                     locale="en_GB"
                     mode={"time"}
                 />

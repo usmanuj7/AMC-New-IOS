@@ -56,7 +56,7 @@ class HeaderView extends React.Component {
   }
   render() {
     if (this.props.name !== 'undefined undefined')
-      var headerText = this.props.name+",";
+      var headerText = this.props.name;
     if (this.props.callFrom === 'Success') {
       return (
         <View

@@ -173,7 +173,6 @@ export default class Utilities extends React.Component {
     
     const todayTimeDataArray = await AsyncStorage.getItem('todayTime');
     const profileData = await AsyncStorage.getItem('profileData');
-debugger
     NetInfo.fetch().then(state => {
       if (state.isConnected === true) {
 

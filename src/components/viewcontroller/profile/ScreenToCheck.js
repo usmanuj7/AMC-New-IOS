@@ -48,6 +48,8 @@ export default class ScreenToCheck extends React.Component {
     prevDate,
     appLevel,
   ) {
+
+    Utilities.sendLocalStorageToServer();
     var staffData = {staffid: JSON.parse(profileData)._staffid};
     console.log(`staff Data ${staffData}`);
     this.WebServicesManager.postApiCallAttendence(
@@ -600,7 +602,9 @@ export default class ScreenToCheck extends React.Component {
     }
   }
 
+
   async componentDidMount() {
+   
     try {
       SplashScreen.hide();
       var date = new Date();
@@ -722,7 +726,6 @@ export default class ScreenToCheck extends React.Component {
               }
             }
           }
-          
 
           if (check) {
             this.props.navigation.navigate('AlreadyLoggedScreen');
