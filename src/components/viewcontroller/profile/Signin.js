@@ -370,6 +370,7 @@ export default class SiginScreen extends React.Component {
                   'Success',
                   'You have successfully logged in',
                 );
+                AsyncStorage.setItem('loginDone', `${x}`);
                 var date = new Date();
                 this.WebServicesManager.postGetData(
                   {dataToInsert: '', apiEndPoint: 'get_all_leave_types'},

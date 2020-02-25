@@ -30,6 +30,7 @@ import SigninDataLogsModel from '../../Models/SigninDataLogsModel';
 
 export default class ScreenToCheck extends React.Component {
   WebServicesManager = new WebServicesManager();
+   checkForSync = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -602,9 +603,27 @@ export default class ScreenToCheck extends React.Component {
     }
   }
 
+  async componentWillMount(){
+    debugger
+    const _loginDone= await AsyncStorage.getItem('loginDone')
+    if(_loginDone !== null){
+     await Utilities.sendLocalStorageToServer();
+     this.checkForSync = true
+     this.componentDidMount()
+      console.log(`if login done is ${_loginDone}`)
+    }else{
+      this.checkForSync = true
+      this.componentDidMount()
+      console.log(`else login done is ${_loginDone}`)
+    }
+    
+    debugger
 
+  }
   async componentDidMount() {
-   
+  if(this.checkForSync){
+    this.checkForSync = false
+    debugger
     try {
       SplashScreen.hide();
       var date = new Date();
@@ -690,6 +709,7 @@ export default class ScreenToCheck extends React.Component {
     } catch (e) {
       console.log(`my custom error error ${e}`);
     }
+  }
   }
 
   componentDidCatch(error) {
