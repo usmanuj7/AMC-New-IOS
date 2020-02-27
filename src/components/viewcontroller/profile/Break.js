@@ -424,6 +424,7 @@ export default class Break extends React.Component {
     this.props.navigation.navigate('NotificationScreen');
   }
   async setofflineData(attendanceData) {
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
     var today = moment(new Date());
     var dataToPush = [];
     dataToPush.push(attendanceData);
@@ -444,7 +445,7 @@ export default class Break extends React.Component {
     } else {
       Utilities.saveToStorage('attendanceData', dataToPush);
     }
-console.log(`after first iff dta ${todayTimePrevArray}`)
+    console.log(`after first iff dta ${todayTimePrevArray}`)
     if (todayTimePrevArray !== null && todayTimePrevArray !== '') {
       console.log("inner iffi fififififi")
       var todayTimePrevArrayPArsed = JSON.parse(todayTimePrevArray);
@@ -482,6 +483,10 @@ console.log(`after first iff dta ${todayTimePrevArray}`)
   }
 
   async setofflineDataEndDuty(attendanceData) {
+
+
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
+
     console.log( `end duty offline called`)
     var today = moment(new Date());
     var dataToPush = [];

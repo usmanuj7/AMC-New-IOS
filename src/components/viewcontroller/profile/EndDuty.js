@@ -212,6 +212,7 @@ export default class EndDuty extends React.Component {
 
 
   async setofflineData(attendanceData) {
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
      
     var dataToPush = [];
     dataToPush.push(attendanceData);

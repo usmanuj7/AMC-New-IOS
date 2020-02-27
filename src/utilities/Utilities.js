@@ -171,6 +171,8 @@ export default class Utilities extends React.Component {
 
   static async sendLocalStorageToServer() {
     
+    AsyncStorage.setItem('lastNetworkStatus', `online`);
+    
     const todayTimeDataArray = await AsyncStorage.getItem('todayTime');
     const profileData = await AsyncStorage.getItem('profileData');
     NetInfo.fetch().then(state => {
@@ -183,7 +185,7 @@ export default class Utilities extends React.Component {
         }
         console.log(`today time array ${JSON.stringify(todayTimeDataArray)}`)
         console.log(`profile is ${JSON.stringify(profileData)}`)
-        debugger
+        // debugger
         var Leave = { staffid: JSON.parse(profileData)._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
         WebServicesManager.callPostMethodAttendanceOffline({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
           (statusCode, response) => {
@@ -350,7 +352,7 @@ export default class Utilities extends React.Component {
               Utilities.saveToStorage("todayTime", dataToPush);
               Utilities.saveToStorage("lastEntry", dataToPush[dataToPush.length - 1]);
               console.log(`app level is ${dataToPush[dataToPush.length - 1].title}`)
-              debugger
+              // debugger
               if(dataToPush[dataToPush.length - 1].title==="StartDuty")
               {
                 AsyncStorage.setItem('appLevel', "BreakScreen");

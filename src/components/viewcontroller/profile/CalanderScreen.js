@@ -383,6 +383,7 @@ export default class CalanderScreen extends React.Component {
     async getOfflineStorageData() {
          
         var today = moment(new Date());
+        console.log(`today plus  ${today}`)
         var offlineApplevel = await AsyncStorage.getItem("attendanceData");
         var lastEntry = await AsyncStorage.getItem("lastEntry");
 
@@ -392,7 +393,9 @@ export default class CalanderScreen extends React.Component {
     // debugger
         if (lastEntry !== null) {
           var lastEntryData = JSON.parse(lastEntry);
-          if (today.diff(lastEntryData.date, 'days') !== 0) {
+        //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
             var lastEntry = await AsyncStorage.setItem("lastEntry", "");
             this.props.navigation.navigate("DashboardScreen");
           }

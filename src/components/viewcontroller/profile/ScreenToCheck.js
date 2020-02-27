@@ -30,7 +30,6 @@ import SigninDataLogsModel from '../../Models/SigninDataLogsModel';
 
 export default class ScreenToCheck extends React.Component {
   WebServicesManager = new WebServicesManager();
-   checkForSync = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -395,7 +394,10 @@ export default class ScreenToCheck extends React.Component {
         }
       }
     } else {
+
       if (attendance_id === 'undefined' || attendance_id === null) {
+
+        // debugger
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(new Date()).format('YYYY-MM-DD'),
@@ -541,15 +543,24 @@ export default class ScreenToCheck extends React.Component {
           },
         );
       } else {
+        
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(new Date()).format('YYYY-MM-DD'),
         };
+       
+        console.log(`body is ${JSON.stringify(Leave.clock_date)}  ${JSON.stringify(Leave.staffid)}`)
+        // debugger
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
+
+           
             if (Utilities.checkAPICallStatus(statusCode)) {
+              console.log(`data is ${JSON.stringify(response.attendance_data)}`)
+              // debugger
               if (response.attendance_data.length === 0) {
+                // debugger
                 this.setState({isLoadingIndicator: false});
                 this.props.navigation.navigate('DashboardScreen');
               } else {
@@ -558,6 +569,7 @@ export default class ScreenToCheck extends React.Component {
                     k => k.is_manual == 2 && k.status == 101,
                   ) !== undefined
                 ) {
+                  // debugger
                   constants.attendance_id =
                     response.attendance_data[0].attendance_id;
                   this.setState({isLoadingIndicator: false});
@@ -568,6 +580,8 @@ export default class ScreenToCheck extends React.Component {
                 } else {
                   constants.attendance_id =
                     response.attendance_data[0].attendance_id;
+                    console.log(`app level ${appLevel}`)
+                    // debugger
                   if (appLevel !== null) {
                     this.setState({isLoadingIndicator: false});
                     if (appLevel === 'BreakScreen')
@@ -602,34 +616,21 @@ export default class ScreenToCheck extends React.Component {
       }
     }
   }
-
-  async componentWillMount(){
-    debugger
-    const _loginDone= await AsyncStorage.getItem('loginDone')
-    if(_loginDone !== null){
-     await Utilities.sendLocalStorageToServer();
-     this.checkForSync = true
-     this.componentDidMount()
-      console.log(`if login done is ${_loginDone}`)
-    }else{
-      this.checkForSync = true
-      this.componentDidMount()
-      console.log(`else login done is ${_loginDone}`)
-    }
+//   async componentWillMount(){
     
-    debugger
+//  await Utilities.sendLocalStorageToServer();
 
-  }
+// }
+
   async componentDidMount() {
-  if(this.checkForSync){
-    this.checkForSync = false
-    debugger
+   
     try {
       SplashScreen.hide();
       var date = new Date();
 
       var prevDate = date.setDate(date.getDate() - 1);
       var appLevel = await AsyncStorage.getItem('appLevel');
+
       this.setState({isLoadingIndicator: true});
       const profileData = await AsyncStorage.getItem('profileData');
 
@@ -642,6 +643,17 @@ export default class ScreenToCheck extends React.Component {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(prevDate).format('YYYY-MM-DD'),
         };
+        
+   var loginStatus = await AsyncStorage.getItem('loginDone');
+   var networkStatus = await AsyncStorage.getItem('lastNetworkStatus');
+   if(loginStatus !== null && networkStatus !==null && networkStatus !=="online"){
+     debugger
+     Utilities.sendLocalStorageToServer();
+     this.setState({isLoadingIndicator: false});
+     this.getOfflineStorageData()
+   }
+else{
+        debugger
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
@@ -682,16 +694,19 @@ export default class ScreenToCheck extends React.Component {
                 );
               }
               console.log(
-                `all daily logs ${JSON.stringify(dailyLogsModelDataSource)}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,
+                `all daily logs ${JSON.stringify(dailyLogsModelDataSource[0])}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,
               );
-              
-              this.checkNotif(
-                dailyLogsModelDataSource,
-                attendance_id,
-                profileData,
-                moment(prevDate).format('YYYY-MM-DD'),
-                appLevel,
-              );
+             
+              // debugger
+                this.checkNotif(
+                  dailyLogsModelDataSource,
+                  attendance_id,
+                  profileData,
+                  moment(prevDate).format('YYYY-MM-DD'),
+                  appLevel,
+                );
+            
+     
               this.setState({
                 dailyLogsModelDataSource: dailyLogsModelDataSource,
               });
@@ -702,6 +717,8 @@ export default class ScreenToCheck extends React.Component {
             }
           },
         );
+
+      }
       } else {
         this.setState({isLoadingIndicator: false});
         this.props.navigation.navigate('SigninScreen');
@@ -710,12 +727,12 @@ export default class ScreenToCheck extends React.Component {
       console.log(`my custom error error ${e}`);
     }
   }
-  }
 
   componentDidCatch(error) {
     console.log(`my custom componentDidCatch error ${error} `);
   }
   async getOfflineStorageData() {
+  
     var today = moment(new Date());
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
 
@@ -731,9 +748,9 @@ export default class ScreenToCheck extends React.Component {
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      // debugger
-
-      if (today.diff(lastEntryData.date, 'days') !== 0) {
+      debugger
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
         this.props.navigation.navigate('DashboardScreen');
       } else {

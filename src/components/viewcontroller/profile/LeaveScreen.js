@@ -442,7 +442,9 @@ export default class LeaveScreen extends React.Component {
     var lastEntry = await AsyncStorage.getItem('lastEntry');
     if (lastEntry !== null) {
       var lastEntryData = JSON.parse(lastEntry);
-      if (today.diff(lastEntryData.date, 'days') !== 0) {
+      // if (today.diff(lastEntryData.date, 'days') !== 0) {
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
         this.props.navigation.navigate('DashboardScreen');
       } else {

@@ -323,6 +323,9 @@ export default class Dashboard extends React.Component {
   }
 
   async setofflineData(attendanceData) {
+
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
+
     // debugger
     var dataToPush = [];
     var today = moment(new Date());
