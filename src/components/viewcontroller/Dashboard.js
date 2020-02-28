@@ -199,8 +199,8 @@ export default class Dashboard extends React.Component {
                   this.props.navigation.navigate("BreakScreen");
                 if (appLevel === "DashboardScreen")
                   this.props.navigation.navigate("DashboardScreen");
-                // else if (appLevel === "EndDutyScreen")
-                //   this.props.navigation.navigate("EndDutyScreen");
+                else if (appLevel === "EndDutyScreen")
+                  this.props.navigation.navigate("EndDutyScreen");
               }
               else {
                 this.setState({ isLoadingIndicator: false })
