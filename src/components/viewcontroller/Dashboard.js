@@ -191,11 +191,13 @@ export default class Dashboard extends React.Component {
                 this.props.navigation.navigate("AlreadyLoggedScreen", { attendanceData: response.attendance_data });
               }
               console.log(`app level ${appLevel}`)
-              debugger
+              // debugger
               if (appLevel !== null) {
                 this.setState({ isLoadingIndicator: false })
-                if (appLevel === "BreakScreen")
+                if (appLevel === "BreakScreen"){
                   this.props.navigation.navigate("BreakScreen");
+                
+                }
                 if (appLevel === "DashboardScreen")
                   {
                     this.props.navigation.navigate("DashboardScreen");
@@ -211,7 +213,7 @@ export default class Dashboard extends React.Component {
               }
             }
             else {
-              debugger
+              // debugger
               this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
@@ -240,7 +242,7 @@ export default class Dashboard extends React.Component {
 
     console.log('offline storage called');
     console.log(`last entry is  ${lastEntry}`);
-debugger
+
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);

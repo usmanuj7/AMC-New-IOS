@@ -102,6 +102,7 @@ export default class Break extends React.Component {
     return true;
   };
   async componentWillMount() {
+    this.getOfflineStorageData();
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
 
     console.log(`start duty checking ${startDutyTimeToday}`)
@@ -158,6 +159,69 @@ export default class Break extends React.Component {
     }
   }
 
+
+  async getOfflineStorageData() {
+  
+    var today = moment(new Date());
+    // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+
+    var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
+    console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+debugger
+    if (lastEntry !== null) {
+      console.log('in if loop');
+      var lastEntryData = JSON.parse(lastEntry);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+      // debugger
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+        var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        this.props.navigation.navigate('DashboardScreen');
+      } else {
+        if (lastEntryData.title === 'StartDuty') {
+          let check = false;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
+        } else if (lastEntryData.title === 'StartBreak') {
+          this.props.navigation.navigate('EndDutyScreen');
+        } else if (lastEntryData.title === 'EndDuty') {
+          this.props.navigation.navigate('AlreadyLoggedScreen');
+        } else if (lastEntryData.title === 'EndBreak') {
+          this.props.navigation.navigate('BreakScreen');
+        } else {
+          this.props.navigation.navigate('DashboardScreen');
+        }
+      }
+    } else {
+
+      var check = await AsyncStorage.getItem('appLevelCheckIs');
+      // debugger
+         if(check == "End Duty"){
+          //  debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+          //  debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+      // this.props.navigation.navigate('DashboardScreen');
+    }
+  }
   async handleStartBreak() {
     console.log("start breat above loading true")
    this.setState({isLoadingIndicator: true});
