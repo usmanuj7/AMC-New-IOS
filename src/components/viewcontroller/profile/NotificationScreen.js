@@ -217,6 +217,7 @@ export default class NotificationScreen extends React.Component {
     var weekDayName = moment(item.item.date).format('dddd');
     return (
       <TouchableOpacity
+      onPress={this.markNotificationReaded()}
         style={styles.rowColFront}>
 
         <View style={{ flex: 1, justifyContent: 'flex-start' }}>
@@ -273,6 +274,24 @@ export default class NotificationScreen extends React.Component {
 //   }
 // }
   }
+  async markNotificationReaded(){
+    const profile = await AsyncStorage.getItem('profileData');
+    if (profile !== null) {
+        var profileData = JSON.parse(profile);
+     
+
+        var staffData = { staffid: profileData._staffid };
+
+    var staffData = { staffid: profileData._staffid };
+  this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "set_notifications_read_mobile" },
+    (statusCode, response) => {
+      if (Utilities.checkAPICallStatus(statusCode)) {
+
+      }
+    })
+    }
+  }
+
   pressNotification() {
     constants.noificationCount = 0;
     this.props.navigation.navigate("NotificationScreen");

@@ -175,6 +175,8 @@ export default class Break extends React.Component {
           var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(
             response.attendance_data,
           );
+          console.log(`data atandance is ${JSON.stringify(dailyLogsModelDataSource)} and length is ${dailyLogsModelDataSource.length}`)
+          debugger
           if (dailyLogsModelDataSource.length > 0) {
             var attendence = {
               title: 'StartBreak',
@@ -260,6 +262,19 @@ export default class Break extends React.Component {
               },
             );
           }
+          else{
+
+            this.setState({isLoadingIndicator: false});
+            this.dropDownAlertRef.alertWithType(
+              'info',
+              'Alert',
+              'Please mark attendance first',
+            );
+            setTimeout(() => {
+              this.props.navigation.navigate('DashboardScreen');
+            }, 3000);
+
+          }
         } else if (statusCode === 400) {
           console.log('offline start break called');
           var attendence = {
@@ -278,6 +293,7 @@ export default class Break extends React.Component {
           this.setofflineData(attendence);
           // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
+  
       },
     );
   }
@@ -399,6 +415,20 @@ export default class Break extends React.Component {
               },
             );
           }
+          else{
+
+            this.setState({isLoadingIndicator: false});
+            this.dropDownAlertRef.alertWithType(
+              'info',
+              'Alert',
+              'Please mark attendance first',
+            );
+            setTimeout(() => {
+              this.props.navigation.navigate('DashboardScreen');
+            }, 3000);
+
+          }
+
         } else if (statusCode === 400) {
           var attendence = {
             title: 'EndDuty',

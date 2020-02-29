@@ -168,7 +168,6 @@ export default class Dashboard extends React.Component {
       var Leave = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(prevDate).format('YYYY-MM-DD') };
       this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
         (statusCode, response) => {
-
           if (Utilities.checkAPICallStatus(statusCode)) {
             var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(response.attendance_data);
             this.checkNotif(dailyLogsModelDataSource, moment(prevDate).format('YYYY-MM-DD'));
@@ -184,7 +183,6 @@ export default class Dashboard extends React.Component {
       var Leave = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
       this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
         (statusCode, response) => {
-
           if (Utilities.checkAPICallStatus(statusCode)) {
 
             if (response.attendance_data.length > 0) {
@@ -192,13 +190,18 @@ export default class Dashboard extends React.Component {
                 this.setState({ isLoadingIndicator: false });
                 this.props.navigation.navigate("AlreadyLoggedScreen", { attendanceData: response.attendance_data });
               }
-
+              console.log(`app level ${appLevel}`)
+              debugger
               if (appLevel !== null) {
                 this.setState({ isLoadingIndicator: false })
                 if (appLevel === "BreakScreen")
                   this.props.navigation.navigate("BreakScreen");
                 if (appLevel === "DashboardScreen")
-                  this.props.navigation.navigate("DashboardScreen");
+                  {
+                    this.props.navigation.navigate("DashboardScreen");
+                    this.getOfflineStorageData();
+                  }
+                  
                 else if (appLevel === "EndDutyScreen")
                   this.props.navigation.navigate("EndDutyScreen");
               }
@@ -208,6 +211,8 @@ export default class Dashboard extends React.Component {
               }
             }
             else {
+              debugger
+              this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
             }
@@ -222,6 +227,71 @@ export default class Dashboard extends React.Component {
 
     }
   }
+
+  
+  async getOfflineStorageData() {
+  
+    var today = moment(new Date());
+    // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+
+    var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
+    console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+debugger
+    if (lastEntry !== null) {
+      console.log('in if loop');
+      var lastEntryData = JSON.parse(lastEntry);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+      // debugger
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+        var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        this.props.navigation.navigate('DashboardScreen');
+      } else {
+        if (lastEntryData.title === 'StartDuty') {
+          let check = false;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
+        } else if (lastEntryData.title === 'StartBreak') {
+          this.props.navigation.navigate('EndDutyScreen');
+        } else if (lastEntryData.title === 'EndDuty') {
+          this.props.navigation.navigate('AlreadyLoggedScreen');
+        } else if (lastEntryData.title === 'EndBreak') {
+          this.props.navigation.navigate('BreakScreen');
+        } else {
+          this.props.navigation.navigate('DashboardScreen');
+        }
+      }
+    } else {
+
+      var check = await AsyncStorage.getItem('appLevelCheckIs');
+      // debugger
+         if(check == "End Duty"){
+          //  debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+          //  debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+      // this.props.navigation.navigate('DashboardScreen');
+    }
+  }
+
 
   hideDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: false });
@@ -321,6 +391,7 @@ export default class Dashboard extends React.Component {
         });
     }
   }
+
 
   async setofflineData(attendanceData) {
 

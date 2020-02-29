@@ -647,13 +647,13 @@ export default class ScreenToCheck extends React.Component {
    var loginStatus = await AsyncStorage.getItem('loginDone');
    var networkStatus = await AsyncStorage.getItem('lastNetworkStatus');
    if(loginStatus !== null && networkStatus !==null && networkStatus !=="online"){
-     debugger
+    //  debugger
      Utilities.sendLocalStorageToServer();
      this.setState({isLoadingIndicator: false});
      this.getOfflineStorageData()
    }
 else{
-        debugger
+        // debugger
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
@@ -734,6 +734,9 @@ else{
   async getOfflineStorageData() {
   
     var today = moment(new Date());
+    // var date = new Date();
+    // var prevDate = date.setDate(date.getDate() + 1);
+    // var today =  moment(prevDate);
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
 
     var lastEntry = await AsyncStorage.getItem('lastEntry');
@@ -748,7 +751,7 @@ else{
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      debugger
+      // debugger
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
