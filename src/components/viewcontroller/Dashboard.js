@@ -152,6 +152,7 @@ export default class Dashboard extends React.Component {
   }
   async componentWillMount() {
     console.log("dashboard components will mount")
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
 
     this.setState({ isLoadingIndicator: true, noificationCount: constants.noificationCount });
     var date = new Date();
@@ -191,7 +192,7 @@ export default class Dashboard extends React.Component {
                 this.props.navigation.navigate("AlreadyLoggedScreen", { attendanceData: response.attendance_data });
               }
               console.log(`app level ${appLevel}`)
-              // debugger
+              debugger
               if (appLevel !== null) {
                 this.setState({ isLoadingIndicator: false })
                 if (appLevel === "BreakScreen"){
@@ -200,7 +201,9 @@ export default class Dashboard extends React.Component {
                 }
                 if (appLevel === "DashboardScreen")
                   {
+                    
                     this.props.navigation.navigate("DashboardScreen");
+                    if(isScreentoCheck === "yes")
                     this.getOfflineStorageData();
                   }
                   
@@ -213,7 +216,8 @@ export default class Dashboard extends React.Component {
               }
             }
             else {
-              // debugger
+              debugger
+              if(isScreentoCheck === "yes")
               this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
@@ -232,6 +236,7 @@ export default class Dashboard extends React.Component {
 
   
   async getOfflineStorageData() {
+    AsyncStorage.setItem('isScreenToCheck', '');
   
     var today = moment(new Date());
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
@@ -248,7 +253,7 @@ export default class Dashboard extends React.Component {
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      // debugger
+      debugger
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');

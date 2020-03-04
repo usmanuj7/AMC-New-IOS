@@ -625,6 +625,9 @@ export default class ScreenToCheck extends React.Component {
   async componentDidMount() {
    
     try {
+      //for checking that last screen was screen to check
+      AsyncStorage.setItem('isScreenToCheck', 'yes');
+
       SplashScreen.hide();
       var date = new Date();
 

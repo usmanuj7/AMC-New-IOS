@@ -100,7 +100,8 @@ export default class EndDuty extends React.Component {
   }
   async  componentWillMount()
   {
-
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
+    if(isScreentoCheck === "yes")
     this.getOfflineStorageData()
     
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
@@ -133,7 +134,8 @@ export default class EndDuty extends React.Component {
 
 
   async getOfflineStorageData() {
-  
+    AsyncStorage.setItem('isScreenToCheck', '');
+  debugger
     var today = moment(new Date());
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
 

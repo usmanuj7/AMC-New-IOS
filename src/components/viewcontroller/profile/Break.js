@@ -102,6 +102,11 @@ export default class Break extends React.Component {
     return true;
   };
   async componentWillMount() {
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
+
+    console.log(`is check screen  value  == ${isScreentoCheck}`)
+    debugger
+    if(isScreentoCheck === "yes")
     this.getOfflineStorageData();
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
 
@@ -161,7 +166,9 @@ export default class Break extends React.Component {
 
 
   async getOfflineStorageData() {
-  
+  debugger
+    AsyncStorage.setItem('isScreenToCheck', '');
+
     var today = moment(new Date());
     // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
 
