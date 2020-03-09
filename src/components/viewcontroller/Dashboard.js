@@ -100,7 +100,8 @@ export default class Dashboard extends React.Component {
 
       if (isConnected == true) {
         this.setState({ connection_Status: "Online" })
-        Utilities.sendLocalStorageToServer();
+        // comment for only online mode
+        // Utilities.sendLocalStorageToServer();
       }
       else {
         this.setState({ connection_Status: "Offline" })
@@ -176,7 +177,9 @@ export default class Dashboard extends React.Component {
           }
           else if (statusCode === 400) {
             this.setState({ isLoadingIndicator: false });
-            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+
+            // uncomment for only online
+            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
           }
         });
@@ -192,7 +195,7 @@ export default class Dashboard extends React.Component {
                 this.props.navigation.navigate("AlreadyLoggedScreen", { attendanceData: response.attendance_data });
               }
               console.log(`app level ${appLevel}`)
-              debugger
+              
               if (appLevel !== null) {
                 this.setState({ isLoadingIndicator: false })
                 if (appLevel === "BreakScreen"){
@@ -203,8 +206,9 @@ export default class Dashboard extends React.Component {
                   {
                     
                     this.props.navigation.navigate("DashboardScreen");
-                    if(isScreentoCheck === "yes")
-                    this.getOfflineStorageData();
+            // comment for only online
+                    // if(isScreentoCheck === "yes")
+                    // this.getOfflineStorageData();
                   }
                   
                 else if (appLevel === "EndDutyScreen")
@@ -216,16 +220,18 @@ export default class Dashboard extends React.Component {
               }
             }
             else {
-              debugger
-              if(isScreentoCheck === "yes")
-              this.getOfflineStorageData();
+
+            // comment for only online
+              // if(isScreentoCheck === "yes")
+              // this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
             }
           }
           else if (statusCode === 400) {
             this.setState({ isLoadingIndicator: false });
-            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // uncomment for only online
+            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
           }
         })
 
@@ -382,13 +388,16 @@ export default class Dashboard extends React.Component {
             }
           }
           else if (statusCode === 400) {
-            var SearchesToSave = [];
-            var attendanceData = {
-              title: "StartDuty", date: date, staffid: this.state.profileDataSurce._staffid, clock_in: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
-            };
-            this.setofflineData(attendanceData);
-            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // comment for only online
+            // var SearchesToSave = [];
+            // var attendanceData = {
+            //   title: "StartDuty", date: date, staffid: this.state.profileDataSurce._staffid, clock_in: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
+            // };
+            // this.setofflineData(attendanceData);
 
+            // uncomment for only online
+            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            this.setState({isLoadingIndicator: false});
           }
           else if (response.responseCode === 403) {
             this.setState({ isLoadingIndicator: false });

@@ -90,7 +90,9 @@ export default class Break extends React.Component {
   }
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
-      if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
+      if (this.state.connectionCount == 1)
+      // comment for only online 
+      // Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
       this.setState({connection_Status: 'Offline'});
@@ -105,9 +107,9 @@ export default class Break extends React.Component {
     const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
 
     console.log(`is check screen  value  == ${isScreentoCheck}`)
-    debugger
-    if(isScreentoCheck === "yes")
-    this.getOfflineStorageData();
+    // comment for only online mode
+    // if(isScreentoCheck === "yes")
+    // this.getOfflineStorageData();
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
 
     console.log(`start duty checking ${startDutyTimeToday}`)
@@ -166,7 +168,7 @@ export default class Break extends React.Component {
 
 
   async getOfflineStorageData() {
-  debugger
+  
     AsyncStorage.setItem('isScreenToCheck', '');
 
     var today = moment(new Date());
@@ -294,21 +296,24 @@ debugger
                     );
                   });
                 } else if (statusCode === 400) {
-                  var attendence = {
-                    title: 'StartBreak',
-                    staffid: this.state.profileDataSurce._staffid,
-                    attendance_id: '',
-                    status: '101',
-                    swipe_time:
-                      new Date().getHours() +
-                      ':' +
-                      new Date().getMinutes() +
-                      ':' +
-                      new Date().getSeconds(),
-                    clock_date: moment(new Date()).format('YYYY-MM-DD'),
-                  };
-                  this.setofflineData(attendence);
-                  // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                  // var attendence = {
+                  //   title: 'StartBreak',
+                  //   staffid: this.state.profileDataSurce._staffid,
+                  //   attendance_id: '',
+                  //   status: '101',
+                  //   swipe_time:
+                  //     new Date().getHours() +
+                  //     ':' +
+                  //     new Date().getMinutes() +
+                  //     ':' +
+                  //     new Date().getSeconds(),
+                  //   clock_date: moment(new Date()).format('YYYY-MM-DD'),
+                  // };
+                  // this.setofflineData(attendence);
+
+                  // uncomment for only online mode
+                  this.setState({isLoadingIndicator: false}); 
+                  this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
                 } else if (response.responseCode === 403) {
                   this.setState({isLoadingIndicator: false});
                   this.dropDownAlertRef.alertWithType(
@@ -348,21 +353,25 @@ debugger
           }
         } else if (statusCode === 400) {
           console.log('offline start break called');
-          var attendence = {
-            title: 'StartBreak',
-            staffid: this.state.profileDataSurce._staffid,
-            attendance_id: '',
-            status: '101',
-            swipe_time:
-              new Date().getHours() +
-              ':' +
-              new Date().getMinutes() +
-              ':' +
-              new Date().getSeconds(),
-            clock_date: moment(new Date()).format('YYYY-MM-DD'),
-          };
-          this.setofflineData(attendence);
-          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // comment for online mode
+          // var attendence = {
+          //   title: 'StartBreak',
+          //   staffid: this.state.profileDataSurce._staffid,
+          //   attendance_id: '',
+          //   status: '101',
+          //   swipe_time:
+          //     new Date().getHours() +
+          //     ':' +
+          //     new Date().getMinutes() +
+          //     ':' +
+          //     new Date().getSeconds(),
+          //   clock_date: moment(new Date()).format('YYYY-MM-DD'),
+          // };
+          // this.setofflineData(attendence);
+
+          // uncomment for online mode
+          this.setState({isLoadingIndicator: false});
+          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
   
       },
@@ -447,21 +456,24 @@ debugger
                     },
                   );
                 } else if (statusCode === 400) {
-                  var attendence = {
-                    title: 'EndDuty',
-                    staffid: this.state.profileDataSurce._staffid,
-                    attendance_id: '',
-                    clock_out:
-                      new Date().getHours() +
-                      ':' +
-                      new Date().getMinutes() +
-                      ':' +
-                      new Date().getSeconds(),
-                    date: moment(new Date()).format('YYYY-MM-DD'),
-                  };
-                  this.setofflineDataEndDuty(attendence);
+                  // comment for only online mode
+                  // var attendence = {
+                  //   title: 'EndDuty',
+                  //   staffid: this.state.profileDataSurce._staffid,
+                  //   attendance_id: '',
+                  //   clock_out:
+                  //     new Date().getHours() +
+                  //     ':' +
+                  //     new Date().getMinutes() +
+                  //     ':' +
+                  //     new Date().getSeconds(),
+                  //   date: moment(new Date()).format('YYYY-MM-DD'),
+                  // };
+                  // this.setofflineDataEndDuty(attendence);
 
-                  // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                  //uncomment only for online mode
+                  this.setState({isLoadingIndicator: false}); 
+                  this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
                 } else if (response.responseCode === 403) {
                   this.setState({isLoadingIndicator: false});
                   this.dropDownAlertRef.alertWithType(
@@ -501,21 +513,23 @@ debugger
           }
 
         } else if (statusCode === 400) {
-          var attendence = {
-            title: 'EndDuty',
-            staffid: this.state.profileDataSurce._staffid,
-            attendance_id: '',
-            clock_out:
-              new Date().getHours() +
-              ':' +
-              new Date().getMinutes() +
-              ':' +
-              new Date().getSeconds(),
-            date: moment(new Date()).format('YYYY-MM-DD'),
-          };
-          this.setofflineDataEndDuty(attendence);
-
-          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // comment for online
+          // var attendence = {
+          //   title: 'EndDuty',
+          //   staffid: this.state.profileDataSurce._staffid,
+          //   attendance_id: '',
+          //   clock_out:
+          //     new Date().getHours() +
+          //     ':' +
+          //     new Date().getMinutes() +
+          //     ':' +
+          //     new Date().getSeconds(),
+          //   date: moment(new Date()).format('YYYY-MM-DD'),
+          // };
+          // this.setofflineDataEndDuty(attendence);
+          //uncomment for online 
+          this.setState({isLoadingIndicator: false}); 
+          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
       },
     );

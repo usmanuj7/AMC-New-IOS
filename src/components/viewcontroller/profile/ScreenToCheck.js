@@ -49,7 +49,8 @@ export default class ScreenToCheck extends React.Component {
     appLevel,
   ) {
 
-    Utilities.sendLocalStorageToServer();
+    // comment for only online mode
+    // Utilities.sendLocalStorageToServer();
     var staffData = {staffid: JSON.parse(profileData)._staffid};
     console.log(`staff Data ${staffData}`);
     this.WebServicesManager.postApiCallAttendence(
@@ -649,13 +650,16 @@ export default class ScreenToCheck extends React.Component {
         
    var loginStatus = await AsyncStorage.getItem('loginDone');
    var networkStatus = await AsyncStorage.getItem('lastNetworkStatus');
-   if(loginStatus !== null && networkStatus !==null && networkStatus !=="online"){
-    //  debugger
-     Utilities.sendLocalStorageToServer();
-     this.setState({isLoadingIndicator: false});
-     this.getOfflineStorageData()
-   }
-else{
+
+
+   // comment for only online
+//    if(loginStatus !== null && networkStatus !==null && networkStatus !=="online"){
+    
+//      Utilities.sendLocalStorageToServer();
+//      this.setState({isLoadingIndicator: false});
+//      this.getOfflineStorageData()
+//    }
+// else{
         // debugger
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
@@ -715,13 +719,14 @@ else{
               });
             } else if (statusCode === 400) {
               this.setState({isLoadingIndicator: false});
-              this.getOfflineStorageData();
-              // this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
+              // comment for only online mode
+              // this.getOfflineStorageData();
+              this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
             }
           },
         );
 
-      }
+     // }
       } else {
         this.setState({isLoadingIndicator: false});
         this.props.navigation.navigate('SigninScreen');

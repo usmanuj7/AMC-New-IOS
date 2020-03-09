@@ -239,15 +239,28 @@ export default class LeaveScreen extends React.Component {
                     );
                   }
                 } else if (statusCode === 400) {
+
+
+
                   this.setState({isLoadingIndicator: false});
-                  var leaveData = {
-                    staffID: this.state.profileDataSurce._staffid,
-                    leave_type: this.state.leaveTypeId,
-                    leave_from_date: this.state.checkedStartDate,
-                    leave_to_date: this.state.checkedEndDate,
-                    comments: this.state.comments,
-                  };
-                  this.setofflineDataLeave(leaveData);
+
+                  // comment for only online mode
+                  // var leaveData = {
+                  //   staffID: this.state.profileDataSurce._staffid,
+                  //   leave_type: this.state.leaveTypeId,
+                  //   leave_from_date: this.state.checkedStartDate,
+                  //   leave_to_date: this.state.checkedEndDate,
+                  //   comments: this.state.comments,
+                  // };
+                  // this.setofflineDataLeave(leaveData);
+
+                  // uncomment only for online mode
+                  this.dropDownAlertRef.alertWithType(
+                    'info',
+                    'Alert',
+                    'please connect the internet',
+                  );
+
                 } else if (response.responseCode === 403) {
                   this.setState({isLoadingIndicator: false});
                   this.dropDownAlertRef.alertWithType(
