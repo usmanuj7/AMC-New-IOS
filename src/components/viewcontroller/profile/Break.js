@@ -90,13 +90,13 @@ export default class Break extends React.Component {
   }
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
-      if (this.state.connectionCount == 1)
       // comment for only online 
+      // if (this.state.connectionCount == 1)
       // Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
       this.setState({connection_Status: 'Offline'});
-      this.setState({connectionCount: 1});
+      this.setState({connectionCount: 0}); // i changed this to 0 will need testing
     }
   };
   handleBackButton = () => {
@@ -722,7 +722,10 @@ debugger
                 underlineColorAndroid="transparent"
               />
             </View>
-            <View style={{flexDirection: 'row', marginTop: 20}}>
+
+  {        
+   this.state.connectionCount === 1 ?
+  <View style={{flexDirection: 'row', marginTop: 20}}>
               <Button
                 onPress={() => this.handleStartBreak()}
                 block
@@ -759,6 +762,10 @@ debugger
                 <Text style={styles.buttonTextSmall}>End Duty</Text>
               </Button>
             </View>
+            :null
+          }
+
+
           </View>
 
           <Footer style={{backgroundColor: constants.colorPurpleLight595278}}>

@@ -89,11 +89,13 @@ export default class AlreadyLoggedScreen extends Component {
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
       // debugger
-      if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
+      // comment for only online 
+      // if (this.state.connectionCount == 1) 
+      // Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
       this.setState({connection_Status: 'Offline'});
-      this.setState({connectionCount: 1});
+      this.setState({connectionCount: 0}); // i changed this to 0
     }
   };
 
@@ -237,7 +239,7 @@ export default class AlreadyLoggedScreen extends Component {
 
     console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
     console.log(`end duty time  ${JSON.stringify(startEndDutyToday)}`);
-    // debugger
+    debugger
 
     var startDutyTime;
     var EndBreakTime;

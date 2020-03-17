@@ -91,7 +91,7 @@ export default class EndDuty extends React.Component {
     }
     else {
       this.setState({ connection_Status: "Offline" });
-      this.setState({connectionCount:1});
+      this.setState({connectionCount:0});  // i changed this to 0
 
     }
   };
@@ -411,13 +411,16 @@ export default class EndDuty extends React.Component {
                 underlineColorAndroid="transparent"
               />
             </View>
-            <Button onPress={() => this.handleBreakEnd()} block style={{ margin: 18, borderRadius: 7, backgroundColor: constants.coloBlue2f2756, height: 45 }}>
+       {    
+          this.state.connectionCount === 1 ?
+       <Button onPress={() => this.handleBreakEnd()} block style={{ margin: 18, borderRadius: 7, backgroundColor: constants.coloBlue2f2756, height: 45 }}>
               <Image source={require('../../../ImageAssets/cup.png')} style={{ width: 20, height: 20, padding: 5, marginRight: 20 }} />
               <Text style={styles.buttonTextSmall}>
                 End Break
                              </Text>
             </Button>
-
+            :null
+}
           </View>
 
 

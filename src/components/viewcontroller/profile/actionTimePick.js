@@ -227,13 +227,13 @@ export default class ActionTimePick extends React.Component {
     );
   }
 
-  async saveToStorage(attendanceData) {
-    await Utilities.saveToStorage('lastEntry', attendanceData);
-    await Utilities.saveToStorage('startDutyTimeToday', attendanceData);
-    setTimeout(() => {
-      this.props.navigation.navigate('CalanderScreen');
-    }, 3000);
-  }
+  // async saveToStorage(attendanceData) {
+  //   await Utilities.saveToStorage('lastEntry', attendanceData);
+  //   await Utilities.saveToStorage('startDutyTimeToday', attendanceData);
+  //   setTimeout(() => {
+  //     this.props.navigation.navigate('CalanderScreen');
+  //   }, 3000);
+  // }
   getTimeData(title){
 
     var _date = this.props.navigation.state.params.selectedItem._clock_date;
@@ -391,7 +391,7 @@ currentDayChecks(){
                       ':' +
                       '00',
                   };
-                  Utilities.saveToStorage('lastEntry', attendanceData);
+                  // Utilities.saveToStorage('lastEntry', attendanceData);
                   Utilities.saveToStorage('startDutyTimeToday', attendanceData);
                 }
               }
@@ -442,7 +442,7 @@ currentDayChecks(){
                     `attandance data is  ${JSON.stringify(attendanceData1)}`,
                   );
                   // debugger;
-                   Utilities.saveToStorage("lastEntry", attendanceData1);
+                  //  Utilities.saveToStorage("lastEntry", attendanceData1);
                   Utilities.saveToStorage('startEndDutyToday', attendanceData1);
                 }
               }
@@ -475,7 +475,7 @@ currentDayChecks(){
                   ':' +
                   '00',
               };
-              Utilities.saveToStorage('lastEntry', attendanceData);
+              // Utilities.saveToStorage('lastEntry', attendanceData);
               Utilities.saveToStorage('startDutyTimeToday', attendanceData);
               Utilities.saveToStorage('todayTime', todayAttemArray);
               setTimeout(() => {
@@ -505,7 +505,7 @@ currentDayChecks(){
                   ':' +
                   '00',
               };
-              Utilities.saveToStorage('lastEntry', attendanceData);
+              // Utilities.saveToStorage('lastEntry', attendanceData);
               Utilities.saveToStorage('startEndDutyToday', attendanceData);
               Utilities.saveToStorage('todayTime', todayAttemArray);
               setTimeout(() => {

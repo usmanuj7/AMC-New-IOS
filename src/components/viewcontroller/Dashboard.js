@@ -316,7 +316,8 @@ export default class Dashboard extends React.Component {
   };
 
   async startDuty() {
-    
+    await AsyncStorage.setItem('lastEntry', '');
+   await AsyncStorage.setItem('todayTime','');
     const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
     var date = '';
     var today = moment(new Date());
@@ -530,12 +531,14 @@ export default class Dashboard extends React.Component {
                 />
               </TouchableOpacity>
             </View>
-            <Button onPress={() => this.startDuty()} block style={{ margin: 18, borderRadius: 7, backgroundColor: constants.colorRed9d0000, height: 40 }}>
+           { 
+            this.state.connectionCount ===1 ?
+           <Button onPress={() => this.startDuty()} block style={{ margin: 18, borderRadius: 7, backgroundColor: constants.colorRed9d0000, height: 40 }}>
               <MaterialCommunityIcons name="clock-start" style={{ marginRight: 10 }} color='white' size={24} />
               <Text style={styles.buttonTextSmall}>
                 Start Duty
               </Text>
-            </Button>
+            </Button>: null}
 
           </View>
 

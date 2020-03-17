@@ -97,6 +97,7 @@ export default class ScreenToCheck extends React.Component {
                       if (attendance_data !== undefined) {
                         if (attendance_data.length === 0) {
                           this.setState({isLoadingIndicator: false});
+                        
                           this.props.navigation.navigate('DashboardScreen');
                         } else {
                           if (attendance_data[0]._title === 'Start Break') {
@@ -720,8 +721,8 @@ export default class ScreenToCheck extends React.Component {
             } else if (statusCode === 400) {
               this.setState({isLoadingIndicator: false});
               // comment for only online mode
-              // this.getOfflineStorageData();
-              this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
+              this.getOfflineStorageData();
+              // this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
             }
           },
         );
@@ -753,16 +754,17 @@ export default class ScreenToCheck extends React.Component {
 
     console.log('offline storage called');
     console.log(`last entry is  ${lastEntry}`);
-// debugger
+
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      // debugger
+      debugger
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        await AsyncStorage.setItem('todayTime','')
         this.props.navigation.navigate('DashboardScreen');
       } else {
         if (lastEntryData.title === 'StartDuty') {
@@ -776,8 +778,10 @@ export default class ScreenToCheck extends React.Component {
           }
 
           if (check) {
+            debugger
             this.props.navigation.navigate('AlreadyLoggedScreen');
           } else {
+            debugger
             this.props.navigation.navigate('BreakScreen');
           }
         } else if (lastEntryData.title === 'StartBreak') {
@@ -787,19 +791,25 @@ export default class ScreenToCheck extends React.Component {
         } else if (lastEntryData.title === 'EndBreak') {
           this.props.navigation.navigate('BreakScreen');
         } else {
+          debugger
+          var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+          await AsyncStorage.setItem('todayTime','')
           this.props.navigation.navigate('DashboardScreen');
         }
       }
     } else {
 
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-      // debugger
+      debugger
          if(check == "End Duty"){
           //  debugger
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-          //  debugger
+           debugger
+          var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+          await AsyncStorage.setItem('todayTime','')
            this.props.navigation.navigate("DashboardScreen");
+
          }
       // this.props.navigation.navigate('DashboardScreen');
     }
