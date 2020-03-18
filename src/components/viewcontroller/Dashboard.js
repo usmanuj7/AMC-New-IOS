@@ -101,7 +101,7 @@ export default class Dashboard extends React.Component {
       if (isConnected == true) {
         this.setState({ connection_Status: "Online" })
         // comment for only online mode
-        // Utilities.sendLocalStorageToServer();
+        Utilities.sendLocalStorageToServer();
       }
       else {
         this.setState({ connection_Status: "Offline" })
@@ -179,7 +179,7 @@ export default class Dashboard extends React.Component {
             this.setState({ isLoadingIndicator: false });
 
             // uncomment for only online
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
           }
         });
@@ -207,8 +207,8 @@ export default class Dashboard extends React.Component {
                     
                     this.props.navigation.navigate("DashboardScreen");
             // comment for only online
-                    // if(isScreentoCheck === "yes")
-                    // this.getOfflineStorageData();
+                    if(isScreentoCheck === "yes")
+                    this.getOfflineStorageData();
                   }
                   
                 else if (appLevel === "EndDutyScreen")
@@ -222,8 +222,8 @@ export default class Dashboard extends React.Component {
             else {
 
             // comment for only online
-              // if(isScreentoCheck === "yes")
-              // this.getOfflineStorageData();
+              if(isScreentoCheck === "yes")
+              this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
             }
@@ -231,7 +231,7 @@ export default class Dashboard extends React.Component {
           else if (statusCode === 400) {
             this.setState({ isLoadingIndicator: false });
             // uncomment for only online
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
           }
         })
 
@@ -389,15 +389,15 @@ export default class Dashboard extends React.Component {
           }
           else if (statusCode === 400) {
             // comment for only online
-            // var SearchesToSave = [];
-            // var attendanceData = {
-            //   title: "StartDuty", date: date, staffid: this.state.profileDataSurce._staffid, clock_in: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
-            // };
-            // this.setofflineData(attendanceData);
+            var SearchesToSave = [];
+            var attendanceData = {
+              title: "StartDuty", date: date, staffid: this.state.profileDataSurce._staffid, clock_in: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
+            };
+            this.setofflineData(attendanceData);
 
             // uncomment for only online
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
-            this.setState({isLoadingIndicator: false});
+            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // this.setState({isLoadingIndicator: false});
           }
           else if (response.responseCode === 403) {
             this.setState({ isLoadingIndicator: false });

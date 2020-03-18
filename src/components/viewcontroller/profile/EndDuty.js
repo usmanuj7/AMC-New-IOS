@@ -84,7 +84,7 @@ export default class EndDuty extends React.Component {
       if(this.state.connectionCount==1)
       {
         // comment for only online mode
-        // Utilities.sendLocalStorageToServer();
+        Utilities.sendLocalStorageToServer();
       }
        this.setState({connectionCount:1});
        
@@ -103,8 +103,8 @@ export default class EndDuty extends React.Component {
   {
     const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
     // comment for only online mode
-    // if(isScreentoCheck === "yes")
-    // this.getOfflineStorageData()
+    if(isScreentoCheck === "yes")
+    this.getOfflineStorageData()
     
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     
@@ -249,16 +249,16 @@ export default class EndDuty extends React.Component {
         else if (statusCode === 400) {
 
 // comment for only online
-          // var attendence = {
-          //   title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
-          //   status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
-          //     moment(new Date()).format("YYYY-MM-DD")
-          // };
-          // this.setofflineData(attendence);
+          var attendence = {
+            title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
+            status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
+              moment(new Date()).format("YYYY-MM-DD")
+          };
+          this.setofflineData(attendence);
 
           // uncomment of only online mode
-          this.setState({isLoadingIndicator: false}); 
-          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // this.setState({isLoadingIndicator: false}); 
+          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
         }
         else if (response.responseCode === 403) {
@@ -291,16 +291,16 @@ export default class EndDuty extends React.Component {
         else if (statusCode === 400) {
 
           // comment for only online mode
-          // var attendence = {
-          //   title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
-          //   status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
-          //     moment(new Date()).format("YYYY-MM-DD")
-          // };
-          // this.setofflineData(attendence);
+          var attendence = {
+            title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
+            status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
+              moment(new Date()).format("YYYY-MM-DD")
+          };
+          this.setofflineData(attendence);
 
           // uncomment only for online mode
-          this.setState({isLoadingIndicator: false}); 
-          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // this.setState({isLoadingIndicator: false}); 
+          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
         }
       })
