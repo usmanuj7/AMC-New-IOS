@@ -180,13 +180,13 @@ export default class Break extends React.Component {
 
     console.log('offline storage called');
     console.log(`last entry is  ${lastEntry}`);
-debugger
+
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      // debugger
+  
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
@@ -220,12 +220,12 @@ debugger
     } else {
 
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-      // debugger
+
          if(check == "End Duty"){
-          //  debugger
+
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-          //  debugger
+       
            this.props.navigation.navigate("DashboardScreen");
          }
       // this.props.navigation.navigate('DashboardScreen');
@@ -233,6 +233,7 @@ debugger
   }
   async handleStartBreak() {
     console.log("start breat above loading true")
+
    this.setState({isLoadingIndicator: true});
     const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
     var today = moment(new Date());
@@ -249,7 +250,7 @@ debugger
             response.attendance_data,
           );
           console.log(`data atandance is ${JSON.stringify(dailyLogsModelDataSource)} and length is ${dailyLogsModelDataSource.length}`)
-          debugger
+         
           if (dailyLogsModelDataSource.length > 0) {
             var attendence = {
               title: 'StartBreak',
@@ -354,24 +355,24 @@ debugger
         } else if (statusCode === 400) {
           console.log('offline start break called');
           // comment for online mode
-          // var attendence = {
-          //   title: 'StartBreak',
-          //   staffid: this.state.profileDataSurce._staffid,
-          //   attendance_id: '',
-          //   status: '101',
-          //   swipe_time:
-          //     new Date().getHours() +
-          //     ':' +
-          //     new Date().getMinutes() +
-          //     ':' +
-          //     new Date().getSeconds(),
-          //   clock_date: moment(new Date()).format('YYYY-MM-DD'),
-          // };
-          // this.setofflineData(attendence);
+          var attendence = {
+            title: 'StartBreak',
+            staffid: this.state.profileDataSurce._staffid,
+            attendance_id: '',
+            status: '101',
+            swipe_time:
+              new Date().getHours() +
+              ':' +
+              new Date().getMinutes() +
+              ':' +
+              new Date().getSeconds(),
+            clock_date: moment(new Date()).format('YYYY-MM-DD'),
+          };
+          this.setofflineData(attendence);
 
           // uncomment for online mode
-          this.setState({isLoadingIndicator: false});
-          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // this.setState({isLoadingIndicator: false});
+          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
   
       },
@@ -514,22 +515,22 @@ debugger
 
         } else if (statusCode === 400) {
           // comment for online
-          // var attendence = {
-          //   title: 'EndDuty',
-          //   staffid: this.state.profileDataSurce._staffid,
-          //   attendance_id: '',
-          //   clock_out:
-          //     new Date().getHours() +
-          //     ':' +
-          //     new Date().getMinutes() +
-          //     ':' +
-          //     new Date().getSeconds(),
-          //   date: moment(new Date()).format('YYYY-MM-DD'),
-          // };
-          // this.setofflineDataEndDuty(attendence);
+          var attendence = {
+            title: 'EndDuty',
+            staffid: this.state.profileDataSurce._staffid,
+            attendance_id: '',
+            clock_out:
+              new Date().getHours() +
+              ':' +
+              new Date().getMinutes() +
+              ':' +
+              new Date().getSeconds(),
+            date: moment(new Date()).format('YYYY-MM-DD'),
+          };
+          this.setofflineDataEndDuty(attendence);
           //uncomment for online 
-          this.setState({isLoadingIndicator: false}); 
-          this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+          // this.setState({isLoadingIndicator: false}); 
+          // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
       },
     );

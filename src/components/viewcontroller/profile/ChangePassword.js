@@ -64,49 +64,14 @@ export default class ChangePassword extends React.Component {
         constants.noificationCount = 0;
         this.props.navigation.navigate("NotificationScreen");
     }
-    async getOfflineStorageData() {
-         
-        var today = moment(new Date());
-        var offlineApplevel = await AsyncStorage.getItem("attendanceData");
-        var lastEntry = await AsyncStorage.getItem("lastEntry");
-        if (lastEntry !== null) {
-            var lastEntryData = JSON.parse(lastEntry);
-            // if (today.diff(lastEntryData.date, 'days') !== 0) {
-      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
-
-                var lastEntry = await AsyncStorage.setItem("lastEntry", "");
-                this.props.navigation.navigate("DashboardScreen");
-            }
-            else {
-                if (lastEntryData.title === "StartDuty") {
-                    this.props.navigation.navigate("BreakScreen");
-                }
-                else if (lastEntryData.title === "StartBreak") {
-                    this.props.navigation.navigate("EndDutyScreen");
-                }
-                else if (lastEntryData.title === "EndDuty") {
-                    this.props.navigation.navigate("AlreadyLoggedScreen");
-                }
-                else if (lastEntryData.title === "EndBreak") {
-                    this.props.navigation.navigate("BreakScreen");
-                }
-                else {
-                    this.props.navigation.navigate("DashboardScreen");
-
-                }
-
-            }
-
-        }
-        else {
-            this.props.navigation.navigate("DashboardScreen");
-
-        }
 
 
-    }
+
+
+
+
     async goToFirstTab() {
-
+     
         var appLevel = await AsyncStorage.getItem('appLevel');
         var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
         this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
@@ -168,6 +133,84 @@ export default class ChangePassword extends React.Component {
                 }
             });
     }
+    async getOfflineStorageData() {
+         
+        var today = moment(new Date());
+        console.log(`today plus  ${today}`)
+        var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+        var lastEntry = await AsyncStorage.getItem("lastEntry");
+
+        var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+        console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+    // debugger
+        if (lastEntry !== null) {
+          var lastEntryData = JSON.parse(lastEntry);
+        //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
+            var lastEntry = await AsyncStorage.setItem("lastEntry", "");
+            this.props.navigation.navigate("DashboardScreen");
+          }
+          else {
+            let check = false;
+            if(todayAttemArray !== null){
+                for (let index = 0; index < todayAttemArray.length; index++) {
+                  if (todayAttemArray[index].title === 'EndDuty') {
+                    check = true;
+                  }
+                }
+              }
+              
+              console.log(`last one is ${lastEntryData.title}`)
+            //   debugger
+            if (lastEntryData.title === "StartDuty") {
+
+                if (check) {
+                    this.props.navigation.navigate('AlreadyLoggedScreen');
+                  } else {
+                    this.props.navigation.navigate('BreakScreen');
+                  }
+            //   this.props.navigation.navigate("BreakScreen");
+            }
+            else if (lastEntryData.title === "StartBreak") {
+              this.props.navigation.navigate("EndDutyScreen");
+            }
+            else if (lastEntryData.title === "EndDuty") {
+              this.props.navigation.navigate("AlreadyLoggedScreen");
+            }
+            else if (lastEntryData.title === "EndBreak") {
+              this.props.navigation.navigate("BreakScreen");
+            }
+            else {
+              this.props.navigation.navigate("DashboardScreen");
+    
+            }
+    
+          }
+    
+        }
+        else {
+            var check = await AsyncStorage.getItem('appLevelCheckIs');
+    //   debugger
+         if(check == "End Duty"){
+        //    debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+        //    debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+        //   this.props.navigation.navigate("DashboardScreen");
+    
+        }
+      }
+
+
+
+
+
+
+
 
     changePassword() {
         if (Utilities.isValidString(this.state.userPassword)) {

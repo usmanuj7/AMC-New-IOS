@@ -259,7 +259,7 @@ export default class Dashboard extends React.Component {
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      debugger
+  
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
@@ -293,12 +293,12 @@ export default class Dashboard extends React.Component {
     } else {
 
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-      // debugger
+  
          if(check == "End Duty"){
-          //  debugger
+         
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-          //  debugger
+        
            this.props.navigation.navigate("DashboardScreen");
          }
       // this.props.navigation.navigate('DashboardScreen');
@@ -316,7 +316,13 @@ export default class Dashboard extends React.Component {
   };
 
   async startDuty() {
+    await AsyncStorage.setItem('todayTime','');
+    await AsyncStorage.setItem('startDutyTimeToday','');
+    await AsyncStorage.setItem('EndBreakTimeToday','');
+    await AsyncStorage.setItem('startBreakTimeToday','');
+    await AsyncStorage.setItem('startEndDutyToday','');
     
+
     const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
     var date = '';
     var today = moment(new Date());
@@ -413,7 +419,7 @@ export default class Dashboard extends React.Component {
 
     AsyncStorage.setItem('lastNetworkStatus', `offline`);
 
-    // debugger
+
     var dataToPush = [];
     var today = moment(new Date());
     dataToPush.push(attendanceData);

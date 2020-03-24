@@ -708,6 +708,7 @@ currentDayChecks(){
     }
   }
 
+
   async goToFirstTab() {
      
     var appLevel = await AsyncStorage.getItem('appLevel');
@@ -774,6 +775,7 @@ currentDayChecks(){
 async getOfflineStorageData() {
      
     var today = moment(new Date());
+    console.log(`today plus  ${today}`)
     var offlineApplevel = await AsyncStorage.getItem("attendanceData");
     var lastEntry = await AsyncStorage.getItem("lastEntry");
 
@@ -783,8 +785,8 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 // debugger
     if (lastEntry !== null) {
       var lastEntryData = JSON.parse(lastEntry);
-      // if (today.diff(lastEntryData.date_times, 'days') !== 0) {
-      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+    //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+  if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
 
         var lastEntry = await AsyncStorage.setItem("lastEntry", "");
         this.props.navigation.navigate("DashboardScreen");
@@ -841,6 +843,7 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
     }
   }
+
   render() {
     return (
       <Container>
@@ -951,9 +954,9 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
               bottom: 0,
             }}>
             <Button
-            // onPress={() => this.goToFirstTab()}
-              onPress={() => this.props.navigation.navigate('DashboardScreen')}
-              style={styles.footerButtonActive}
+            onPress={() => this.goToFirstTab()}
+              // onPress={() => this.props.navigation.navigate('DashboardScreen')}
+              style={styles.footerButtonInactive}
               vertical>
               {/* <Icon name="home" style={{paddingTop:20}} color='white' size={24}/> */}
               <Image

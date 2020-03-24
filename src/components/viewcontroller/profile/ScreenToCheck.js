@@ -49,7 +49,7 @@ export default class ScreenToCheck extends React.Component {
     appLevel,
   ) {
 
-    // comment for only online mode
+    // uncomment for only online mode
     Utilities.sendLocalStorageToServer();
     var staffData = {staffid: JSON.parse(profileData)._staffid};
     console.log(`staff Data ${staffData}`);
@@ -398,7 +398,7 @@ export default class ScreenToCheck extends React.Component {
 
       if (attendance_id === 'undefined' || attendance_id === null) {
 
-        // debugger
+       
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(new Date()).format('YYYY-MM-DD'),
@@ -551,7 +551,7 @@ export default class ScreenToCheck extends React.Component {
         };
        
         console.log(`body is ${JSON.stringify(Leave.clock_date)}  ${JSON.stringify(Leave.staffid)}`)
-        // debugger
+  
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
@@ -559,9 +559,9 @@ export default class ScreenToCheck extends React.Component {
            
             if (Utilities.checkAPICallStatus(statusCode)) {
               console.log(`data is ${JSON.stringify(response.attendance_data)}`)
-              // debugger
+           
               if (response.attendance_data.length === 0) {
-                // debugger
+               
                 this.setState({isLoadingIndicator: false});
                 this.props.navigation.navigate('DashboardScreen');
               } else {
@@ -570,7 +570,7 @@ export default class ScreenToCheck extends React.Component {
                     k => k.is_manual == 2 && k.status == 101,
                   ) !== undefined
                 ) {
-                  // debugger
+          
                   constants.attendance_id =
                     response.attendance_data[0].attendance_id;
                   this.setState({isLoadingIndicator: false});
@@ -582,7 +582,7 @@ export default class ScreenToCheck extends React.Component {
                   constants.attendance_id =
                     response.attendance_data[0].attendance_id;
                     console.log(`app level ${appLevel}`)
-                    // debugger
+              
                   if (appLevel !== null) {
                     this.setState({isLoadingIndicator: false});
                     if (appLevel === 'BreakScreen')
@@ -660,7 +660,7 @@ export default class ScreenToCheck extends React.Component {
      this.getOfflineStorageData()
    }
 else{
-        debugger
+       
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
@@ -674,7 +674,7 @@ else{
                 `attandance ${JSON.stringify(dailyLogsModelDataSource)}`,
               );
 
-              // debugger
+      
 
               if (dailyLogsModelDataSource.length > 0) {
                 // here i updated the code
@@ -694,7 +694,7 @@ else{
                   `Utilities save startDutyTimeToday ${JSON.stringify(attendanceData11)}
                   `,
                 );
-                // debugger
+        
                 Utilities.saveToStorage(
                   'startDutyTimeToday',
                   attendanceData11,
@@ -704,7 +704,7 @@ else{
                 `all daily logs ${JSON.stringify(dailyLogsModelDataSource[0])}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,
               );
              
-              // debugger
+       
                 this.checkNotif(
                   dailyLogsModelDataSource,
                   attendance_id,
@@ -717,11 +717,11 @@ else{
               this.setState({
                 dailyLogsModelDataSource: dailyLogsModelDataSource,
               });
-            } else if (statusCode === 400) {
+              } else if (statusCode === 400) {
               this.setState({isLoadingIndicator: false});
               // comment for only online mode
               this.getOfflineStorageData();
-              this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
+              // this.dropDownAlertRef.alertWithType('info', 'Alert', "Unable to connect with internet");
             }
           },
         );
@@ -753,13 +753,13 @@ else{
 
     console.log('offline storage called');
     console.log(`last entry is  ${lastEntry}`);
-// debugger
+
     if (lastEntry !== null) {
       console.log('in if loop');
       var lastEntryData = JSON.parse(lastEntry);
       console.log(`today ${JSON.stringify(today)}`);
       console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
-      // debugger
+    
       // clock_date
       if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
         var lastEntry = await AsyncStorage.setItem('lastEntry', '');
@@ -793,12 +793,12 @@ else{
     } else {
 
       var check = await AsyncStorage.getItem('appLevelCheckIs');
-      // debugger
+      
          if(check == "End Duty"){
-          //  debugger
+       
            this.props.navigation.navigate("AlreadyLoggedScreen");
          }else{
-          //  debugger
+        
            this.props.navigation.navigate("DashboardScreen");
          }
       // this.props.navigation.navigate('DashboardScreen');
