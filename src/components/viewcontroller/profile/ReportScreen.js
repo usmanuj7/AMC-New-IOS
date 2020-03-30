@@ -436,18 +436,22 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = sundayhrs.break.split(":")[0];
           var minBreak = sundayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = sundayhrs.worked.split(":")[0];
           var min = sundayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
           // arrayTopush.push(parseFloat(inHrs));
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
 
           // arrayTopush.push(parseInt(sundayhrs.total.split(":")[0]))
           var arrayToSend = this.state.arrayToSend;
@@ -462,17 +466,21 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = mondayhrs.break.split(":")[0];
           var minBreak = mondayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = mondayhrs.worked.split(":")[0];
           var min = mondayhrs.worked.split(":")[1];
-          var res =  parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -485,17 +493,21 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = tuesdayhrs.break.split(":")[0];
           var minBreak = tuesdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = tuesdayhrs.worked.split(":")[0];
           var min = tuesdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -507,16 +519,20 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = wednesdayhrs.break.split(":")[0];
           var minBreak = wednesdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = wednesdayhrs.worked.split(":")[0];
           var min = wednesdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var res1 = parseFloat(inHrs) + res
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -528,17 +544,21 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = thursdayhrs.break.split(":")[0];
           var minBreak = thursdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = thursdayhrs.worked.split(":")[0];
           var min = thursdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -551,17 +571,21 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = fridayhrs.break.split(":")[0];
           var minBreak = fridayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = fridayhrs.worked.split(":")[0];
           var min = fridayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -573,17 +597,22 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 
           var inHrsBreak = saturdayhrs.break.split(":")[0];
           var minBreak = saturdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
+      
 
           var inHrs = saturdayhrs.worked.split(":")[0];
           var min = saturdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
