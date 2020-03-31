@@ -292,16 +292,16 @@ export default class Dashboard extends React.Component {
       }
     } else {
 
-      var check = await AsyncStorage.getItem('appLevelCheckIs');
+      // var check = await AsyncStorage.getItem('appLevelCheckIs');
   
-         if(check == "End Duty"){
+      //    if(check == "End Duty"){
          
-           this.props.navigation.navigate("AlreadyLoggedScreen");
-         }else{
+      //      this.props.navigation.navigate("AlreadyLoggedScreen");
+      //    }else{
         
-           this.props.navigation.navigate("DashboardScreen");
-         }
-      // this.props.navigation.navigate('DashboardScreen');
+      //      this.props.navigation.navigate("DashboardScreen");
+      //    }
+      this.props.navigation.navigate('DashboardScreen');
     }
   }
 

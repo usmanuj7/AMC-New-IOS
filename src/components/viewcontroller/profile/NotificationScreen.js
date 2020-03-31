@@ -94,8 +94,10 @@ export default class NotificationScreen extends React.Component {
       this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_unread_notifications" },
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
+            
             this.setState({notificationDataSource:response.response.notifications.slice(0, 3)})
-
+            console.log(`notification data source \n${JSON.stringify(this.state.notificationDataSource)}`)
+            debugger
           }
         })
 

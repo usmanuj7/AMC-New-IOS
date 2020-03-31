@@ -57,14 +57,24 @@ export default class ScreenToCheck extends React.Component {
       {dataToInsert: staffData, apiEndPoint: 'get_unread_notifications'},
       (statusCode, response) => {
         console.log(`check notify ${response.response.notifications.length}`);
+      
         if (Utilities.checkAPICallStatus(statusCode)) {
+          console.log(`length is ${response.response.notifications.length}`)
+          
           if (response.response !== undefined)
             constants.noificationCount = response.response.notifications.length;
+            console.log(`notifivat count is ${constants.noificationCount}`)
+          
+        }
+        else{
+          console.log(statusCode)
+         
         }
       },
     );
 
     if (dailyLogsModelDataSource.length > 0) {
+     
       if (
         dailyLogsModelDataSource.find(
           k => k._is_manual == '0' && k._status == '101',
@@ -395,10 +405,11 @@ export default class ScreenToCheck extends React.Component {
         }
       }
     } else {
+      debugger
 
       if (attendance_id === 'undefined' || attendance_id === null) {
 
-       
+       debugger
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(new Date()).format('YYYY-MM-DD'),
@@ -544,6 +555,8 @@ export default class ScreenToCheck extends React.Component {
           },
         );
       } else {
+
+        debugger
         
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
@@ -654,13 +667,13 @@ export default class ScreenToCheck extends React.Component {
 
    // comment for only online
    if(loginStatus !== null && networkStatus !==null && networkStatus !=="online"){
-    
+    debugger
      Utilities.sendLocalStorageToServer();
      this.setState({isLoadingIndicator: false});
      this.getOfflineStorageData()
    }
 else{
-       
+      
         this.WebServicesManager.postApiDailyAttendence(
           {dataToInsert: Leave, apiEndPoint: 'get_daily_attendance_log'},
           (statusCode, response) => {
@@ -695,10 +708,10 @@ else{
                   `,
                 );
         
-                Utilities.saveToStorage(
-                  'startDutyTimeToday',
-                  attendanceData11,
-                );
+                // Utilities.saveToStorage(
+                //   'startDutyTimeToday',
+                //   attendanceData11,
+                // );
               }
               console.log(
                 `all daily logs ${JSON.stringify(dailyLogsModelDataSource[0])}\n attandance ${attendance_id} \n profile data ${profileData} \n prev data ${prevDate} \n app level ${appLevel} `,

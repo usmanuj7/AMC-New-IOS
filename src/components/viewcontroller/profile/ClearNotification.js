@@ -60,23 +60,25 @@ export default class ClearNotification extends React.Component {
             this.setState({ profileDataSurce: profileData });
 
             var staffData = { staffid: profileData._staffid };
-      this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_staff_weekends" },
-        (statusCode, response) => {
-          if (Utilities.checkAPICallStatus(statusCode)) {
-            var days = Utilities.getWeekDays(response.weekends_defined);
-            this.setState({ Weekdays: days });
+      // this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_staff_weekends" },
+      //   (statusCode, response) => {
+      //     if (Utilities.checkAPICallStatus(statusCode)) {
+      //       var days = Utilities.getWeekDays(response.weekends_defined);
+      //       this.setState({ Weekdays: days });
 
-          }
-        })
+      //     }
+      //   })
 
         var staffData = { staffid: profileData._staffid };
       this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_unread_notifications" },
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
             this.setState({notificationDataSource:response.response.notifications})
-
+            console.log(`notification data source \n${JSON.stringify(this.state.notificationDataSource)}`)
+            debugger
           }
         })
+
         var staffData = { staffid: profileData._staffid };
       this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "set_notifications_read_mobile" },
         (statusCode, response) => {
@@ -301,11 +303,7 @@ export default class ClearNotification extends React.Component {
         AsyncStorage.setItem('notifications', '');
         this.setState({ notificationDataSource: [] })
     }
-    clearAll()
-    {
-        AsyncStorage.setItem('notifications', '');
-        this.setState({notificationDataSource:[]})
-    }
+   
     render() {
         return (
 
