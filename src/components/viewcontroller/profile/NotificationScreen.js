@@ -95,7 +95,8 @@ export default class NotificationScreen extends React.Component {
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
             
-            this.setState({notificationDataSource:response.response.notifications.slice(0, 3)})
+            this.setState({notificationDataSource:response.response.notifications.slice()})
+            // this.setState({notificationDataSource:response.response.notifications.slice(0,3)})
             console.log(`notification data source \n${JSON.stringify(this.state.notificationDataSource)}`)
             debugger
           }
@@ -252,7 +253,7 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
     var weekDayName = moment(item.item.date).format('dddd');
     return (
       <TouchableOpacity
-      onPress={this.markNotificationReaded()}
+      onPress={()=>this.markNotificationReaded()}
         style={styles.rowColFront}>
 
         <View style={{ flex: 1, justifyContent: 'flex-start' }}>
@@ -310,6 +311,7 @@ var todayAttemArray = JSON.parse(todayTimeDataArray);
 // }
   }
   async markNotificationReaded(){
+    debugger
     const profile = await AsyncStorage.getItem('profileData');
     if (profile !== null) {
         var profileData = JSON.parse(profile);

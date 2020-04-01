@@ -51,11 +51,12 @@ export default class ClearNotification extends React.Component {
     }
 
     async componentWillMount() {
-
+     
         // const notificationDataSource = await AsyncStorage.getItem('notifications');
         // this.setState({ notificationDataSource: JSON.parse(notificationDataSource) });
         const profile = await AsyncStorage.getItem('profileData');
         if (profile !== null) {
+          debugger
             var profileData = JSON.parse(profile);
             this.setState({ profileDataSurce: profileData });
 
@@ -72,9 +73,15 @@ export default class ClearNotification extends React.Component {
         var staffData = { staffid: profileData._staffid };
       this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_unread_notifications" },
         (statusCode, response) => {
+          debugger
           if (Utilities.checkAPICallStatus(statusCode)) {
-            this.setState({notificationDataSource:response.response.notifications})
+            console.log(`if ${statusCode}\n${JSON.stringify(response)} `)
+            this.setState({notificationDataSource:response.response.notifications.slice()})
             console.log(`notification data source \n${JSON.stringify(this.state.notificationDataSource)}`)
+            debugger
+          }
+          else{
+            console.log(`issue ${statusCode}\n${JSON.stringify(response)} `)
             debugger
           }
         })
@@ -322,15 +329,15 @@ export default class ClearNotification extends React.Component {
                     </View> */}
                     <View style={{ flex: 1.5, justifyContent: "center",backgroundColor: 'white', opacity: 0.5, marginBottom: 50, marginLeft: 20, marginRight: 20, borderRadius: 5, }}>
                         <View style={{}}>
-                          { 
-                           this.state.notificationDataSource.length > 0 ?
+                          
+                          { this.state.notificationDataSource.length > 0 ?
                           <FlatList
                                 data={this.state.notificationDataSource}
                                 renderItem={this._renderItem}
                                 extraData={this.state}
                             />
-                          :<Text style={{alignSelf:"center"}}> No data available </Text>
-                          }
+                      :<Text style={{alignSelf:"center"}}> No data available </Text>} 
+                          
                         </View>
 
                     </View>

@@ -405,11 +405,11 @@ export default class ScreenToCheck extends React.Component {
         }
       }
     } else {
-      debugger
+      
 
       if (attendance_id === 'undefined' || attendance_id === null) {
 
-       debugger
+      
         var Leave = {
           staffid: JSON.parse(profileData)._staffid,
           clock_date: moment(new Date()).format('YYYY-MM-DD'),
