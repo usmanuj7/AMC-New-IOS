@@ -139,14 +139,16 @@ export default class LogData extends React.Component {
 
         var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 ) {
+        // day check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 ) {
             this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
             var today = moment(new Date());
             var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
             var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-            if (totalDifferenceInDays > 3 || totalDifferenceInDays<0) {
+        // day check previous 3
+            if (totalDifferenceInDays > 1 || totalDifferenceInDays<0) {
                 this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
             }
             else {
@@ -451,8 +453,8 @@ export default class LogData extends React.Component {
         var today = moment(new Date());
         var tocheckDate = moment(item._clock_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
+        //date check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
             this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
@@ -649,9 +651,10 @@ export default class LogData extends React.Component {
         var today = moment(new Date());
         var tocheckDate = moment(item._added_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
-        }
+        //date check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
+            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot delete record for this date");
+        } 
         else {
             this.setState({ isLoadingIndicator: true, deleteShiftItem: item })
         }
