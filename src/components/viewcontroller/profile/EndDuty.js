@@ -83,6 +83,7 @@ export default class EndDuty extends React.Component {
     if (isConnected == true) {
       if(this.state.connectionCount==1)
       {
+        // comment for only online mode
         Utilities.sendLocalStorageToServer();
       }
        this.setState({connectionCount:1});
@@ -100,6 +101,10 @@ export default class EndDuty extends React.Component {
   }
   async  componentWillMount()
   {
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
+    // comment for only online mode
+    if(isScreentoCheck === "yes")
+    this.getOfflineStorageData()
     
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     
@@ -111,23 +116,94 @@ export default class EndDuty extends React.Component {
       const profile = await AsyncStorage.getItem('profileData');
   
       if (profile !== null) {
+        debugger
         var profileData = JSON.parse(profile);
          this.setState({profileDataSurce:profileData});
          var Leave = { staffid:profileData._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
          this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
            (statusCode, response) => {
              if (Utilities.checkAPICallStatus(statusCode)) {
+               console.log(`start duty is ${JSON.stringify(response.attendance_data[0].clock_time)}`)
+               debugger
                this.setState({startDutyTime:response.attendance_data[0].clock_time.split(" ")[1]});
              }
            })
        }
       else
       {
+        debugger
         var profileData= constants.profileData;
         this.setState({profileDataSurce:profileData});
       }
       
   }
+
+
+  async getOfflineStorageData() {
+    AsyncStorage.setItem('isScreenToCheck', '');
+  
+    var today = moment(new Date());
+    // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+
+    var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
+    console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+
+    if (lastEntry !== null) {
+      console.log('in if loop');
+      var lastEntryData = JSON.parse(lastEntry);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+      // debugger
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+        var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        this.props.navigation.navigate('DashboardScreen');
+      } else {
+        if (lastEntryData.title === 'StartDuty') {
+          let check = false;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
+        } else if (lastEntryData.title === 'StartBreak') {
+          this.props.navigation.navigate('EndDutyScreen');
+        } else if (lastEntryData.title === 'EndDuty') {
+          this.props.navigation.navigate('AlreadyLoggedScreen');
+        } else if (lastEntryData.title === 'EndBreak') {
+          this.props.navigation.navigate('BreakScreen');
+        } else {
+          this.props.navigation.navigate('DashboardScreen');
+        }
+      }
+    } else {
+
+      var check = await AsyncStorage.getItem('appLevelCheckIs');
+      // debugger
+         if(check == "End Duty"){
+          //  debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+          //  debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+      // this.props.navigation.navigate('DashboardScreen');
+    }
+  }
+
+
   toggleLoader(status)
   {
     // this.setState({isLoadingIndicator:status})
@@ -171,6 +247,8 @@ export default class EndDuty extends React.Component {
           })
         }
         else if (statusCode === 400) {
+
+// comment for only online
           var attendence = {
             title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
             status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
@@ -178,6 +256,8 @@ export default class EndDuty extends React.Component {
           };
           this.setofflineData(attendence);
 
+          // uncomment of only online mode
+          // this.setState({isLoadingIndicator: false}); 
           // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
         }
@@ -194,8 +274,23 @@ export default class EndDuty extends React.Component {
         }
       });
   }
+  else{
+
+    this.setState({isLoadingIndicator: false});
+    this.dropDownAlertRef.alertWithType(
+      'info',
+      'Alert',
+      'Please mark attendance first',
+    );
+    setTimeout(() => {
+      this.props.navigation.navigate('DashboardScreen');
+    }, 3000);
+
+  }
         }
         else if (statusCode === 400) {
+
+          // comment for only online mode
           var attendence = {
             title: "EndBreak", staffid: this.state.profileDataSurce._staffid, attendance_id: "",
             status: "101", swipe_time: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds(), clock_date:
@@ -203,6 +298,8 @@ export default class EndDuty extends React.Component {
           };
           this.setofflineData(attendence);
 
+          // uncomment only for online mode
+          // this.setState({isLoadingIndicator: false}); 
           // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
         }
@@ -212,6 +309,7 @@ export default class EndDuty extends React.Component {
 
 
   async setofflineData(attendanceData) {
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
      
     var dataToPush = [];
     dataToPush.push(attendanceData);

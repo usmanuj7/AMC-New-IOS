@@ -56,7 +56,7 @@ class HeaderView extends React.Component {
   }
   render() {
     if (this.props.name !== 'undefined undefined')
-      var headerText = 'Welcome ' + this.props.name;
+      var headerText = this.props.name;
     if (this.props.callFrom === 'Success') {
       return (
         <View
@@ -75,8 +75,9 @@ class HeaderView extends React.Component {
               paddingBottom: 10,
               alignContent: 'center',
               justifyContent: 'center',
+              
             }}>
-            <Image source={require('../../../ImageAssets/backbtn.png')}></Image>
+            <Image source={require('../../../ImageAssets/back1.png')} resizeMode ={"contain"}style={{width:80, height:40}}></Image>
           </TouchableOpacity>
 
           <View
@@ -153,18 +154,18 @@ class HeaderView extends React.Component {
             onPress={() => this.props.context.menuItemPressed()}
             style={{
               flexDirection: 'row',
-              paddingBottom: 10,
+              // paddingLeft: 10,
               flex: 1,
               alignContent: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={require('../../../ImageAssets/backbtn.png')}></Image>
+            <Image source={require('../../../ImageAssets/back1.png')} resizeMode ={"contain"}style={{width:80, height:40}}></Image>
           </TouchableOpacity>
 
           <View
             style={{
               flex: 5,
-              marginLeft: 30,
+              marginLeft: 60,
               alignContent: 'center',
               justifyContent: 'center',
             }}>
@@ -185,12 +186,15 @@ class HeaderView extends React.Component {
           }}>
           <View
             style={{
-              flex: 1.3,
+              flex: 8,
               alignContent: 'center',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{color: '#fff'}}>{headerText}</Text>
+            <Text style={{color: '#fff', width:"100%"}}>
+            <Text> WELCOME:</Text>
+          <Text style={{fontWeight: "bold", fontSize:15, }}> {headerText}</Text>
+            </Text>
           </View>
 
           <View

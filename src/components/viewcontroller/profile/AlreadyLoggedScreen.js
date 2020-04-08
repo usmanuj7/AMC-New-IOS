@@ -88,6 +88,7 @@ export default class AlreadyLoggedScreen extends Component {
   };
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
+      // debugger
       if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
@@ -167,6 +168,8 @@ export default class AlreadyLoggedScreen extends Component {
         var formatted = moment.utc(workedHours * 1000).format('HH:mm:ss');
 
         this.setState({timeWorked: formatted});
+        console.log(`time worked ${JSON.stringify(formatted)}`)
+        // debugger
         // this.getOfflineData();
       } else {
         // debugger
@@ -197,8 +200,40 @@ export default class AlreadyLoggedScreen extends Component {
           },
         );
       }
+
+      var attendence = {
+        staffid: profileData._staffid,
+        month_year: moment(new Date()).format('YYYY-MM-DD'),
+      };
+      console.log(`att parameter ${JSON.stringify(attendence)}`)
+      this.WebServicesManager.postApiHoursHistoryMonth(
+        {dataToInsert: attendence, apiEndPoint: 'get_hours_history_wm'},
+        (statusCode, response) => {
+          if (Utilities.checkAPICallStatus(statusCode)) {
+            console.log(`hours history ${JSON.stringify( response.hours_history)}`);
+            var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(
+              response.hours_history,
+            );
+            
+            this.setState({hoursDataModel: attendenceModel});
+            console.log(
+              `timeWorked ${JSON.stringify(attendenceModel._worked)}`,
+            );
+            // debugger
+            this.setState({timeWorked: attendenceModel._worked});
+          } else {
+            // debugger
+            this.getOfflineData();
+          }
+        },
+      );
     });
   }
+
+
+
+
+
   async getOfflineData() {
 
     console.log(`offline data et called`);
@@ -210,8 +245,7 @@ export default class AlreadyLoggedScreen extends Component {
 
     console.log(`start duty time  ${JSON.stringify(startDutyTimeToday)}`);
     console.log(`end duty time  ${JSON.stringify(startEndDutyToday)}`);
-    debugger
-
+    // debugger
 
     var startDutyTime;
     var EndBreakTime;
@@ -261,7 +295,7 @@ export default class AlreadyLoggedScreen extends Component {
       startEndDuty = startEndDutyToday.clock_out;
       var abc = startEndDutyToday.clock_out;
       console.log(`abc ${abc}`);
-      debugger;
+      // debugger;
       if (abc !== undefined) {
         var d = abc;
         var n = parseInt(d.split(':')[0]);
@@ -279,7 +313,7 @@ export default class AlreadyLoggedScreen extends Component {
     console.log(
       `breakend ${EndBreakTime}\n start break ${startBreakTime}\n start duty ${startDutyTime} \n end duty ${startEndDuty}`,
     );
-    debugger;
+    // debugger;
     if (EndBreakTime !== undefined && startBreakTime !== undefined) {
       totalBreakTime = moment
         .utc(
@@ -291,7 +325,7 @@ export default class AlreadyLoggedScreen extends Component {
     }
 
     if (startDutyTime !== undefined && startEndDuty !== undefined) {
-      debugger;
+      // debugger;
       totalTime = moment
         .utc(
           moment(startEndDuty, 'HH:mm:ss').diff(
@@ -300,7 +334,7 @@ export default class AlreadyLoggedScreen extends Component {
         )
         .format('HH:mm:ss');
       console.log(`total time ${totalTime}`);
-      debugger;
+      // debugger;
       totalTime = moment
         .utc(
           moment(totalTime, 'HH:mm:ss').diff(
@@ -309,8 +343,9 @@ export default class AlreadyLoggedScreen extends Component {
         )
         .format('HH:mm:ss');
       console.log(`total time ${totalTime}`);
-      debugger;
+      // debugger;
       this.setState({timeWorked: totalTime});
+
     }
   }
   handleBackButton = () => {
@@ -326,6 +361,7 @@ export default class AlreadyLoggedScreen extends Component {
       });
     }, 5000);
 
+    // debugger
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
     console.log(`end duty time is ${endDutyTimeToday}`);
 

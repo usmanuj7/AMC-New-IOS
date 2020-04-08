@@ -41,7 +41,7 @@ class Loader extends React.Component {
 
     if (this.state.timerId == null) {
       //clearTimeout(this.state.timerId)
-      var ti = setTimeout(() => {this.hideLoading()}, 20000);
+      var ti = setTimeout(() => {this.hideLoading()}, 80000);
       this.setState({ timerId: ti});
     }
   }
@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'space-around',
-    backgroundColor: '#00000040'
+    backgroundColor: '#00000040',
+    zIndex:10,
   },
   activityIndicatorWrapper: {
     backgroundColor: '#FFFFFF',

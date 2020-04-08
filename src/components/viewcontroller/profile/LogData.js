@@ -14,6 +14,7 @@ import { Container, Body, Title, Center, Content, Footer, FooterTab, Button, Rig
 import styles from "../../../Style";
 import AntDesignIcons from 'react-native-vector-icons/AntDesign';
 import WebServicesManager from '../../managers/webServicesManager/WebServicesManager';;
+import EntypoIcons from 'react-native-vector-icons/Entypo';
 import HeaderView from '../Header/Header'
 import moment from 'moment';
 import { FloatingAction } from "react-native-floating-action";
@@ -22,6 +23,7 @@ import constants from '../../../constants/constants';
 import LeaveModel from '../../Models/LeaveModel'
 import DailyLogsModel from '../../Models/DailyLogsModel';
 import PropTypes from 'prop-types';
+import Loader from '../../../Loader';
 import AttendanceModel from '../../Models/AttendanceModel';
 import DeleteShiftPopUp from '../../../DeleteShiftPopUp';
 import SigninDataLogsModel from '../../Models/SigninDataLogsModel';
@@ -39,19 +41,25 @@ export default class LogData extends React.Component {
 
         this.state = {
             profileDataSurce: [],
+            actions:[],
+            checkActionNames:[],
             dailyLogsModelDataSource: '',
             text: '',
             isLoadingIndicator: false,
+            isLoading:false,
             deleteShiftItem: '',
             timeWorked: "00:00:00",
             noificationCount: 0,
             isStartDateTimePickerVisible: false,
             isEndDateTimePickerVisible: false,
             isDateTimePickerVisible: false,
-            checnkedNameToAdd: ''
+            checnkedNameToAdd: '',
+           
         }
         // userInfo: '',
     }
+    startDutyInterval = 0;
+    endBreakInterval= 0;
     static propTypes = {
         context: PropTypes.object.isRequired,
 
@@ -59,21 +67,89 @@ export default class LogData extends React.Component {
     hideDateTimePicker = () => {
         this.setState({ isDateTimePickerVisible: false });
     };
+    checkDatePick= date=>{
+ 
+        console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
+        var selectedDate = this.props.navigation.state.params.selectedDate
+        var today = moment(new Date());
+        console.log(`date is ${today}`)
+         if (today.diff(selectedDate, 'days') !== 0) {
+           debugger
+           console.log("iff called")
+           this.handleDatePicked(date);
+          
+         }
+         else{
+             debugger
+          console.log("else called")
+          this.checkCurrentDatePick(date);
+         }
+      }
+
+    checkCurrentDatePick= date =>{
+
+        var selectedHours = parseInt( moment(date).format('HH')) ;
+        
+// var selectedHours = parseInt(temp[0]) 
+    // selectedHours == "00" ? selectedHours = 0 : null
+        console.log(selectedHours)
+
+        var selectedMinutes =  parseInt( moment(date).format('mm')) ;
+
+        console.log(selectedMinutes)
+    
+        var today = new Date();
+        var hour = today.getHours() ;
+        console.log(`hour ${hour}`)
+
+        var min = today.getMinutes();
+        console.log(`mins ${min}`)
+
+        if(selectedHours<hour){
+          this.handleDatePicked(date)
+    
+        }
+        else if(selectedHours===hour){
+          if(selectedMinutes<min || selectedMinutes == min){
+            this.handleDatePicked(date)
+          }
+          else{
+            this.dropDownAlertRefRed.alertWithType(
+              'info',
+              'Alert',
+              'Please select valid time',
+            );
+          }
+          
+      
+        }else{
+            console.log("outer called")
+          this.dropDownAlertRefRed.alertWithType(
+            'info',
+            'Alert',
+            'Please select valid time',
+          );
+        }
+        this.hideDateTimePicker();
+
+      }
 
     handleDatePicked = date => {
         var today = moment(new Date());
 
         var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 ) {
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
+        // day check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 ) {
+            this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
             var today = moment(new Date());
             var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
             var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-            if (totalDifferenceInDays > 3 || totalDifferenceInDays<0) {
-                this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
+        // day check previous 3
+            if (totalDifferenceInDays > 1 || totalDifferenceInDays<0) {
+                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "You cannot edit record for this date");
             }
             else {
                 var time = moment(date).format('HH:mm');
@@ -93,17 +169,22 @@ export default class LogData extends React.Component {
                                   
                               Utilities.saveToStorage("startDutyTimeToday", attendanceData);
                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Start Duty is recorded successfully");
-                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                this.componentWillMount()
+                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
                             }
                             else if (statusCode === 400) {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please check your internet connection");
 
                             }
                             else if (response.responseCode === 403) {
                                 this.setState({ isLoadingIndicator: false });
-                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
                 }
@@ -116,7 +197,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
                                         clock_out: time,
@@ -127,32 +208,42 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "End Duty is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
-                                            }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
+                                            // }
+                                            else  {
+                                                this.setState({ isLoadingIndicator: false });
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
 
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
-
+         
+                                else  {
+                                  
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
                                 }
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -165,7 +256,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
 
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
@@ -180,37 +271,49 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Add break is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+
+                                            // }
+                                            else  {
                                                 this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
-
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
-
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
-
-                                            }
-
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                else  {
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
+                               
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
                 }
                 if (this.state.checnkedNameToAdd === "start_break") {
+                    this.setState({
+                        isLoading:true
+                    })
                     var Leave = {
                         staffid: this.state.profileDataSurce._staffid,
                         clock_date: this.props.navigation.state.params.selectedDate
@@ -218,7 +321,7 @@ export default class LogData extends React.Component {
                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
                         (statusCode, response) => {
                             if (Utilities.checkAPICallStatus(statusCode)) {
-                                if (response.attendance_data.length >= 0) {
+                                if (response.attendance_data.length > 0) {
                                     this.setState({ attendance_id: response.attendance_data[0].attendance_id })
                                     var attendence = {
                                         staffid: this.state.profileDataSurce._staffid, attendance_id: response.attendance_data[0].attendance_id,
@@ -229,32 +332,44 @@ export default class LogData extends React.Component {
                                         (statusCode, response) => {
                                             if (Utilities.checkAPICallStatus(response.responseCode)) {
                                                 this.dropDownAlertRef.alertWithType('info', 'Success', "Break Start is recorded successfully");
-                                                setTimeout(() => { this.props.navigation.goBack(); }, 3000);
+                                                this.componentWillMount()
+                                                this.setState({
+                                                    isLoading:false
+                                                })
+                                                // setTimeout(() => { this.props.navigation.goBack(); }, 3000);
 
                                             }
-                                            else if (statusCode === 400) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                            // else if (statusCode === 400) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
-                                            }
-                                            else if (response.responseCode === 403) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
+                                            // }
+                                            // else if (response.responseCode === 403) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "No two consecutive in allowed");
 
-                                            }
-                                            else if (response.responseCode === 204 || response.responseCode === 404) {
-                                                this.setState({ isLoadingIndicator: false });
-                                                this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
-                                                setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
+                                            // }
+                                            // else if (response.responseCode === 204 || response.responseCode === 404) {
+                                            //     this.setState({ isLoadingIndicator: false });
+                                            //     this.dropDownAlertRef.alertWithType('info', 'Alert', "Please mark attendance first");
+                                            //     setTimeout(() => { this.props.navigation.navigate("DashboardScreen") }, 3000);
 
+                                            // }
+                                            else  {
+                                                this.setState({ isLoadingIndicator: false });
+                                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                                             }
 
                                         });
                                 }
-                                else if (statusCode === 400) {
-                                    this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+                                else  {
+                                    this.dropDownAlertRefRed.alertWithType('info', 'Alert', "Please mark the attandance first");
 
                                 }
+                            }
+                            else  {
+                                this.setState({ isLoadingIndicator: false });
+                                this.dropDownAlertRefRed.alertWithType('info', 'Alert', response.description);
                             }
                         });
 
@@ -330,20 +445,26 @@ export default class LogData extends React.Component {
     }
 
     handleEdit(item) {
+
+        console.log(`date is ${this.props.navigation.state.params.selectedDate}`)
+
+        clearInterval(this.startDutyInterval);
+        clearInterval(this.endBreakInterval);
         var today = moment(new Date());
         var tocheckDate = moment(item._clock_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
+        //date check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
             this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
         }
         else {
-            this.props.navigation.navigate('ActionTimePick', { selectedItem: item, context: this })
+            var _date = this.props.navigation.state.params.selectedDate
+            this.props.navigation.navigate('ActionTimePick', { selectedItem: item,  fullData:this.state.dailyLogsModelDataSource ,selectedDate: _date,context: this })
         }
     }
 
     async  componentWillMount() {
-
+        console.log(`selected date is ${JSON.stringify( this.props.navigation.state.params.selectedDate)}`)
         const profile = await AsyncStorage.getItem('profileData');
 
         if (profile !== null) {
@@ -355,7 +476,66 @@ export default class LogData extends React.Component {
                     if (Utilities.checkAPICallStatus(statusCode)) {
                           
                         var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(response.attendance_data);
+                      
+                     
                         this.setState({ dailyLogsModelDataSource: dailyLogsModelDataSource });
+                        console.log(`full data ${JSON.stringify(this.state.dailyLogsModelDataSource)}`)
+                      console.log(`length is ${JSON.stringify(this.state.dailyLogsModelDataSource.length)}`)
+                    
+                      let l = this.state.dailyLogsModelDataSource.length
+                      var da = this.state.dailyLogsModelDataSource
+                      var te =[]
+                      var start ;
+                      var end;
+                      this.state.checkActionNames =[]
+                      for (let i =0; i<l ;i++){
+                        console.log(da[i]._title)
+                          if(da[i]._title==="Start Duty" && da[i]._status !="0"){
+                              start = da[i]._title
+
+                              console.log("iff called")
+                          }
+                         else if(da[i]._title==="End Duty" && da[i]._status !="0"){
+                            end  = da[i]._title
+                        }
+                          else{
+                            console.log("else called")
+
+                          }
+                      }
+                      const actions = [
+                        {
+                            text: "Start Duty",
+                            icon: require("../../../ImageAssets/cup.png"),
+                            name: "start_duty",
+                            position: 1
+                        },
+                        {
+                            text: "Start Break",
+                            icon: require("../../../ImageAssets/cup.png"),
+                            name: "start_break",
+                            position: 2
+                        },
+                        {
+                            text: "End Break",
+                            icon: require("../../../ImageAssets/end.png"),
+                            name: "end_break",
+                            position: 3
+                        },
+                        {
+                            text: "End Duty",
+                            icon: require("../../../ImageAssets/end.png"),
+                            name: "end_duty",
+                            position: 4
+                        }
+                    ];
+                     
+               var tempArr = actions.filter(action => action.text !==start && action.text!==end)
+               this.setState({
+                   actions:tempArr
+               })
+               console.log(`refined arr is ${JSON.stringify(tempArr)}`)
+            //    debugger
                         var attendence = { staffid: this.state.profileDataSurce._staffid, month_year: moment(this.props.navigation.state.params.selectedDate).format("YYYY-MM-DD") };
                         this.WebServicesManager.postApiHoursHistoryMonth({ dataToInsert: attendence, apiEndPoint: "get_hours_history_wm" },
                             (statusCode, response) => {
@@ -363,7 +543,6 @@ export default class LogData extends React.Component {
 
                                     var attendenceModel = LoggedHoursModal.parsesLoggedHoursModalFromJSON(response.hours_history);
                                     this.setState({ hoursDataModel: attendenceModel });
-
                                     var totalWorkeshrs = attendenceModel._worked;
                                     var found = false;
                                     if(totalWorkeshrs==="00:00:00"){
@@ -377,8 +556,16 @@ export default class LogData extends React.Component {
                                     }
                                 }
 
+                                console.log(`${JSON.stringify(totalWorkeshrs)}`)
+
                                      this.setState({ timeWorked: totalWorkeshrs });
-                                    
+
+                                     var today = moment(new Date());
+                                     var tocheckDate = moment(this.props.navigation.state.params.selectedDate);
+                                     var totalDifferenceInDays = today.diff(tocheckDate, 'days');
+                                     console.log(`difference is ${totalDifferenceInDays}`)
+                                     if ( totalDifferenceInDays==0 ) {
+                                        
                                     var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
                                     this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
                                         (statusCode, response) => {
@@ -386,30 +573,54 @@ export default class LogData extends React.Component {
                                             if (Utilities.checkAPICallStatus(statusCode)) {
                                                 if (response.attendance !== undefined) {
                                                     var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                                                    console.log(`dated attandance is ${JSON.stringify(attendance_data)}`)
                                                     if (attendance_data.length > 0) {
                                                         if (attendance_data[0]._title === "Start Duty") {
-                                                         
+                                                            console.log(`clock time ${attendance_data[0]._clock_time}`)
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
-                                                            setInterval( () => {
+                                                            console.log(`working hours ${totalWorkeshrs}`)
+                                                            console.log(`start duty interval ${this.startDutyInterval}`)
+
+                                                        //    debugger
+                                                           if(this.startDutyInterval === 0){
+                                                            this.startDutyInterval= setInterval( () => {
+                                                                // debugger
                                                                 var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
                                                                 totalWorkeshrs=timeWorked;
+                                                                console.log(`in loop working hours ${totalWorkeshrs}`)
                                                                 this.setState({
                                                                     timeWorked : timeWorked
                                                                 });
                                                               },1200)
+
+                                                           }
+                                                           else{
+                                                               console.log("interval else called")
+                                                           }
+                                                   
                                                         }
                                                        else if (attendance_data[0]._title === "End Break") {
-                                                         
+                                                         var previousWorkingHours =totalWorkeshrs
                                                             var duration = moment.duration(moment(new Date()).diff(attendance_data[0]._clock_time));
+                                                            var temp = moment.duration(duration.add(previousWorkingHours))
+                                                            console.log(`temp : ${JSON.stringify(temp)}`)
+                                                            // debugger
                                                             totalWorkeshrs=duration._data.hours+":"+duration._data.minutes+":"+duration._data.seconds;
-                                                            setInterval( () => {
-                                                                var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
-                                                                totalWorkeshrs=timeWorked;
-                                                                this.setState({
-                                                                    timeWorked : timeWorked
-                                                                });
-                                                              },1200)
+                                                            if(this.endBreakInterval === 0){
+                                                                this.endBreakInterval= setInterval( () => {
+                                                                    // debugger
+                                                                    var timeWorked =  moment.utc(totalWorkeshrs, "HH:mm:ss").add(1, 'second').format("HH:mm:ss");
+                                                                    totalWorkeshrs=timeWorked;
+                                                                    this.setState({
+                                                                        timeWorked : timeWorked
+                                                                    });
+                                                                  },1200)
+                                                            }
+                                                            else{
+                                                                console.log(`else end break  end brek interval`)
+                                                            }
+                                                   
                                                         }
                                                     }
                                                 }
@@ -417,7 +628,7 @@ export default class LogData extends React.Component {
                                         })
 
                                     
-                                      
+                                     }
                                 }
                             });
                         this.setState({ dailyLogsModelDataSource: dailyLogsModelDataSource });
@@ -440,9 +651,10 @@ export default class LogData extends React.Component {
         var today = moment(new Date());
         var tocheckDate = moment(item._added_date);
         var totalDifferenceInDays = today.diff(tocheckDate, 'days');
-        if (totalDifferenceInDays > 3 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
-            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot edit record for this date");
-        }
+        //date check previous 3
+        if (totalDifferenceInDays > 1 || totalDifferenceInDays<0 || totalDifferenceInDays<0) {
+            this.dropDownAlertRef.alertWithType('info', 'Alert', "You cannot delete record for this date");
+        } 
         else {
             this.setState({ isLoadingIndicator: true, deleteShiftItem: item })
         }
@@ -456,6 +668,7 @@ export default class LogData extends React.Component {
                     if (Utilities.checkAPICallStatus(statusCode)) {
                         this.setState({ isLoadingIndicator: false })
                         this.dropDownAlertRef.alertWithType('info', 'Success', "Break is deleted successfully");
+                        // this.componentWillMount()
                         setTimeout(() => { this.props.navigation.goBack(); }, 3000);
                     }
                     else if (statusCode === 400) {
@@ -605,47 +818,11 @@ export default class LogData extends React.Component {
         constants.noificationCount = 0;
         this.props.navigation.navigate("NotificationScreen");
     }
-    async getOfflineStorageData() {
-
-        var today = moment(new Date());
-        var offlineApplevel = await AsyncStorage.getItem("attendanceData");
-        var lastEntry = await AsyncStorage.getItem("lastEntry");
-        if (lastEntry !== null) {
-            var lastEntryData = JSON.parse(lastEntry);
-            if (today.diff(lastEntryData.date_times, 'days') !== 0) {
-                var lastEntry = await AsyncStorage.setItem("lastEntry", "");
-                this.props.navigation.navigate("DashboardScreen");
-            }
-            else {
-                if (lastEntryData.title === "StartDuty") {
-                    this.props.navigation.navigate("BreakScreen");
-                }
-                else if (lastEntryData.title === "StartBreak") {
-                    this.props.navigation.navigate("EndDutyScreen");
-                }
-                else if (lastEntryData.title === "EndDuty") {
-                    this.props.navigation.navigate("AlreadyLoggedScreen");
-                }
-                else if (lastEntryData.title === "EndBreak") {
-                    this.props.navigation.navigate("BreakScreen");
-                }
-                else {
-                    this.props.navigation.navigate("DashboardScreen");
-
-                }
-
-            }
-
-        }
-        else {
-            this.props.navigation.navigate("DashboardScreen");
-
-        }
 
 
-    }
+
     async goToFirstTab() {
-       
+     
         var appLevel = await AsyncStorage.getItem('appLevel');
         var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
         this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
@@ -654,29 +831,11 @@ export default class LogData extends React.Component {
                 if (Utilities.checkAPICallStatus(statusCode)) {
                     if (response.attendance !== undefined) {
                         var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
-                        
-                       
-                      
                         if (attendance_data.length > 0) {
-                           
-                            for (let index = 0; index < todayAttemArray.length; index++) {
-                              if (todayAttemArray[index].title === 'EndDuty') {
-                                check = true;
-                              }
-                            }
-
-                            if (check) {
-                                this.props.navigation.navigate('AlreadyLoggedScreen');
-                              } else {
-                                this.props.navigation.navigate('BreakScreen');
-                              }
-                  
                             if (attendance_data[0]._title === "Start Break") {
                                 AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
                                     this.setState({ isLoadingIndicator: false });
                                     constants.attendance_id = attendance_data[0]._attendance_id;
-
-                                    
                                     this.props.navigation.navigate("EndDutyScreen");
                                 })
                             }
@@ -684,7 +843,6 @@ export default class LogData extends React.Component {
                                 AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
                                     this.setState({ isLoadingIndicator: false });
                                     constants.attendance_id = attendance_data[0]._attendance_id;
-                                  
                                     this.props.navigation.navigate("BreakScreen");
                                 })
                             }
@@ -726,23 +884,99 @@ export default class LogData extends React.Component {
                 }
             });
     }
+    async getOfflineStorageData() {
+         
+        var today = moment(new Date());
+        console.log(`today plus  ${today}`)
+        var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+        var lastEntry = await AsyncStorage.getItem("lastEntry");
+
+        var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+        console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+    // debugger
+        if (lastEntry !== null) {
+          var lastEntryData = JSON.parse(lastEntry);
+        //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
+            var lastEntry = await AsyncStorage.setItem("lastEntry", "");
+            this.props.navigation.navigate("DashboardScreen");
+          }
+          else {
+            let check = false;
+            if(todayAttemArray !== null){
+                for (let index = 0; index < todayAttemArray.length; index++) {
+                  if (todayAttemArray[index].title === 'EndDuty') {
+                    check = true;
+                  }
+                }
+              }
+              
+              console.log(`last one is ${lastEntryData.title}`)
+            //   debugger
+            if (lastEntryData.title === "StartDuty") {
+
+                if (check) {
+                    this.props.navigation.navigate('AlreadyLoggedScreen');
+                  } else {
+                    this.props.navigation.navigate('BreakScreen');
+                  }
+            //   this.props.navigation.navigate("BreakScreen");
+            }
+            else if (lastEntryData.title === "StartBreak") {
+              this.props.navigation.navigate("EndDutyScreen");
+            }
+            else if (lastEntryData.title === "EndDuty") {
+              this.props.navigation.navigate("AlreadyLoggedScreen");
+            }
+            else if (lastEntryData.title === "EndBreak") {
+              this.props.navigation.navigate("BreakScreen");
+            }
+            else {
+              this.props.navigation.navigate("DashboardScreen");
+    
+            }
+    
+          }
+    
+        }
+        else {
+            var check = await AsyncStorage.getItem('appLevelCheckIs');
+    //   debugger
+         if(check == "End Duty"){
+        //    debugger
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+        //    debugger
+           this.props.navigation.navigate("DashboardScreen");
+         }
+        //   this.props.navigation.navigate("DashboardScreen");
+    
+        }
+      }
+
+
+
+
     render() {
+        // debugger
         const actions = [
             {
                 text: "Start Duty",
                 icon: require("../../../ImageAssets/cup.png"),
                 name: "start_duty",
-                position: 2
+                position: 1
             },
             {
                 text: "Start Break",
                 icon: require("../../../ImageAssets/cup.png"),
                 name: "start_break",
-                position: 1
+                position: 2
             },
             {
                 text: "End Break",
-                icon: require("../../../ImageAssets/cup.png"),
+                icon: require("../../../ImageAssets/end.png"),
                 name: "end_break",
                 position: 3
             },
@@ -757,7 +991,9 @@ export default class LogData extends React.Component {
         return (
             <Container>
                 <StatusBar barStyle="light-content" hidden={false} backgroundColor={constants.colorPurpleLight595278} translucent={false} />
+                <Loader loading={this.state.isLoading}></Loader>
                 <HeaderView name={this.state.profileDataSurce._firstname + " " + this.state.profileDataSurce._lastname} context={this} notificationCount={this.state.noificationCount} />
+               
                 <DropdownAlert infoColor={constants.coloBrownFFF5DA} titleStyle={{ color: constants.colorGrey838383, fontWeight: 'bold', }}
                     messageStyle={{ color: constants.colorGrey838383, fontWeight: 'bold', fontSize: 12 }} imageStyle={{
                         padding: 8,
@@ -767,8 +1003,9 @@ export default class LogData extends React.Component {
                     ref={ref => this.dropDownAlertRef = ref} />
                 <DateTimePicker
                     isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this.handleDatePicked.bind(this)}
+                    onConfirm={this.checkDatePick.bind(this)}
                     onCancel={this.hideDateTimePicker}
+                    titleIOS="Please select time"
                     locale="en_GB"
                     mode={"time"}
                 />
@@ -779,6 +1016,22 @@ export default class LogData extends React.Component {
                         alignSelf: 'center',
                     }}
                     ref={ref => this.dropDownAlertRef1 = ref} />
+
+              <DropdownAlert
+                  infoColor={constants.colorRedFD3232}
+                titleStyle={{color: constants.colorWhitefcfcfc, fontWeight: 'bold'}}
+                 messageStyle={{
+                   color: constants.colorWhitefcfcfc,
+                 fontWeight: 'bold',
+                 fontSize: 12,
+                    }}
+                 imageStyle={{
+                   padding: 8,
+                  tintColor: constants.colorWhitefcfcfc,
+                 alignSelf: 'center',
+               }}
+               ref={ref => (this.dropDownAlertRefRed = ref)}
+             />
                 <Modal
                     transparent
                     animationType={'none'}
@@ -799,7 +1052,18 @@ export default class LogData extends React.Component {
                 </Modal>
                 <ImageBackground source={require('../../../ImageAssets/background.png')}
                     style={[styles.mainImageBackground, { backgroundColor: 'white' }]}>
-                    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white', opacity: 0.5, marginBottom: 30, marginTop: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, borderTopWidth: 1, borderTopColor: "BLACK", borderLeftWidth: 1, borderLeftColor: "black" }}>
+                  
+                    <View
+                         style={{alignItems: "center", marginRight: 18, marginTop: 10, flexDirection:"row", justifyContent:"space-between"}}>
+                                   <Text style={{textAlign:"center",marginLeft: 22, }}>
+                          Date: {this.props.navigation.state.params.selectedDate}
+                      </Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                          <EntypoIcons name="circle-with-cross" color="Red" size={24} />
+                         </TouchableOpacity>
+                          </View>
+                    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white', opacity: 0.5, marginBottom: 30, marginTop: 5, marginLeft: 20, marginRight: 20, borderRadius: 5, borderTopWidth: 1, borderTopColor: "BLACK", borderLeftWidth: 1, borderLeftColor: "black" }}>
+                      
                         <FlatList
 
                             data={this.state.dailyLogsModelDataSource}
@@ -821,7 +1085,7 @@ export default class LogData extends React.Component {
                             <Image source={require('../../../ImageAssets/home.png')} style={{ width: 20, height: 20 }} />
                             <Text style={{ color: 'white', fontSize: 10, }}>Home</Text>
                         </Button>
-                        <Button onPress={() => this.props.navigation.navigate("LeaveHistory")} vertical style={styles.footerButtonInactive} >
+                        <Button onPress={() => this.props.navigation.navigate("LeaveScreen")} vertical style={styles.footerButtonInactive} >
 
                             {/* <Icon name="home"  color='white' size={24}/> */}
                             <Image source={require('../../../ImageAssets/leave.png')} style={{ width: 20, height: 20 }} />

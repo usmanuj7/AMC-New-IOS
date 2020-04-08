@@ -94,8 +94,11 @@ export default class NotificationScreen extends React.Component {
       this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "get_unread_notifications" },
         (statusCode, response) => {
           if (Utilities.checkAPICallStatus(statusCode)) {
-            this.setState({notificationDataSource:response.response.notifications.slice(0, 3)})
-
+            
+            this.setState({notificationDataSource:response.response.notifications.slice()})
+            // this.setState({notificationDataSource:response.response.notifications.slice(0,3)})
+            console.log(`notification data source \n${JSON.stringify(this.state.notificationDataSource)}`)
+            debugger
           }
         })
 
@@ -107,20 +110,111 @@ export default class NotificationScreen extends React.Component {
 
 
   }
-  async getOfflineStorageData() {
 
+
+
+  async goToFirstTab() {
+     
+    var appLevel = await AsyncStorage.getItem('appLevel');
+    var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
+    this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
+        (statusCode, response) => {
+
+            if (Utilities.checkAPICallStatus(statusCode)) {
+                if (response.attendance !== undefined) {
+                    var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                    if (attendance_data.length > 0) {
+                        if (attendance_data[0]._title === "Start Break") {
+                            AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("EndDutyScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "Start Duty") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Break") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Duty") {
+                            AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("AlreadyLoggedScreen");
+                            })
+                        }
+                    }
+                    else {
+                        AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                            this.setState({ isLoadingIndicator: false })
+                            this.props.navigation.navigate("DashboardScreen");
+                        })
+                    }
+                }
+
+
+                else if (statusCode === 400) {
+                }
+                else {
+                    AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                        this.setState({ isLoadingIndicator: false })
+                        this.props.navigation.navigate("DashboardScreen");
+                    })
+                }
+            }
+            else if (statusCode === 400) {
+                this.getOfflineStorageData();
+            }
+        });
+}
+async getOfflineStorageData() {
+     
     var today = moment(new Date());
+    console.log(`today plus  ${today}`)
     var offlineApplevel = await AsyncStorage.getItem("attendanceData");
     var lastEntry = await AsyncStorage.getItem("lastEntry");
+
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
+var todayAttemArray = JSON.parse(todayTimeDataArray);
+// debugger
     if (lastEntry !== null) {
       var lastEntryData = JSON.parse(lastEntry);
-      if (today.diff(lastEntryData.date_times, 'days') !== 0) {
+    //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+  if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
         var lastEntry = await AsyncStorage.setItem("lastEntry", "");
         this.props.navigation.navigate("DashboardScreen");
       }
       else {
+        let check = false;
+        if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+          
+          console.log(`last one is ${lastEntryData.title}`)
+        //   debugger
         if (lastEntryData.title === "StartDuty") {
-          this.props.navigation.navigate("BreakScreen");
+
+            if (check) {
+                this.props.navigation.navigate('AlreadyLoggedScreen');
+              } else {
+                this.props.navigation.navigate('BreakScreen');
+              }
+        //   this.props.navigation.navigate("BreakScreen");
         }
         else if (lastEntryData.title === "StartBreak") {
           this.props.navigation.navigate("EndDutyScreen");
@@ -140,80 +234,26 @@ export default class NotificationScreen extends React.Component {
 
     }
     else {
-      this.props.navigation.navigate("DashboardScreen");
+        var check = await AsyncStorage.getItem('appLevelCheckIs');
+//   debugger
+     if(check == "End Duty"){
+    //    debugger
+       this.props.navigation.navigate("AlreadyLoggedScreen");
+     }else{
+    //    debugger
+       this.props.navigation.navigate("DashboardScreen");
+     }
+    //   this.props.navigation.navigate("DashboardScreen");
 
     }
-
-
   }
-  async goToFirstTab() {
 
-    var appLevel = await AsyncStorage.getItem('appLevel');
-    var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-    this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
-      (statusCode, response) => {
-
-        if (Utilities.checkAPICallStatus(statusCode)) {
-          if (response.attendance !== undefined) {
-            var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
-            if (attendance_data.length > 0) {
-              if (attendance_data[0]._title === "Start Break") {
-                AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("EndDutyScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "Start Duty") {
-                AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("BreakScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "End Break") {
-                AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("BreakScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "End Duty") {
-                AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("AlreadyLoggedScreen");
-                })
-              }
-            }
-            else {
-              AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
-                this.setState({ isLoadingIndicator: false })
-                this.props.navigation.navigate("DashboardScreen");
-              })
-            }
-          }
-
-
-          else if (statusCode === 400) {
-          }
-          else {
-            AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
-              this.setState({ isLoadingIndicator: false })
-              this.props.navigation.navigate("DashboardScreen");
-            })
-          }
-        }
-        else if (statusCode === 400) {
-          this.getOfflineStorageData();
-        }
-      });
-  }
   _renderItem(item) {
     
     var weekDayName = moment(item.item.date).format('dddd');
     return (
       <TouchableOpacity
+      onPress={()=>this.markNotificationReaded()}
         style={styles.rowColFront}>
 
         <View style={{ flex: 1, justifyContent: 'flex-start' }}>
@@ -270,6 +310,25 @@ export default class NotificationScreen extends React.Component {
 //   }
 // }
   }
+  async markNotificationReaded(){
+    debugger
+    const profile = await AsyncStorage.getItem('profileData');
+    if (profile !== null) {
+        var profileData = JSON.parse(profile);
+     
+
+        var staffData = { staffid: profileData._staffid };
+
+    var staffData = { staffid: profileData._staffid };
+  this.WebServicesManager.postApiCallAttendence({ dataToInsert: staffData, apiEndPoint: "set_notifications_read_mobile" },
+    (statusCode, response) => {
+      if (Utilities.checkAPICallStatus(statusCode)) {
+
+      }
+    })
+    }
+  }
+
   pressNotification() {
     constants.noificationCount = 0;
     this.props.navigation.navigate("NotificationScreen");
@@ -431,11 +490,15 @@ export default class NotificationScreen extends React.Component {
             </View>
           </View>
           <View style={{ flex: 1.3, justifyContent: 'center', backgroundColor: 'white', opacity: 0.8, marginBottom: 30, marginLeft: 20, marginRight: 20, borderRadius: 5, }}>
-            <FlatList
+        {    
+        this.state.notificationDataSource.length >0 ?
+        <FlatList
               data={this.state.notificationDataSource}
               renderItem={this._renderItem}
               extraData={this.state}
             />
+          :<Text style={{alignSelf:"center", height:"50%"}}> No data available </Text>
+          }
             <Button onPress={() => this.props.navigation.navigate("ClearNotification")} block style={{ marginLeft: 10, marginRight: 10, marginBottom: 5, borderRadius: 7, backgroundColor: constants.coloBlue2f2756, height: 40 }}>
               <Text style={styles.buttonTextSmall}>
                 View All

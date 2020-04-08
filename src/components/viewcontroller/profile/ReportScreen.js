@@ -180,7 +180,7 @@ export default class ReportScreen extends React.Component {
     //     });
   }
   updateWeek(week) {
-    debugger
+    // debugger
     var prevWeekNo = parseInt(parseInt(week.split("Week")[1]));
     this.setState({ weeknumber: prevWeekNo });
 
@@ -227,24 +227,108 @@ export default class ReportScreen extends React.Component {
   // }
 
 
-  async getOfflineStorageData() {
+  async goToFirstTab() {
+     
+    var appLevel = await AsyncStorage.getItem('appLevel');
+    var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
+    this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
+        (statusCode, response) => {
 
+            if (Utilities.checkAPICallStatus(statusCode)) {
+                if (response.attendance !== undefined) {
+                    var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
+                    if (attendance_data.length > 0) {
+                        if (attendance_data[0]._title === "Start Break") {
+                            AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("EndDutyScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "Start Duty") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Break") {
+                            AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("BreakScreen");
+                            })
+                        }
+                        else if (attendance_data[0]._title === "End Duty") {
+                            AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
+                                this.setState({ isLoadingIndicator: false });
+                                constants.attendance_id = attendance_data[0]._attendance_id;
+                                this.props.navigation.navigate("AlreadyLoggedScreen");
+                            })
+                        }
+                    }
+                    else {
+                        AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                            this.setState({ isLoadingIndicator: false })
+                            this.props.navigation.navigate("DashboardScreen");
+                        })
+                    }
+                }
+
+
+                else if (statusCode === 400) {
+                }
+                else {
+                    AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
+                        this.setState({ isLoadingIndicator: false })
+                        this.props.navigation.navigate("DashboardScreen");
+                    })
+                }
+            }
+            else if (statusCode === 400) {
+                this.getOfflineStorageData();
+            }
+        });
+}
+async getOfflineStorageData() {
+     
     var today = moment(new Date());
+    console.log(`today plus  ${today}`)
     var offlineApplevel = await AsyncStorage.getItem("attendanceData");
     var lastEntry = await AsyncStorage.getItem("lastEntry");
+
     var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
-    var check = await AsyncStorage.getItem('appLevelCheckIs');
-    console.log(`last entery ${lastEntry}`)
-    debugger
+    console.log(`time array is ${JSON.stringify(todayTimeDataArray)}`)
+var todayAttemArray = JSON.parse(todayTimeDataArray);
+// debugger
     if (lastEntry !== null) {
       var lastEntryData = JSON.parse(lastEntry);
-      if (today.diff(lastEntryData.date_times, 'days') !== 0) {
+    //   if (today.diff(lastEntryData.date, 'days') !== 0) {
+  if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+
         var lastEntry = await AsyncStorage.setItem("lastEntry", "");
         this.props.navigation.navigate("DashboardScreen");
       }
       else {
+        let check = false;
+        if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+          
+          console.log(`last one is ${lastEntryData.title}`)
+        //   debugger
         if (lastEntryData.title === "StartDuty") {
-          this.props.navigation.navigate("BreakScreen");
+
+            if (check) {
+                this.props.navigation.navigate('AlreadyLoggedScreen');
+              } else {
+                this.props.navigation.navigate('BreakScreen');
+              }
+        //   this.props.navigation.navigate("BreakScreen");
         }
         else if (lastEntryData.title === "StartBreak") {
           this.props.navigation.navigate("EndDutyScreen");
@@ -256,8 +340,6 @@ export default class ReportScreen extends React.Component {
           this.props.navigation.navigate("BreakScreen");
         }
         else {
-          // this.props.navigation.navigate("AlreadyLoggedScreen");
-
           this.props.navigation.navigate("DashboardScreen");
 
         }
@@ -266,87 +348,22 @@ export default class ReportScreen extends React.Component {
 
     }
     else {
-      // this.props.navigation.navigate("AlreadyLoggedScreen");
-      var check = await AsyncStorage.getItem('appLevelCheckIs');
-   debugger
-      if(check == "End Duty"){
-        debugger
-        this.props.navigation.navigate("AlreadyLoggedScreen");
-      }else{
-        debugger
-        this.props.navigation.navigate("DashboardScreen");
-      }
-      
+        var check = await AsyncStorage.getItem('appLevelCheckIs');
+//   debugger
+     if(check == "End Duty"){
+    //    debugger
+       this.props.navigation.navigate("AlreadyLoggedScreen");
+     }else{
+    //    debugger
+       this.props.navigation.navigate("DashboardScreen");
+     }
+    //   this.props.navigation.navigate("DashboardScreen");
 
     }
-
-
   }
-  async goToFirstTab() {
-    debugger
-    var appLevel = await AsyncStorage.getItem('appLevel');
-    var attendence = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
-    this.WebServicesManager.postApiDailyAttendence({ dataToInsert: attendence, apiEndPoint: "get_dated_lastAttendance" },
-      (statusCode, response) => {
-
-        if (Utilities.checkAPICallStatus(statusCode)) {
-          if (response.attendance !== undefined) {
-            var attendance_data = SigninDataLogsModel.parseSigninDataLogsModelFromJSON(response.attendance);
-            if (attendance_data.length > 0) {
-              if (attendance_data[0]._title === "Start Break") {
-                AsyncStorage.setItem('appLevel', "EndDutyScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("EndDutyScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "Start Duty") {
-                AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("BreakScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "End Break") {
-                AsyncStorage.setItem('appLevel', "BreakScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("BreakScreen");
-                })
-              }
-              else if (attendance_data[0]._title === "End Duty") {
-                AsyncStorage.setItem('appLevel', "AlreadyLoggedScreen").then((value) => {
-                  this.setState({ isLoadingIndicator: false });
-                  constants.attendance_id = attendance_data[0]._attendance_id;
-                  this.props.navigation.navigate("AlreadyLoggedScreen");
-                })
-              }
-            }
-            else {
-              AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
-                this.setState({ isLoadingIndicator: false })
-                this.props.navigation.navigate("DashboardScreen");
-              })
-            }
-          }
 
 
-          else if (statusCode === 400) {
-          }
-          else {
-            debugger
-            AsyncStorage.setItem('appLevel', "DashboardScreen").then((value) => {
-              this.setState({ isLoadingIndicator: false })
-              this.props.navigation.navigate("DashboardScreen");
-            })
-          }
-        }
-        else if (statusCode === 400) {
-          debugger
-          this.getOfflineStorageData();
-        }
-      });
-  }
+
   async componentWillMount() {
     var Months = moment(new Date()).format("MMMM YYYY");
     this.setState({
@@ -419,18 +436,22 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = sundayhrs.break.split(":")[0];
           var minBreak = sundayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = sundayhrs.worked.split(":")[0];
           var min = sundayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
           // arrayTopush.push(parseFloat(inHrs));
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
 
           // arrayTopush.push(parseInt(sundayhrs.total.split(":")[0]))
           var arrayToSend = this.state.arrayToSend;
@@ -445,17 +466,21 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = mondayhrs.break.split(":")[0];
           var minBreak = mondayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = mondayhrs.worked.split(":")[0];
           var min = mondayhrs.worked.split(":")[1];
-          var res =  parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -468,17 +493,21 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = tuesdayhrs.break.split(":")[0];
           var minBreak = tuesdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = tuesdayhrs.worked.split(":")[0];
           var min = tuesdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -490,16 +519,20 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = wednesdayhrs.break.split(":")[0];
           var minBreak = wednesdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = wednesdayhrs.worked.split(":")[0];
           var min = wednesdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var res1 = parseFloat(inHrs) + res
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -511,17 +544,21 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = thursdayhrs.break.split(":")[0];
           var minBreak = thursdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = thursdayhrs.worked.split(":")[0];
           var min = thursdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -534,17 +571,21 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = fridayhrs.break.split(":")[0];
           var minBreak = fridayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
 
           var inHrs = fridayhrs.worked.split(":")[0];
           var min = fridayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);
@@ -556,17 +597,22 @@ export default class ReportScreen extends React.Component {
 
           var inHrsBreak = saturdayhrs.break.split(":")[0];
           var minBreak = saturdayhrs.break.split(":")[1];
-          var resBreak = parseFloat(minBreak) / 100
+          var resBreak = parseFloat(minBreak) >9 ? parseFloat(minBreak) / 100 : parseFloat(minBreak)/10;
           var temp = parseFloat(resBreak.toFixed(2))
           var res1Break = parseFloat(inHrsBreak) + temp
-          arrayTopush.push(parseFloat(res1Break));
+          var teBreak = res1Break.toFixed(2).toString()
+          var finBreak = parseFloat(teBreak)
+          arrayTopush.push(parseFloat(finBreak));
+      
 
           var inHrs = saturdayhrs.worked.split(":")[0];
           var min = saturdayhrs.worked.split(":")[1];
-          var res = parseFloat(min) / 100
+          var res = parseFloat(min) >9 ? parseFloat(min) / 100 : parseFloat(min)/10;
           var temp = parseFloat(res.toFixed(2))
           var res1 = parseFloat(inHrs) + temp
-          arrayTopush.push(res1);
+          var te = res1.toFixed(2).toString()
+          var fin = parseFloat(te)
+          arrayTopush.push(parseFloat(fin));
           // arrayTopush.push(parseFloat(inHrs));
           var arrayToSend = this.state.arrayToSend;
           arrayToSend.push(arrayTopush);

@@ -100,6 +100,7 @@ export default class Dashboard extends React.Component {
 
       if (isConnected == true) {
         this.setState({ connection_Status: "Online" })
+        // comment for only online mode
         Utilities.sendLocalStorageToServer();
       }
       else {
@@ -152,6 +153,7 @@ export default class Dashboard extends React.Component {
   }
   async componentWillMount() {
     console.log("dashboard components will mount")
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
 
     this.setState({ isLoadingIndicator: true, noificationCount: constants.noificationCount });
     var date = new Date();
@@ -168,7 +170,6 @@ export default class Dashboard extends React.Component {
       var Leave = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(prevDate).format('YYYY-MM-DD') };
       this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
         (statusCode, response) => {
-
           if (Utilities.checkAPICallStatus(statusCode)) {
             var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(response.attendance_data);
             this.checkNotif(dailyLogsModelDataSource, moment(prevDate).format('YYYY-MM-DD'));
@@ -176,6 +177,8 @@ export default class Dashboard extends React.Component {
           }
           else if (statusCode === 400) {
             this.setState({ isLoadingIndicator: false });
+
+            // uncomment for only online
             // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
           }
@@ -184,7 +187,6 @@ export default class Dashboard extends React.Component {
       var Leave = { staffid: this.state.profileDataSurce._staffid, clock_date: moment(new Date()).format('YYYY-MM-DD') };
       this.WebServicesManager.postApiDailyAttendence({ dataToInsert: Leave, apiEndPoint: "get_daily_attendance_log" },
         (statusCode, response) => {
-
           if (Utilities.checkAPICallStatus(statusCode)) {
 
             if (response.attendance_data.length > 0) {
@@ -192,15 +194,25 @@ export default class Dashboard extends React.Component {
                 this.setState({ isLoadingIndicator: false });
                 this.props.navigation.navigate("AlreadyLoggedScreen", { attendanceData: response.attendance_data });
               }
-
+              console.log(`app level ${appLevel}`)
+              
               if (appLevel !== null) {
                 this.setState({ isLoadingIndicator: false })
-                if (appLevel === "BreakScreen")
+                if (appLevel === "BreakScreen"){
                   this.props.navigation.navigate("BreakScreen");
+                
+                }
                 if (appLevel === "DashboardScreen")
-                  this.props.navigation.navigate("DashboardScreen");
-                // else if (appLevel === "EndDutyScreen")
-                //   this.props.navigation.navigate("EndDutyScreen");
+                  {
+                    
+                    this.props.navigation.navigate("DashboardScreen");
+            // comment for only online
+                    if(isScreentoCheck === "yes")
+                    this.getOfflineStorageData();
+                  }
+                  
+                else if (appLevel === "EndDutyScreen")
+                  this.props.navigation.navigate("EndDutyScreen");
               }
               else {
                 this.setState({ isLoadingIndicator: false })
@@ -208,12 +220,17 @@ export default class Dashboard extends React.Component {
               }
             }
             else {
+
+            // comment for only online
+              if(isScreentoCheck === "yes")
+              this.getOfflineStorageData();
               this.setState({ isLoadingIndicator: false })
 
             }
           }
           else if (statusCode === 400) {
             this.setState({ isLoadingIndicator: false });
+            // uncomment for only online
             // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
           }
         })
@@ -222,6 +239,72 @@ export default class Dashboard extends React.Component {
 
     }
   }
+
+  
+  async getOfflineStorageData() {
+    AsyncStorage.setItem('isScreenToCheck', '');
+  
+    var today = moment(new Date());
+    // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+
+    var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
+    console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+
+    if (lastEntry !== null) {
+      console.log('in if loop');
+      var lastEntryData = JSON.parse(lastEntry);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+  
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+        var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        this.props.navigation.navigate('DashboardScreen');
+      } else {
+        if (lastEntryData.title === 'StartDuty') {
+          let check = false;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
+        } else if (lastEntryData.title === 'StartBreak') {
+          this.props.navigation.navigate('EndDutyScreen');
+        } else if (lastEntryData.title === 'EndDuty') {
+          this.props.navigation.navigate('AlreadyLoggedScreen');
+        } else if (lastEntryData.title === 'EndBreak') {
+          this.props.navigation.navigate('BreakScreen');
+        } else {
+          this.props.navigation.navigate('DashboardScreen');
+        }
+      }
+    } else {
+
+      // var check = await AsyncStorage.getItem('appLevelCheckIs');
+  
+      //    if(check == "End Duty"){
+         
+      //      this.props.navigation.navigate("AlreadyLoggedScreen");
+      //    }else{
+        
+      //      this.props.navigation.navigate("DashboardScreen");
+      //    }
+      this.props.navigation.navigate('DashboardScreen');
+    }
+  }
+
 
   hideDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: false });
@@ -233,7 +316,13 @@ export default class Dashboard extends React.Component {
   };
 
   async startDuty() {
+    await AsyncStorage.setItem('todayTime','');
+    await AsyncStorage.setItem('startDutyTimeToday','');
+    await AsyncStorage.setItem('EndBreakTimeToday','');
+    await AsyncStorage.setItem('startBreakTimeToday','');
+    await AsyncStorage.setItem('startEndDutyToday','');
     
+
     const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
     var date = '';
     var today = moment(new Date());
@@ -305,13 +394,16 @@ export default class Dashboard extends React.Component {
             }
           }
           else if (statusCode === 400) {
+            // comment for only online
             var SearchesToSave = [];
             var attendanceData = {
               title: "StartDuty", date: date, staffid: this.state.profileDataSurce._staffid, clock_in: new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
             };
             this.setofflineData(attendanceData);
-            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
 
+            // uncomment for only online
+            // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
+            // this.setState({isLoadingIndicator: false});
           }
           else if (response.responseCode === 403) {
             this.setState({ isLoadingIndicator: false });
@@ -322,8 +414,12 @@ export default class Dashboard extends React.Component {
     }
   }
 
+
   async setofflineData(attendanceData) {
-    // debugger
+
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
+
+
     var dataToPush = [];
     var today = moment(new Date());
     dataToPush.push(attendanceData);
@@ -449,7 +545,7 @@ export default class Dashboard extends React.Component {
 
           </View>
 
-          {this.state.notificationView}
+          {/* {this.state.notificationView} */}
 
           <Footer style={{ backgroundColor: constants.colorPurpleLight595278 }}>
             <Button onPress={() => this.props.navigation.navigate("DashboardScreen")} style={styles.footerButtonActive} vertical>

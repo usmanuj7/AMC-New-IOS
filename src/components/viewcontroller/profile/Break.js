@@ -90,7 +90,9 @@ export default class Break extends React.Component {
   }
   _handleConnectivityChange = isConnected => {
     if (isConnected == true) {
-      if (this.state.connectionCount == 1) Utilities.sendLocalStorageToServer();
+      if (this.state.connectionCount == 1)
+      // comment for only online 
+      Utilities.sendLocalStorageToServer();
       this.setState({connectionCount: 1});
     } else {
       this.setState({connection_Status: 'Offline'});
@@ -102,6 +104,12 @@ export default class Break extends React.Component {
     return true;
   };
   async componentWillMount() {
+    const isScreentoCheck = await AsyncStorage.getItem('isScreenToCheck');
+
+    console.log(`is check screen  value  == ${isScreentoCheck}`)
+    // comment for only online mode
+    if(isScreentoCheck === "yes")
+    this.getOfflineStorageData();
     var startDutyTimeToday = await AsyncStorage.getItem('startDutyTimeToday');
 
     console.log(`start duty checking ${startDutyTimeToday}`)
@@ -158,8 +166,74 @@ export default class Break extends React.Component {
     }
   }
 
+
+  async getOfflineStorageData() {
+  
+    AsyncStorage.setItem('isScreenToCheck', '');
+
+    var today = moment(new Date());
+    // var offlineApplevel = await AsyncStorage.getItem("attendanceData");
+
+    var lastEntry = await AsyncStorage.getItem('lastEntry');
+    var todayTimeDataArray = await AsyncStorage.getItem('todayTime');
+    var todayAttemArray = JSON.parse(todayTimeDataArray);
+
+    console.log('offline storage called');
+    console.log(`last entry is  ${lastEntry}`);
+
+    if (lastEntry !== null) {
+      console.log('in if loop');
+      var lastEntryData = JSON.parse(lastEntry);
+      console.log(`today ${JSON.stringify(today)}`);
+      console.log(`last entery is ${JSON.stringify(lastEntryData)}`);
+  
+      // clock_date
+      if( (today.diff(lastEntryData.date, 'days') !== 0 || (today.diff(lastEntryData.clock_date, 'days') !== 0)) ){
+        var lastEntry = await AsyncStorage.setItem('lastEntry', '');
+        this.props.navigation.navigate('DashboardScreen');
+      } else {
+        if (lastEntryData.title === 'StartDuty') {
+          let check = false;
+          if(todayAttemArray !== null){
+            for (let index = 0; index < todayAttemArray.length; index++) {
+              if (todayAttemArray[index].title === 'EndDuty') {
+                check = true;
+              }
+            }
+          }
+
+          if (check) {
+            this.props.navigation.navigate('AlreadyLoggedScreen');
+          } else {
+            this.props.navigation.navigate('BreakScreen');
+          }
+        } else if (lastEntryData.title === 'StartBreak') {
+          this.props.navigation.navigate('EndDutyScreen');
+        } else if (lastEntryData.title === 'EndDuty') {
+          this.props.navigation.navigate('AlreadyLoggedScreen');
+        } else if (lastEntryData.title === 'EndBreak') {
+          this.props.navigation.navigate('BreakScreen');
+        } else {
+          this.props.navigation.navigate('DashboardScreen');
+        }
+      }
+    } else {
+
+      var check = await AsyncStorage.getItem('appLevelCheckIs');
+
+         if(check == "End Duty"){
+
+           this.props.navigation.navigate("AlreadyLoggedScreen");
+         }else{
+       
+           this.props.navigation.navigate("DashboardScreen");
+         }
+      // this.props.navigation.navigate('DashboardScreen');
+    }
+  }
   async handleStartBreak() {
     console.log("start breat above loading true")
+
    this.setState({isLoadingIndicator: true});
     const todayTimePrevArray = await AsyncStorage.getItem('todayTime');
     var today = moment(new Date());
@@ -175,6 +249,8 @@ export default class Break extends React.Component {
           var dailyLogsModelDataSource = DailyLogsModel.parseDailyLogsModelFromJSON(
             response.attendance_data,
           );
+          console.log(`data atandance is ${JSON.stringify(dailyLogsModelDataSource)} and length is ${dailyLogsModelDataSource.length}`)
+         
           if (dailyLogsModelDataSource.length > 0) {
             var attendence = {
               title: 'StartBreak',
@@ -235,6 +311,9 @@ export default class Break extends React.Component {
                     clock_date: moment(new Date()).format('YYYY-MM-DD'),
                   };
                   this.setofflineData(attendence);
+
+                  // uncomment for only online mode
+                  // this.setState({isLoadingIndicator: false}); 
                   // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
                 } else if (response.responseCode === 403) {
                   this.setState({isLoadingIndicator: false});
@@ -260,8 +339,22 @@ export default class Break extends React.Component {
               },
             );
           }
+          else{
+
+            this.setState({isLoadingIndicator: false});
+            this.dropDownAlertRef.alertWithType(
+              'info',
+              'Alert',
+              'Please mark attendance first',
+            );
+            setTimeout(() => {
+              this.props.navigation.navigate('DashboardScreen');
+            }, 3000);
+
+          }
         } else if (statusCode === 400) {
           console.log('offline start break called');
+          // comment for online mode
           var attendence = {
             title: 'StartBreak',
             staffid: this.state.profileDataSurce._staffid,
@@ -276,8 +369,12 @@ export default class Break extends React.Component {
             clock_date: moment(new Date()).format('YYYY-MM-DD'),
           };
           this.setofflineData(attendence);
+
+          // uncomment for online mode
+          // this.setState({isLoadingIndicator: false});
           // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
+  
       },
     );
   }
@@ -360,6 +457,7 @@ export default class Break extends React.Component {
                     },
                   );
                 } else if (statusCode === 400) {
+                  // comment for only online mode
                   var attendence = {
                     title: 'EndDuty',
                     staffid: this.state.profileDataSurce._staffid,
@@ -374,6 +472,8 @@ export default class Break extends React.Component {
                   };
                   this.setofflineDataEndDuty(attendence);
 
+                  //uncomment only for online mode
+                  // this.setState({isLoadingIndicator: false}); 
                   // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
                 } else if (response.responseCode === 403) {
                   this.setState({isLoadingIndicator: false});
@@ -399,7 +499,22 @@ export default class Break extends React.Component {
               },
             );
           }
+          else{
+
+            this.setState({isLoadingIndicator: false});
+            this.dropDownAlertRef.alertWithType(
+              'info',
+              'Alert',
+              'Please mark attendance first',
+            );
+            setTimeout(() => {
+              this.props.navigation.navigate('DashboardScreen');
+            }, 3000);
+
+          }
+
         } else if (statusCode === 400) {
+          // comment for online
           var attendence = {
             title: 'EndDuty',
             staffid: this.state.profileDataSurce._staffid,
@@ -413,7 +528,8 @@ export default class Break extends React.Component {
             date: moment(new Date()).format('YYYY-MM-DD'),
           };
           this.setofflineDataEndDuty(attendence);
-
+          //uncomment for online 
+          // this.setState({isLoadingIndicator: false}); 
           // this.dropDownAlertRef.alertWithType('info', 'Alert', "Please check your internet connection");
         }
       },
@@ -424,6 +540,7 @@ export default class Break extends React.Component {
     this.props.navigation.navigate('NotificationScreen');
   }
   async setofflineData(attendanceData) {
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
     var today = moment(new Date());
     var dataToPush = [];
     dataToPush.push(attendanceData);
@@ -444,7 +561,7 @@ export default class Break extends React.Component {
     } else {
       Utilities.saveToStorage('attendanceData', dataToPush);
     }
-console.log(`after first iff dta ${todayTimePrevArray}`)
+    console.log(`after first iff dta ${todayTimePrevArray}`)
     if (todayTimePrevArray !== null && todayTimePrevArray !== '') {
       console.log("inner iffi fififififi")
       var todayTimePrevArrayPArsed = JSON.parse(todayTimePrevArray);
@@ -482,6 +599,10 @@ console.log(`after first iff dta ${todayTimePrevArray}`)
   }
 
   async setofflineDataEndDuty(attendanceData) {
+
+
+    AsyncStorage.setItem('lastNetworkStatus', `offline`);
+
     console.log( `end duty offline called`)
     var today = moment(new Date());
     var dataToPush = [];
