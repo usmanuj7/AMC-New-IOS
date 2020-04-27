@@ -30,15 +30,18 @@ import Dashboard from '../Dashboard';
 import LeaveTypeModel from '../../Models/LeaveTypeModel';
 import LeaveModel from '../../Models/LeaveModel';
 
-export default class SiginScreen extends React.Component {
+export default class SigupScreen extends React.Component {
   WebServicesManager = new WebServicesManager();
   constructor(props) {
     super(props);
     this.Login = this.Login.bind(this);
     this.state = {
       isModelVisible: false,
+      userFirstName:"",
+      userLastName:"",
       userEmail: 'noufal@dowgroup.com',
       userPassword: '123',
+      userConfirmPassword:"",
       isLoadingIndicator: false,
       token: null,
     };
@@ -486,6 +489,8 @@ export default class SiginScreen extends React.Component {
         'Please enter valid Email',
       );
   }
+
+
   render() {
     return (
       <ImageBackground
@@ -530,17 +535,70 @@ export default class SiginScreen extends React.Component {
             }}
             ref={ref => (this.dropDownAlertRef1 = ref)}
           />
-          <View style={styles.upperHeader}>
+          <SafeAreaView>
+            
+          <View style={{ flexDirection:"row", alignItems:"center", 
+          justifyContent:"space-between", paddingLeft:10, paddingRight:30}}>
+          <TouchableOpacity onPress={()=>{
+              this.props.navigation.navigate('BreakScreen')
+          }}>
+          <Icon
+              // style={styles.searchIcon}
+              name="chevron-left"
+              size={24 }
+              color="#000"
+            />
+          </TouchableOpacity>
+          <Text style={{fontSize:20, lineHeight:24, fontWeight:"bold", alignSelf:"center"}}> Register</Text>
+          {/* <View></View> */}
+          </View>
+          </SafeAreaView>
+        
+          <View style={styles.signupUpperHeader}>
             <Image
               source={require('../../../ImageAssets/amc.png')}
               style={{height: 80, width: 50}}
             />
           </View>
-          <View style={styles.transparentInputBox}>
+          <View style={styles.SignupTransparentInputBox}>
             <Icon
               style={styles.searchIcon}
               name="user"
               size={24}
+              color="#000"
+            />
+            <TextInput
+              style={styles.inputNotCenterAligned}
+              placeholder="First Name"
+              onChangeText={searchString => {
+                this.setState({userFirstName: searchString});
+              }}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+
+          <View style={styles.SignupTransparentInputBox}>
+            <Icon
+              style={styles.searchIcon}
+              name="user"
+              size={24}
+              color="#000"
+            />
+            <TextInput
+              style={styles.inputNotCenterAligned}
+              placeholder="Last Name"
+              onChangeText={searchString => {
+                this.setState({userLastName: searchString});
+              }}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+
+          <View style={styles.SignupTransparentInputBox}>
+            <Icon
+              style={styles.searchIcon}
+              name="envelope"
+              size={20}
               color="#000"
             />
             <TextInput
@@ -552,7 +610,7 @@ export default class SiginScreen extends React.Component {
               underlineColorAndroid="transparent"
             />
           </View>
-          <View style={styles.transparentInputBox}>
+          <View style={styles.SignupTransparentInputBox}>
             <Ionicons
               style={styles.searchIcon}
               name="md-lock"
@@ -564,7 +622,7 @@ export default class SiginScreen extends React.Component {
               placeholder="Password"
               secureTextEntry={true}
               onSubmitEditing={() => {
-                this.Login();
+                // this.Login();
               }}
               onChangeText={searchString => {
                 this.setState({userPassword: searchString});
@@ -572,36 +630,42 @@ export default class SiginScreen extends React.Component {
               underlineColorAndroid="transparent"
             />
           </View>
+
+          <View style={styles.SignupTransparentInputBox}>
+            <Ionicons
+              style={styles.searchIcon}
+              name="md-lock"
+              size={24}
+              color="#000"
+            />
+            <TextInput
+              style={styles.inputNotCenterAligned}
+              placeholder=" Confirm Password"
+              secureTextEntry={true}
+              onSubmitEditing={() => {
+                // this.Login();
+              }}
+              onChangeText={searchString => {
+                this.setState({userConfirmPassword: searchString});
+              }}
+              underlineColorAndroid="transparent"
+            />
+          </View>
           <Button
-            onPress={() => this.Login()}
+            onPress={() =>{ 
+              // this.Login()
+            }}
             block
             style={{
-              margin: 18,
+              marginHorizontal: 75,
+              marginVertical:25,
               borderRadius: 7,
               backgroundColor: constants.colorRed9d0000,
               height: 40,
             }}>
-            <Text style={styles.buttonTextSmall}>Log In</Text>
+            <Text style={styles.buttonTextSmall}>Sign Up</Text>
           </Button>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('ForgotPasswordScreen')
-            }>
-            <Text style={styles.underline}>Forgot your password? </Text>
-          </TouchableOpacity>
         </ScrollView>
-
-        <SafeAreaView>
-        <View style={{position: 'relative', bottom:10}}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('SignupScreen')
-            }>
-            <Text style={styles.underline}>Dont have an Account? Sign Up </Text>
-          </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-    
       </ImageBackground>
     );
   }

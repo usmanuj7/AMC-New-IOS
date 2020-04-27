@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
 import SigninScreen from "./src/components/viewcontroller/profile/Signin";
+import SignupScreen from "./src/components/viewcontroller/profile/Signup";
 import ForgotPasswordScreen from "./src/components/viewcontroller/profile/ForgotPassword";
 import DashboardScreen from "./src/components/viewcontroller/Dashboard";
 import SplashScreen from 'react-native-splash-screen';
@@ -32,6 +33,7 @@ const App = createStackNavigator({
 
    ScreenToCheck: { screen: ScreenToCheck, navigationOptions: { header: null,gesturesEnabled: false } },
    SigninScreen: { screen: SigninScreen, navigationOptions: { header: null,gesturesEnabled: false } },
+   SignupScreen: { screen: SignupScreen, navigationOptions: { header: null,gesturesEnabled: false } },
    ForgotPasswordScreen: { screen: ForgotPasswordScreen, navigationOptions: { header: null,gesturesEnabled: false } },
    DashboardScreen: { screen: DashboardScreen, navigationOptions: { header: null,gesturesEnabled: false } },
    SuccessScreen: {screen:Success, navigationOptions: {header: null,gesturesEnabled: false}},

@@ -16,9 +16,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'transparent',
         borderWidth:1,
-        marginRight:20,
-        marginLeft:20,
+        marginHorizontal:20,
         marginTop:10,
+        opacity:0.8,
+        borderColor:'grey',
+        borderRadius:7,
+        height:45,
+        color:'black'
+        
+    },
+
+    SignupTransparentInputBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+        borderWidth:1,
+        marginHorizontal:25,
+        marginTop:15,
         opacity:0.8,
         borderColor:'grey',
         borderRadius:7,
@@ -71,6 +86,10 @@ const styles = StyleSheet.create({
     },
     upperHeader:{
         alignItems: 'center',marginBottom:20,marginTop:60,height:80
+    },
+
+    signupUpperHeader:{
+        alignItems: 'center',marginBottom:40,marginTop:12,height:80
     },
     buttonText:{ color: 'white', fontSize: 16, fontWeight: '400', textAlign:'center'
 },
