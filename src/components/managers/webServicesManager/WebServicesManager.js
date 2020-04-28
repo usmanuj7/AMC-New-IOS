@@ -57,6 +57,37 @@ export default class WebServicesManager extends React.Component {
     });
   }
 
+  callPostMethodSignUp(apiURL, params, callback) {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected === true) {
+        var formdata = new FormData();
+        formdata.append('firstname', params.dataToInsert.First_name);
+        formdata.append('lastname', params.dataToInsert.Last_name);
+        formdata.append('email', params.dataToInsert.Email);
+        formdata.append('password', params.dataToInsert.Password);
+        formdata.append('conf_password', params.dataToInsert.confirm_Password);
+
+        var request = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formdata,
+        };
+        fetch(apiURL + params.apiEndPoint, request)
+          .then(response => response.json())
+          .then(responseJson => {
+            let statusCode = 200;
+            callback(statusCode, responseJson);
+          })
+          .catch(error => {});
+      } else {
+        let statusCode = 400;
+        callback(statusCode, '');
+      }
+    });
+  }
+
   callPostMethodForgotPass(apiURL, params, callback) {
     NetInfo.fetch().then(state => {
       if (state.isConnected === true) {
@@ -737,6 +768,10 @@ export default class WebServicesManager extends React.Component {
 
   postApiCall(params, callback) {
     return this.callPostMethod(this.baseUrl, params, callback);
+  }
+  postApiCallSignUp(params, callback) {
+    return this.callPostMethodSignUp(this.baseUrl, params, callback);
+    
   }
   postApiCallStartDuty(params, callback) {
     return this.callPostMethodStartDuty(this.baseUrl, params, callback);

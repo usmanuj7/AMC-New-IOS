@@ -15,5 +15,7 @@ export default {
     noificationCount:0,
     appStatus:"Online",
     colorRedFD3232: '#FD3232',
+    colorWhite: '#fff',
+    colorGreen:"#00565A",
 
 };

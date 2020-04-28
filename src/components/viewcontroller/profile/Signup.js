@@ -12,6 +12,8 @@ import {
   ScrollView,
   BackHandler,
   AsyncStorage,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import styles from '../../../Style';
 import WebServicesManager from '../../managers/webServicesManager/WebServicesManager';
@@ -39,15 +41,16 @@ export default class SigupScreen extends React.Component {
       isModelVisible: false,
       userFirstName:"",
       userLastName:"",
-      userEmail: 'noufal@dowgroup.com',
+      userEmail: '',
       userPassword: '123',
       userConfirmPassword:"",
       isLoadingIndicator: false,
       token: null,
+     
     };
     // userInfo: '',
   }
-
+ errorMsg = ""
   async checkNotif(dailyLogsModelDataSource, prevDate, profileData) {
     console.log(` check notify ${JSON.stringify(JSON.stringify(profileData))}`);
     debugger;
@@ -489,10 +492,115 @@ export default class SigupScreen extends React.Component {
         'Please enter valid Email',
       );
   }
+  validateFields = ()=>{
+    if(this.state.userFirstName.trim()!== null && this.state.userFirstName.trim() !==""){
+      if(this.state.userLastName.trim()!== null && this.state.userLastName.trim() !==""){
+        if (Utilities.ValidateEmail(this.state.userEmail)) {
+          if(this.state.userPassword.trim()!== null && this.state.userPassword.trim() !==""){
+
+            if(this.state.userConfirmPassword.trim()!== null && this.state.userConfirmPassword.trim() !==""){
+              if(this.state.userPassword === this.state.userConfirmPassword){
+                this.errorMsg = ""
+                return true
+              }
+              else{
+                this.errorMsg = "Password does Match"
+                return false
+              }
+            }
+            else{
+              this.errorMsg = "Please enter Confirm Password"
+              return false
+            }
+          }
+          else{
+            this.errorMsg = "Please enter Password"
+            return false
+          }
+        }
+        else{
+          this.errorMsg = "Please enter Valid Email"
+          return false
+        }
+      
+      }
+      else{
+        this.errorMsg = "Please enter Last name"
+        return false
+      }
+    }
+    else{
+      this.errorMsg = "Please enter First name"
+      return false
+    }
+  
+  }
+
+signup = ()=>{
+  this.setState({isLoadingIndicator:true })
+ let check = this.validateFields()
+
+ if(check){
+  var profile = {
+    First_name: this.state.userFirstName,
+    Last_name: this.state.userLastName,
+    Email: this.state.userEmail,
+    Password: this.state.userPassword,
+    confirm_Password: this.state.userConfirmPassword,
+  };
+  console.log(JSON.stringify(profile))
+
+  this.WebServicesManager.postApiCallSignUp(
+    {dataToInsert: profile, apiEndPoint: 'new_user_reg'},
+    (statusCode, response) => {
+      if (Utilities.checkAPICallStatus(statusCode)) {
+        if (Utilities.checkAPICallStatus(response.responseCode)) {
+  this.setState({isLoadingIndicator:false })
+          this.dropDownAlertRef.alertWithType(
+            'info',
+            'sucess',
+            response.description,
+          );
+        }
+
+        else{
+  this.setState({isLoadingIndicator:false })
+          this.dropDownAlertRef1.alertWithType(
+            'info',
+            'Error',
+            response.description,
+          );
+        }
+      }
+      else{
+  this.setState({isLoadingIndicator:false })
+        this.dropDownAlertRef1.alertWithType(
+          'info',
+          'Error',
+          'Please check your internet connection',
+        );
+      }
+    })
+ }
+ else{
+  this.setState({isLoadingIndicator:false })
+  this.dropDownAlertRef1.alertWithType(
+    'info',
+    'Error',
+    this.errorMsg,
+  );
+ }
+
+
+}
 
 
   render() {
     return (
+      <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={{flex:1}}
+    >
       <ImageBackground
         style={{height: '100%'}}
         source={require('../../../ImageAssets/background.png')}
@@ -505,8 +613,28 @@ export default class SigupScreen extends React.Component {
             translucent={false}
           />
           <Loader loading={this.state.isLoadingIndicator}></Loader>
+   
+
+          <SafeAreaView>
+            
+          <View style={{ flexDirection:"row", alignItems:"center", 
+          justifyContent:"space-between", paddingLeft:10, paddingRight:30}}>
+          <TouchableOpacity onPress={()=>{
+              this.props.navigation.goBack()
+          }}>
+          <Icon
+              // style={styles.searchIcon}
+              name="chevron-left"
+              size={24 }
+              color="#000"
+            />
+          </TouchableOpacity>
+          <Text style={{fontSize:20, lineHeight:24, fontWeight:"bold", alignSelf:"center"}}> Register</Text>
+          {/* <View></View> */}
+          </View>
+          </SafeAreaView>
           <DropdownAlert
-            infoColor={constants.coloBrownFFF5DA}
+            infoColor={constants.colorGreen}
             titleStyle={{color: constants.colorWhitefcfcfc, fontWeight: 'bold'}}
             messageStyle={{
               color: constants.colorWhitefcfcfc,
@@ -522,38 +650,19 @@ export default class SigupScreen extends React.Component {
           />
           <DropdownAlert
             infoColor={constants.coloBrownFFF5DA}
-            titleStyle={{color: constants.colorGrey838383, fontWeight: 'bold'}}
+            titleStyle={{color: constants.colorWhite, fontWeight: 'bold'}}
             messageStyle={{
-              color: constants.colorGrey838383,
+              color: constants.colorWhite,
               fontWeight: 'bold',
               fontSize: 12,
             }}
             imageStyle={{
               padding: 8,
-              tintColor: constants.colorGrey838383,
+              tintColor: constants.colorWhite,
               alignSelf: 'center',
             }}
             ref={ref => (this.dropDownAlertRef1 = ref)}
           />
-          <SafeAreaView>
-            
-          <View style={{ flexDirection:"row", alignItems:"center", 
-          justifyContent:"space-between", paddingLeft:10, paddingRight:30}}>
-          <TouchableOpacity onPress={()=>{
-              this.props.navigation.navigate('BreakScreen')
-          }}>
-          <Icon
-              // style={styles.searchIcon}
-              name="chevron-left"
-              size={24 }
-              color="#000"
-            />
-          </TouchableOpacity>
-          <Text style={{fontSize:20, lineHeight:24, fontWeight:"bold", alignSelf:"center"}}> Register</Text>
-          {/* <View></View> */}
-          </View>
-          </SafeAreaView>
-        
           <View style={styles.signupUpperHeader}>
             <Image
               source={require('../../../ImageAssets/amc.png')}
@@ -654,6 +763,8 @@ export default class SigupScreen extends React.Component {
           <Button
             onPress={() =>{ 
               // this.Login()
+              Keyboard.dismiss
+              this.signup()
             }}
             block
             style={{
@@ -667,6 +778,7 @@ export default class SigupScreen extends React.Component {
           </Button>
         </ScrollView>
       </ImageBackground>
+     </KeyboardAvoidingView>
     );
   }
 }
