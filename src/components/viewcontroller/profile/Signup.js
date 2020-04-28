@@ -555,14 +555,16 @@ signup = ()=>{
     (statusCode, response) => {
       if (Utilities.checkAPICallStatus(statusCode)) {
         if (Utilities.checkAPICallStatus(response.responseCode)) {
-  this.setState({isLoadingIndicator:false })
+         this.setState({isLoadingIndicator:false })
           this.dropDownAlertRef.alertWithType(
             'info',
             'sucess',
             response.description,
           );
+          setTimeout(() => {
+            this.props.navigation.navigate("SigninScreen")
+          }, 2000);
         }
-
         else{
   this.setState({isLoadingIndicator:false })
           this.dropDownAlertRef1.alertWithType(
